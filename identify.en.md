@@ -1,13 +1,13 @@
-Hi all,
-<br/>
-   We add the "Identify" section on the group details page of https://thecelo.com/ , so that we can konw this group more accurately. we believe most of you have already saw it.
+Hi all,<br/>
+     <br/>We add the "Identify" section on the group details page of https://thecelo.com/ , so that we can konw this group more accurately. we believe most of you have already saw it.
    <br/>
    here's some notes on how it's identified.
    <br/>
-If you have some questions, feel free to contact us:<br/>
+If you have some questions, feel free to contact us:
+ <br/>
 Email: support@bi23.com<br/>
 Discord:
-Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
+Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980
 <br/>
 
 ### Some notes about Identify:
@@ -79,4 +79,4 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 13. Participates in the community
 > *Partial group information has been collected
 
-*: Group needs to provide some information to thecelo
+*: we'd like you to check these info and give us feedback if there's something wrong or missing.<br/> 
