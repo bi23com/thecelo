@@ -1,5 +1,5 @@
 
-Hi all,
+Hi all,<br/>
 We're collecting info below to complete the identify section of groups on thecelo.com. so we'd like you to check these info below and give us feedback if there's something wrong or missing. or you can just fork and modify by yourself and then pull request to us, we'll merge that. 
 Here's how to contact us:
 email: support@bi23.com
