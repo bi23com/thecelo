@@ -1,6 +1,8 @@
-Hi all,<br/>
+Hi all,
 <br/>
-   We add the "Identify" section on https://thecelo.com/ and believe you all saw it already. here's some notes on how it's identified.
+   We add the "Identify" section on the group details page of https://thecelo.com/ , so that we can konw this group more accurately. we believe most of you have already saw it.
+   <br/>
+   here's some notes on how it's identified.
    <br/>
 If you have some questions, feel free to contact us:<br/>
 Email: support@bi23.com<br/>
