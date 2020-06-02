@@ -18,15 +18,15 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | Manta Labs|0xbf55dF76204f00AcF296F76cF4Aaf86A866a5eb0|https://keybase.io/mantalabs|/|
 | missionquorum-group|0xA432da0Ed5A2c15cbc681227cCec3b375908FdCB|/|/|
 | DSRV CeloWhale.com | 0xF83C93ea360B66DDCD532960304948B1c10786a1|dsrv labs - WellDoneStake.com|75.00%|https://keybase.io/dsrvlabs|https://www.celowhale.com|
-| TDlabs   Staked.us | 0x8a12caB622B8093208931fA008D12D6Ba5AF47E4|Tdlabs|70.00%
-| ChainLayer | 0x7194DFE766a92308880A943fD70F31c8E7c50e66|Chainlayer1|100.00%
-| The Passive Trust | 0xB87f2354E34B26ba6406Ac60EA99DCD8cd5e63Bf|/|/|
+| TDlabs   Staked.us | 0x8a12caB622B8093208931fA008D12D6Ba5AF47E4|Tdlabs|70.00%||https://keybase.io/tdlabs_crypto|
+| ChainLayer | 0x7194DFE766a92308880A943fD70F31c8E7c50e66|Chainlayer1|100.00%||https://keybase.io/chainlayer
+| The Passive Trust | 0xB87f2354E34B26ba6406Ac60EA99DCD8cd5e63Bf|/|/||https://keybase.io/thepassivetrust|https://www.thepassivetrust.com/
 | Nodito Labs | 0x2c2B0f71d59B546B2CAfd222696589c13C3c325C|/|/|
-| Blockdaemon | 0xCc4B2Bcbbc9639ef1E91F47acfD12Bd131525e79|"daithi-blockdaemon|70.00%|
-| Censusworks | 0x0d4f8cEA48cDaDEAe345431577a64983c0535B12|census0|72.50%|
+| Blockdaemon | 0xCc4B2Bcbbc9639ef1E91F47acfD12Bd131525e79|"daithi-blockdaemon|70.00%||https://keybase.io/blockdaemon_ops
+| Censusworks | 0x0d4f8cEA48cDaDEAe345431577a64983c0535B12|census0|72.50%||https://keybase.io/censusworks
 | Bitcandy | 0x34649AdA2cB44D851a2103Feaa8922DedDABfc1c|/|/|
-| wotrust | 0x7C75B0B81A54359E9dCCDa9cb663ca2e3De6B710|wotrust1|72.50%|
-| PretoriaResearchLab.io|0xddaa60B6d803674bBc434F1C2B261CeB67C2fd7c|pretoria|66.70%|https://cauldron.pretoriaresearchlab.io/block-map|
+| wotrust | 0x7C75B0B81A54359E9dCCDa9cb663ca2e3De6B710|wotrust1|72.50%||https://keybase.io/wotrust
+| PretoriaResearchLab.io|0xddaa60B6d803674bBc434F1C2B261CeB67C2fd7c|pretoria|66.70%|https://cauldron.pretoriaresearchlab.io/block-map|https://keybase.io/pretoriaresearch
 | Conclave|0xAF2b000bAed202fA7de0d9DCeB6F6612De348011|/|/|
 | Bison Trails | 0xDaDBd6Cfb29b054aDC9c4c2Ef0F21f0BBdb44871|Bison Trails|69.20%|
 | kytzu.com | 0xc64DF5Be250264bf2888591D87cdeB13BFADC501|kytzu|76.70%|
