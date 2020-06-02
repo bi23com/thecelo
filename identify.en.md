@@ -1,3 +1,13 @@
+Hi all,<br/>
+<br/>
+   We add the "Identify" section on https://thecelo.com/ and believe you all saw it already. here's some notes on how it's identified.
+   <br/>
+If you have some questions, feel free to contact us:<br/>
+Email: support@bi23.com<br/>
+Discord:
+Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
+<br/>
+
 ### Some notes about Identify:
 
 1. Domain proven
