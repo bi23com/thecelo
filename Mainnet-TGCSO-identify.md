@@ -1,3 +1,7 @@
+
+Hi all,
+    We're collecting info below to complete the identify section of groups on thecelo.com. so we'd like you to check these info below and give us feedback if there's something wrong or missing. or you can just fork and modify by yourself and then pull request to us, we'll merge that.
+
 | Mainnet Groups Name  | Mainnet Group Address | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) entity identity | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) master validator chanllege | community tool | keybase|website |
 | :---: | :-------: | :-------: | :-----: | :-----: | :-----: | :-----: |
 | Bi23 Labs|0x07fa1874ad4655AD0C763a7876503509be11e29E|Bi23|50.00%|https://thecelo.com|https://keybase.io/sunxmldapp|https://bi23.com|
