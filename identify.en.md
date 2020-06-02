@@ -1,5 +1,5 @@
 Hi all,<br/>
-     <br/>We add the "Identify" section on the group details page of https://thecelo.com/ , so that celo users can konw this group more accurately. we believe most of you have already saw it. here's some notes on how it's identified.<br/>
+     <br/>We add the "Identify" section on the group details page of https://thecelo.com/ , so that celo users can konw this group more accurately. we believe most of you have already saw it. here're some notes on how it's identified.<br/>
 
 ### Some notes about Identify:
 
