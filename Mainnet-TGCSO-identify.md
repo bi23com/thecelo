@@ -15,7 +15,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | Bi23 Labs|0x07fa1874ad4655AD0C763a7876503509be11e29E|Bi23|50.00%|https://thecelo.com|https://keybase.io/sunxmldapp|https://bi23.com|
 | Polychain Labs|0x47b2dB6af05a55d42Ed0F3731735F9479ABF0673||||https://keybase.io/polychainlabs|https://www.polychainlabs.com/|
 | cnstnt.xyz|0x21FB4411FA5828344c2788aB07D4cc12a12571b9|cnstnt.xyz|/| 
-| Manta Labs|0xbf55dF76204f00AcF296F76cF4Aaf86A866a5eb0||||https://keybase.io/mantalabs|/|
+| Manta Labs|0xbf55dF76204f00AcF296F76cF4Aaf86A866a5eb0||||https://keybase.io/mantalabs|/|http://mantalabs.org/
 | missionquorum-group|0xA432da0Ed5A2c15cbc681227cCec3b375908FdCB|/|/|
 | DSRV CeloWhale.com | 0xF83C93ea360B66DDCD532960304948B1c10786a1|dsrv labs - WellDoneStake.com|75.00%||https://keybase.io/dsrvlabs|https://www.celowhale.com|
 | TDlabs   Staked.us | 0x8a12caB622B8093208931fA008D12D6Ba5AF47E4|Tdlabs|70.00%||https://keybase.io/tdlabs_crypto|https://tdlabs.ca/
@@ -25,11 +25,11 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | Blockdaemon | 0xCc4B2Bcbbc9639ef1E91F47acfD12Bd131525e79|"daithi-blockdaemon|70.00%||https://keybase.io/blockdaemon_ops|https://blockdaemon.com/
 | Censusworks | 0x0d4f8cEA48cDaDEAe345431577a64983c0535B12|census0|72.50%||https://keybase.io/censusworks|https://censusworks.com/
 | Bitcandy | 0x34649AdA2cB44D851a2103Feaa8922DedDABfc1c|/|/|
-| wotrust | 0x7C75B0B81A54359E9dCCDa9cb663ca2e3De6B710|wotrust1|72.50%||https://keybase.io/wotrust
+| wotrust | 0x7C75B0B81A54359E9dCCDa9cb663ca2e3De6B710|wotrust1|72.50%||https://keybase.io/wotrust|https://wotrust.us/
 | PretoriaResearchLab.io|0xddaa60B6d803674bBc434F1C2B261CeB67C2fd7c|pretoria|66.70%|https://cauldron.pretoriaresearchlab.io/block-map|https://keybase.io/pretoriaresearch|https://pretoriaresearchlab.io/
 | Conclave|0xAF2b000bAed202fA7de0d9DCeB6F6612De348011|/|/|
 | Bison Trails | 0xDaDBd6Cfb29b054aDC9c4c2Ef0F21f0BBdb44871|Bison Trails|69.20%||https://keybase.io/bisontrails|https://bisontrails.co/
-| kytzu.com | 0xc64DF5Be250264bf2888591D87cdeB13BFADC501|kytzu|76.70%||https://keybase.io/kytzu
+| kytzu.com | 0xc64DF5Be250264bf2888591D87cdeB13BFADC501|kytzu|76.70%||https://keybase.io/kytzu|https://kytzu.com/
 | celvaly | 0xd25c6a9FEf4744E8d4F90Bf6bdFAF7686909d799|celvaly0 |72.50%|
 | sparkpool-group | 0xEEFCfDFc8F5CeD9799A13EcA58DE2ba7534eAB92|sparkpool-v1"|30.00%||https://keybase.io/spark_pool|https://www.sparkpool.com/
 | AG | 0x15Ed3f6b79F5Fb9Ef1D99D37314Dd626b3005F0b|AGx1|53.30%|
@@ -45,7 +45,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | The Celo Group | 0x81AE1C73A326325216E25ff1af9EA3871195036E|Newroad|/||https://keybase.io/thecelogroup|https://newroad.network/
 | Moonlet.io | 0x8851F4852ce427191Dc8D9065d720619889e3260|MoonletV|100.00%|||https://moonlet.io/
 | Staking Fund | 0xFaa0b40645Ee5E8D9AE38393e8cDF8e5baA71d13|Staking Fund|75.00%||https://keybase.io/stakingfund|https://staking.fund/
-| Tessellated Geometry Alliance | 0x0339Df3FE4f5ccC864EAE8491E5c8AEc4611A631|/|/||https://keybase.io/tessellatedgeo
+| Tessellated Geometry Alliance | 0x0339Df3FE4f5ccC864EAE8491E5c8AEc4611A631|/|/||https://keybase.io/tessellatedgeo|https://tessellatedgeometry.com/
 | huglester | 0x614B7654ba0cC6000ABe526779911b70C1F7125A|huglester00|54.20%||https://keybase.io/huglester
 | nonce | 0xC7d5409fEe80B3Ac37Dbc111664dC511a5982469|nonce - validator1|/|
 | StakesStoneGroup| 0x3DcF2ED8dC84a63FfD2bfDc3CDb2fA0B1aeAfE5c|StakesStoneGroup|75.00%|
@@ -61,7 +61,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | Masternode24.de| 0x95aE59515915D6c493a846aE022F93726652b50A|Masternode25.de|69.20%||https://keybase.io/masternode24
 | Bambarello| 0x6CF4bB9ff947610944c6D8E0E5Ea26B1dEa73196|Bambarello|90.80%||https://keybase.io/bambarello
 | SlavaMo| 0x602B65795BCc64b2fb329AC004236E194f077158|SlavaMo|/||https://keybase.io/slavamo
-| swiftstaking| 0xE141831c2c1198d79B9Ff61cD97C3bAca7F071E0|/|/||https://keybase.io/swiftstaking
+| swiftstaking| 0xE141831c2c1198d79B9Ff61cD97C3bAca7F071E0|/|/||https://keybase.io/swiftstaking|https://www.swiftstaking.com/
 | Tango| 0x98c62d86634bB0E3f818EFC550e2F33369Eae7F3|/|/|
 | keyko.io| 0x2fd49E97262D505Fd76BB6E0e06eC10e1fd54589|/|/|
 | “Gossip”| 0x8954661e743c60C966E2ff6002B514126bb1cFe2|/|/|
