@@ -13,7 +13,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | Mainnet Groups Name  | Mainnet Group Address | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) entity identity | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) master validator chanllege | community tool | keybase|website |
 | :---: | :-------: | :-------: | :-----: | :-----: | :-----: | :-----: |
 | Bi23 Labs|0x07fa1874ad4655AD0C763a7876503509be11e29E|Bi23|50.00%|https://thecelo.com|https://keybase.io/sunxmldapp|https://bi23.com|
-| Polychain Labs|0x47b2dB6af05a55d42Ed0F3731735F9479ABF0673|https://keybase.io/polychainlabs|https://www.polychainlabs.com/|
+| Polychain Labs|0x47b2dB6af05a55d42Ed0F3731735F9479ABF0673||||https://keybase.io/polychainlabs|https://www.polychainlabs.com/|
 | cnstnt.xyz|0x21FB4411FA5828344c2788aB07D4cc12a12571b9|cnstnt.xyz|/| 
 | Manta Labs|0xbf55dF76204f00AcF296F76cF4Aaf86A866a5eb0|https://keybase.io/mantalabs|/|
 | missionquorum-group|0xA432da0Ed5A2c15cbc681227cCec3b375908FdCB|/|/|
