@@ -39,7 +39,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | moonli.me | 0xc8A81D473992c7c6D3F469A8263F24914625709d|moonlime|72.50%||https://keybase.io/y3v63n|https://moonli.me/
 | Alive29 | 0x0f66619058BB9675f3d394FCc2cE236a29901571|Alive29|82.50%||https://keybase.io/alive29
 | chainvibes | 0xD72Ed2e3db984bAC3bB351FE652200dE527eFfcf|chainvibes|100.00%||https://keybase.io/chainvibes|https://chainvibes.com/
-| Validator.Capital | 0xB33e9e01E561a1Da60f7Cb42508500e571afb6Eb|/|/||https://keybase.io/validatorcapital|https://www.validator.capital/
+| Validator.Capital | 0xB33e9e01E561a1Da60f7Cb42508500e571afb6Eb|Qoor.io|79.20%||https://keybase.io/validatorcapital|https://www.validator.capital/
 | Figment Networks | 0x01b2b83fDf26aFC3Ca7062C35Bc68c8DdE56dB04|Figment Networks|95.80%||https://keybase.io/figmentnetworks|https://figment.network/
 | YYYYYYYYYYYYY | 0xE075ba4b1dCAF75513118d7aA08A057c658842c9|YYYYYYYYYYYYY|65.80%||https://keybase.io/yyyyyyyyyyyyy
 | The Celo Group | 0x81AE1C73A326325216E25ff1af9EA3871195036E|Newroad|/||https://keybase.io/thecelogroup|https://newroad.network/
