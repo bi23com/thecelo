@@ -51,8 +51,8 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | StakesStoneGroup| 0x3DcF2ED8dC84a63FfD2bfDc3CDb2fA0B1aeAfE5c|StakesStoneGroup|75.00%|
 | ZanshinDojo.org| 0x8eB004daD9397B8f23E1279905c584920000756D|ZanshinDojo.org|63.30%|
 | Chainflow| 0x249a6B2B260000b08f50A2480e2d703bAf02E8BE|Chainflow-Validator|/|
-| Chorus One| 0x81cef0668e15639D0b101bdc3067699309D73BED|chorusone|75.80%||https://keybase.io/chorusoneinc
-| Easy2Stake Group| 0x061E9958028dcAa66fd8B255AD95194203b6c4Da|/|/|/|https://keybase.io/easy2stake|
+| Chorus One| 0x81cef0668e15639D0b101bdc3067699309D73BED|chorusone|75.80%||https://keybase.io/chorusoneinc|https://chorus.one/
+| Easy2Stake Group| 0x061E9958028dcAa66fd8B255AD95194203b6c4Da|/|/|/|https://keybase.io/easy2stake|https://www.easy2stake.com/
 | Goods & Services| 0x8580dB53C3ebC56230662B771ceF2707E92Ef83A|/|/|
 | gunray| 0x5402172E972b31Fc9F0383F53f45823Ab5037379|gunray01|0.00%||https://keybase.io/gunray
 | nga_group| 0xc24baeac0Fd189637112B7e33d22FfF2730aF993|NGA_validator|/|
