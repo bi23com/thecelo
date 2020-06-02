@@ -1,5 +1,5 @@
-| Mainnet Groups Name  | Mainnet Group Address | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) entity identity | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) master validator chanllege | community tool | keybase/website |
-| :---: | :-------: | :-------: | :-----: | :-----: | :-----: |
+| Mainnet Groups Name  | Mainnet Group Address | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) entity identity | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) master validator chanllege | community tool | keybase|website |
+| :---: | :-------: | :-------: | :-----: | :-----: | :-----: | :-----: |
 | Bi23 Labs|0x07fa1874ad4655AD0C763a7876503509be11e29E|Bi23|50.00%|https://thecelo.com|https://keybase.io/sunxmldapp|
 | Polychain Labs|0x47b2dB6af05a55d42Ed0F3731735F9479ABF0673|/|/|
 | cnstnt.xyz|0x21FB4411FA5828344c2788aB07D4cc12a12571b9|cnstnt.xyz|/| 
