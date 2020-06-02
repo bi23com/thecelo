@@ -71,7 +71,7 @@ Hi all,<br/>
 13. Participates in the community
 > *已收集部分group信息
 
-另外，没有认证的部分，我们还需要Group需要提供一些信息给我们，以便进一步完善您的认证信息。<br/>
+另外，目前没有打钩的部分，我们还需要Group需要提供一些信息给我们，以便进一步完善您的认证信息。<br/>
 <br/>联系我们：
 <br/>邮    件：support@bi23。com
 <br/>discord：Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980
