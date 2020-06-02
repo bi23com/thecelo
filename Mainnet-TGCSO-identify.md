@@ -66,11 +66,11 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | keyko.io| 0x2fd49E97262D505Fd76BB6E0e06eC10e1fd54589|/|/|
 | “Gossip”| 0x8954661e743c60C966E2ff6002B514126bb1cFe2|/|/|
 | #ValiDAO| 0xf87a83a0FB9118102b7fE2F19B7940dE3D421932|/|/|
-| stake.fish🐠 | 0x4D5A51039ea45063D4b665B21755db20A738DaDc|stake.fish|66.70%|
+| stake.fish🐠 | 0x4D5A51039ea45063D4b665B21755db20A738DaDc|stake.fish|66.70%||https://keybase.io/stakedotfish
 | Alpha Virtual| 0xFA592ae90E407Da044602342625AAABBF5d50C22|/|/|
-| www.nodeasy.com| 0xD491e5eC7bbB4C6Ea9eE522F21F6621706e65a3E|Nodeasy|/|
+| www.nodeasy.com| 0xD491e5eC7bbB4C6Ea9eE522F21F6621706e65a3E|Nodeasy|/||https://keybase.io/nodeasy|https://www.nodeasy.com/
 | ❄️❄️❄️ | 0xbB59448319755708d06DACaAc017308129FffdBb|/|/|
-| BitCat| 0xA1e923892df867fB5cb7575cCa2538c394aD1BD9|bitcat|/|
-| HashQuark | 0xD19FB36B7F433fe13820767ef6d0E26FDbaB68CC|hashquark|0.00%|
+| BitCat| 0xA1e923892df867fB5cb7575cCa2538c394aD1BD9|bitcat|/||https://keybase.io/bitcat365|https://www.bitcat365.com/
+| HashQuark| 0xD19FB36B7F433fe13820767ef6d0E26FDbaB68CC|hashquark|0.00%||https://keybase.io/hashquark|https://www.hashquark.io/#/
 | StakeServe| 0x0b04c6ca6f2eA2C57D51C28Bb3E82b0c9B4072Eb|/|/|
-| Ryabina  Celomap.io | 0x8493BD3De67AC341D4cC11531f96a1A2cdBf29aD|ryabina-1|0.00%|https://celomap.io https://t.me/Celo_Ryabina_bot|
+| Ryabina  Celomap.io | 0x8493BD3De67AC341D4cC11531f96a1A2cdBf29aD|ryabina-1|0.00%|https://celomap.io https://t.me/Celo_Ryabina_bot|https://keybase.io/ryabina|https://ryabina.io/
