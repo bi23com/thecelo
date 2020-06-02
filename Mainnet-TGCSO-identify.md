@@ -7,8 +7,7 @@ Hi all,<br/>
 Contact us:<br/>
 Email: support@bi23.com<br/>
 Discord:
-Shen | Bi23 | thecelo.com<br/>
-Emma |Bi23 Labs  | thecelo.com#9980<br/>
+Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 <br/>
 
 | Mainnet Groups Name  | Mainnet Group Address | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) entity identity | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) master validator chanllege | community tool | keybase|website |
