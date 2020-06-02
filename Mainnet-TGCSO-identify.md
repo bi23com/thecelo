@@ -31,7 +31,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | Bison Trails | 0xDaDBd6Cfb29b054aDC9c4c2Ef0F21f0BBdb44871|Bison Trails|69.20%||https://keybase.io/bisontrails
 | kytzu.com | 0xc64DF5Be250264bf2888591D87cdeB13BFADC501|kytzu|76.70%||https://keybase.io/kytzu
 | celvaly | 0xd25c6a9FEf4744E8d4F90Bf6bdFAF7686909d799|celvaly0 |72.50%|
-| sparkpool-group | 0xEEFCfDFc8F5CeD9799A13EcA58DE2ba7534eAB92|sparkpool-v1"|30.00%||https://keybase.io/spark_pool
+| sparkpool-group | 0xEEFCfDFc8F5CeD9799A13EcA58DE2ba7534eAB92|sparkpool-v1"|30.00%||https://keybase.io/spark_pool|https://www.sparkpool.com/
 | AG | 0x15Ed3f6b79F5Fb9Ef1D99D37314Dd626b3005F0b|AGx1|53.30%|
 | Simply Staking | 0xAcdf897493A6000dbe256791E8A2beCbb405FD4F|Simply Staking|100.00%|||https://simply-vc.com.mt/
 | syncnode_group | 0x82f8Bcf96f24BA60Ef041D192c7CE04C907E2fb8|syncnode|75.00%||https://keybase.io/syncnode
@@ -66,7 +66,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | keyko.io| 0x2fd49E97262D505Fd76BB6E0e06eC10e1fd54589|/|/|
 | “Gossip”| 0x8954661e743c60C966E2ff6002B514126bb1cFe2|/|/|
 | #ValiDAO| 0xf87a83a0FB9118102b7fE2F19B7940dE3D421932|/|/|
-| stake.fish🐠 | 0x4D5A51039ea45063D4b665B21755db20A738DaDc|stake.fish|66.70%||https://keybase.io/stakedotfish
+| stake.fish🐠 | 0x4D5A51039ea45063D4b665B21755db20A738DaDc|stake.fish|66.70%||https://keybase.io/stakedotfish|https://stake.fish/
 | Alpha Virtual| 0xFA592ae90E407Da044602342625AAABBF5d50C22|/|/|
 | www.nodeasy.com| 0xD491e5eC7bbB4C6Ea9eE522F21F6621706e65a3E|Nodeasy|/||https://keybase.io/nodeasy|https://www.nodeasy.com/
 | ❄️❄️❄️ | 0xbB59448319755708d06DACaAc017308129FffdBb|/|/|
