@@ -1,6 +1,8 @@
 
-Hi all,
-    We're collecting info below to complete the identify section of groups on thecelo.com. so we'd like you to check these info below and give us feedback if there's something wrong or missing. or you can just fork and modify by yourself and then pull request to us, we'll merge that.
+Hi all,:-------: We're collecting info below to complete the identify section of groups on thecelo.com. so we'd like you to check these info below and give us feedback if there's something wrong or missing. or you can just fork and modify by yourself and then pull request to us, we'll merge that. 
+Here's how to contact us:
+email: support@bi23.com
+discord:Emma |Bi23 Labs  | thecelo.com#9980
 
 | Mainnet Groups Name  | Mainnet Group Address | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) entity identity | [TGCSO](https://docs.google.com/spreadsheets/d/e/2PACX-1vQwk10o6YV0uriR8LuYfLqB1irjmOX_-L6Jljn3BtKlmz_R_TsUU8aI-pMqGVlu4HQKIQlQaFkUhsyl/pubhtml?gid=1970613133&single=true) master validator chanllege | community tool | keybase|website |
 | :---: | :-------: | :-------: | :-----: | :-----: | :-----: | :-----: |
