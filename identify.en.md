@@ -70,11 +70,7 @@ Hi all,<br/>
 13. Participates in the community
 > *Partial group information has been collected
 
-*: we'd like you to check these info and give us feedback if there's something wrong or missing.<br/> 
-If you have some questions, feel free to contact us:
- <br/>
+*: we'd like you to check these info and give us feedback if you have some questions:
 Email: support@bi23.com
-<br/>
 Discord:
 Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980
-<br/>
