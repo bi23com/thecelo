@@ -1,3 +1,7 @@
+Hi all,<br/>
+<br/>
+    我们在http://thecelo.com 的Group详情页中，新增加了identify模块，主要用来对验证组的各项指标进行一个初步的判断和认证，以便于用户们更全面的了解这个验证组。以下是目前我们对这些指标进行认证的标准，请查阅：
+
 ### 关于Identify的一些说明：
 
 1. Domain proven
@@ -67,4 +71,7 @@
 13. Participates in the community
 > *已收集部分group信息
 
-*：请Group需要提供一些信息给thecelo
+*：另外，没有认证的部分，我们还需要Group需要提供一些信息给我们，以免我们进行进一步的完善。<br/>
+<br/>联系我们：
+<br/>邮箱：support@bi23。com
+<br/>discord：Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980
