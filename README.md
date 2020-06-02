@@ -1,4 +1,4 @@
-### 这里是关于Identify的一些说明：
+### 关于Identify的一些说明：
 
 1. Domain proven
 > DNS claims
