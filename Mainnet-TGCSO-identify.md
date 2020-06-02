@@ -18,11 +18,11 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | Manta Labs|0xbf55dF76204f00AcF296F76cF4Aaf86A866a5eb0||||https://keybase.io/mantalabs|/|
 | missionquorum-group|0xA432da0Ed5A2c15cbc681227cCec3b375908FdCB|/|/|
 | DSRV CeloWhale.com | 0xF83C93ea360B66DDCD532960304948B1c10786a1|dsrv labs - WellDoneStake.com|75.00%||https://keybase.io/dsrvlabs|https://www.celowhale.com|
-| TDlabs   Staked.us | 0x8a12caB622B8093208931fA008D12D6Ba5AF47E4|Tdlabs|70.00%||https://keybase.io/tdlabs_crypto|
+| TDlabs   Staked.us | 0x8a12caB622B8093208931fA008D12D6Ba5AF47E4|Tdlabs|70.00%||https://keybase.io/tdlabs_crypto|https://tdlabs.ca/
 | ChainLayer | 0x7194DFE766a92308880A943fD70F31c8E7c50e66|Chainlayer1|100.00%||https://keybase.io/chainlayer|https://www.chainlayer.io/
 | The Passive Trust | 0xB87f2354E34B26ba6406Ac60EA99DCD8cd5e63Bf|/|/||https://keybase.io/thepassivetrust|https://www.thepassivetrust.com/
 | Nodito Labs | 0x2c2B0f71d59B546B2CAfd222696589c13C3c325C|/|/|
-| Blockdaemon | 0xCc4B2Bcbbc9639ef1E91F47acfD12Bd131525e79|"daithi-blockdaemon|70.00%||https://keybase.io/blockdaemon_ops
+| Blockdaemon | 0xCc4B2Bcbbc9639ef1E91F47acfD12Bd131525e79|"daithi-blockdaemon|70.00%||https://keybase.io/blockdaemon_ops|https://blockdaemon.com/
 | Censusworks | 0x0d4f8cEA48cDaDEAe345431577a64983c0535B12|census0|72.50%||https://keybase.io/censusworks|https://censusworks.com/
 | Bitcandy | 0x34649AdA2cB44D851a2103Feaa8922DedDABfc1c|/|/|
 | wotrust | 0x7C75B0B81A54359E9dCCDa9cb663ca2e3De6B710|wotrust1|72.50%||https://keybase.io/wotrust
