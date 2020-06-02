@@ -1,9 +1,10 @@
 
-Hi all,<br/>
-We're collecting info below to complete the identify section of groups on thecelo.com. so we'd like you to check these info below and give us feedback if there's something wrong or missing.
-<br/> or you can just fork and modify by yourself and then pull request to us, we'll merge that. <br/>
+Hi all,
 <br/>
-Here's how to contact us:<br/>
+We're collecting info below to complete the identify section of groups on thecelo.com. so we'd like you to check these info below and give us feedback if there's something wrong or missing.
+<br/> or you can just fork and modify by yourself and then pull request to us, we'll merge that asap. <br/>
+<br/>
+Contact us:<br/>
 email: support@bi23.com<br/>
 discord:Emma |Bi23 Labs  | thecelo.com#9980<br/>
 <br/>
