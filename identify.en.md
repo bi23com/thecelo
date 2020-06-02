@@ -29,7 +29,7 @@
 
 10. Receives Celo Foundation votes
 > Received the following Celo Foundation votes:
->
+
 > 0xb234e017ad9e29687474196a93d5c7df24415902
 
 > 0x489dca840aa686cf055c342c165e9358889840de
