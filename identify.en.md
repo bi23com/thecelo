@@ -1,14 +1,5 @@
 Hi all,<br/>
-     <br/>We add the "Identify" section on the group details page of https://thecelo.com/ , so that we can konw this group more accurately. we believe most of you have already saw it.
-   <br/>
-   here's some notes on how it's identified.
-   <br/>
-If you have some questions, feel free to contact us:
- <br/>
-Email: support@bi23.com<br/>
-Discord:
-Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980
-<br/>
+     <br/>We add the "Identify" section on the group details page of https://thecelo.com/ , so that we can konw this group more accurately. we believe most of you have already saw it. here's some notes on how it's identified.<br/>
 
 ### Some notes about Identify:
 
@@ -80,3 +71,10 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980
 > *Partial group information has been collected
 
 *: we'd like you to check these info and give us feedback if there's something wrong or missing.<br/> 
+If you have some questions, feel free to contact us:
+ <br/>
+Email: support@bi23.com
+<br/>
+Discord:
+Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980
+<br/>
