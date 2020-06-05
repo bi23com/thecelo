@@ -27,7 +27,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | Bitcandy | 0x34649AdA2cB44D851a2103Feaa8922DedDABfc1c|/|/|
 | wotrust | 0x7C75B0B81A54359E9dCCDa9cb663ca2e3De6B710|wotrust1|72.50%|https://celovote.com|https://keybase.io/wotrust|https://wotrust.us/
 | PretoriaResearchLab.io|0xddaa60B6d803674bBc434F1C2B261CeB67C2fd7c|pretoria|66.70%|https://cauldron.pretoriaresearchlab.io/block-map|https://keybase.io/pretoriaresearch|https://pretoriaresearchlab.io/
-| Conclave|0xAF2b000bAed202fA7de0d9DCeB6F6612De348011|/|/|
+| Conclave|0xAF2b000bAed202fA7de0d9DCeB6F6612De348011|/|/|https://celoist.com|
 | Bison Trails | 0xDaDBd6Cfb29b054aDC9c4c2Ef0F21f0BBdb44871|Bison Trails|69.20%||https://keybase.io/bisontrails|https://bisontrails.co/
 | kytzu.com | 0xc64DF5Be250264bf2888591D87cdeB13BFADC501|kytzu|76.70%||https://keybase.io/kytzu|https://kytzu.com/
 | celvaly | 0xd25c6a9FEf4744E8d4F90Bf6bdFAF7686909d799|celvaly0 |72.50%|
