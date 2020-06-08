@@ -22,7 +22,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | TDlabs   Staked.us | 0x8a12caB622B8093208931fA008D12D6Ba5AF47E4|Tdlabs|70.00%||https://keybase.io/tdlabs_crypto|https://tdlabs.ca/
 | ChainLayer | 0x7194DFE766a92308880A943fD70F31c8E7c50e66|Chainlayer1|100.00%||https://keybase.io/chainlayer|https://www.chainlayer.io/
 | The Passive Trust | 0xB87f2354E34B26ba6406Ac60EA99DCD8cd5e63Bf|/|/||https://keybase.io/thepassivetrust|https://www.thepassivetrust.com/
-| Nodito Labs | 0x2c2B0f71d59B546B2CAfd222696589c13C3c325C|/|/|
+| Nodito Labs | 0x2c2B0f71d59B546B2CAfd222696589c13C3c325C|/|/|||https://noditolabs.com/
 | Blockdaemon | 0xCc4B2Bcbbc9639ef1E91F47acfD12Bd131525e79|"daithi-blockdaemon|70.00%||https://keybase.io/blockdaemon_ops|https://blockdaemon.com/
 | Censusworks | 0x0d4f8cEA48cDaDEAe345431577a64983c0535B12|census0|72.50%||https://keybase.io/censusworks|https://censusworks.com/
 | Bitcandy | 0x34649AdA2cB44D851a2103Feaa8922DedDABfc1c|/|/|
