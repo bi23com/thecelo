@@ -64,7 +64,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | Bambarello| 0x6CF4bB9ff947610944c6D8E0E5Ea26B1dEa73196|Bambarello|90.80%||https://keybase.io/bambarello
 | SlavaMo| 0x602B65795BCc64b2fb329AC004236E194f077158|SlavaMo|/||https://keybase.io/slavamo
 | swiftstaking| 0xE141831c2c1198d79B9Ff61cD97C3bAca7F071E0|/|/||https://keybase.io/swiftstaking|https://www.swiftstaking.com/
-| Tango| 0x98c62d86634bB0E3f818EFC550e2F33369Eae7F3|/|/|
+| Tango| 0x98c62d86634bB0E3f818EFC550e2F33369Eae7F3|/|/||https://keybase.io/missionaligned|Tangovalidator.com
 | keyko.io| 0x2fd49E97262D505Fd76BB6E0e06eC10e1fd54589|/|/|
 | “Gossip”| 0x8954661e743c60C966E2ff6002B514126bb1cFe2|/|/|
 | #ValiDAO| 0xf87a83a0FB9118102b7fE2F19B7940dE3D421932|/|/|
