@@ -46,7 +46,7 @@ Shen | Bi23 | thecelo.com#6675, Emma |Bi23 Labs  | thecelo.com#9980<br/>
 | The Celo Group | 0x81AE1C73A326325216E25ff1af9EA3871195036E|Newroad|/||https://keybase.io/thecelogroup|https://newroad.network/
 | Moonlet.io | 0x8851F4852ce427191Dc8D9065d720619889e3260|MoonletV|100.00%|||https://moonlet.io/
 | Staking Fund | 0xFaa0b40645Ee5E8D9AE38393e8cDF8e5baA71d13|Staking Fund|75.00%||https://keybase.io/stakingfund|https://staking.fund/
-|stakevalley|0x3FEf91a3422F4dA394C08f115632D3e075d0EFFd|||||https://www.stakevalley.com/
+|stakevalley|0x3FEf91a3422F4dA394C08f115632D3e075d0EFFd|steakvalley01|79.20%|||https://www.stakevalley.com/
 | Tessellated Geometry Alliance | 0x0339Df3FE4f5ccC864EAE8491E5c8AEc4611A631|/|/||https://keybase.io/tessellatedgeo|https://tessellatedgeometry.com/
 | huglester | 0x614B7654ba0cC6000ABe526779911b70C1F7125A|huglester00|54.20%||https://keybase.io/huglester
 | nonce | 0xC7d5409fEe80B3Ac37Dbc111664dC511a5982469|nonce - validator1|/|
