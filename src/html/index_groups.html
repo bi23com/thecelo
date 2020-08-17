@@ -1,0 +1,329 @@
+<div class="card-deck mb-3 text-secondary">
+		<div class="card mb-4 shadow-sm">
+				<div class="card-body">
+					<div><span set-lan="html:Group Validators"></span></div>
+					<div><strong class="text-success float-right mt-3" id="group_count"></strong></div>
+				</div>
+		</div>
+		<div class="card mb-4 shadow-sm">
+				<div class="card-body" style="cursor: pointer;" onclick="javascript:switchTab('validators');">
+					<div><span set-lan="html:Individual Validators"></span><i class="iconfont icondouble_right float-right" style="font-size:11px;"></i></div>
+					<div><strong class="text-success float-right mt-3" id="validator_count"></strong></div>
+				</div>
+		</div>
+		<div class="card mb-4 shadow-sm">
+				<div class="card-body">
+					<div><span set-lan="html:Total Votes"></span></div>
+					<ul class="list-group">
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">
+							<span></span><strong class="text-success" id='total_votes'>-</strong></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">
+							<span></span><strong class="text-primary" id='total_votes_change'>-</strong></li>
+					</ul>
+				</div>
+		</div>
+		<div class="card mb-4 shadow-sm">
+				<div class="card-body">
+					<div><span set-lan="html:Elected Minimum Votes"></span></div>
+					<ul class="list-group">
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">
+							<span set-lan="html:Current"></span><strong class="text-success" id='current_minimum_votes'>-</strong></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">
+							<span set-lan="html:Next"></span><strong class="text-primary" id='frontrunner_minimum_votes'>-</strong></li>
+					</ul>
+				</div>
+		</div>
+</div>
+<!-- -->
+<div class="card-deck">
+	<div class="card shadow-sm table-responsive">
+		<table class="table table-hover table-expandable mb-0 p-0" data-toggle="table">
+      <thead class="card-header">
+          <tr>
+							<td><div><i class="text-success iconfont iconicon_rank_star"></i></div></td>
+							<td width="30px"></td>
+              <td style="text-align:left;cursor: pointer;min-width:120px;" onclick="javascript:click_sort('address','up');">
+								<div style="white-space: nowrap;">
+								<span set-lan="html:Group"></span>
+								<span id='address_sort'></span>
+								</div>
+							</td>
+              <td style="text-align:right;cursor: pointer;vertical:middle;" id="group_votes_sort" onclick="javascript:click_sort('votes','down');">
+								<div style="white-space: nowrap;">
+								<span set-lan="html:Total Votes"></span>
+								<span id='votes_sort'></span>
+								</div>
+							</td>
+							<td style="text-align:right;">
+								<div style="white-space: nowrap;">
+								<span set-lan="html:% Cumulative Share"></span>
+								</div>
+							</td>
+							<!--
+							<td style="text-align:right;cursor: pointer;" onclick="javascript:click_sort('capacity','down');">
+								<div style="white-space: nowrap;">
+									<span set-lan="html:* Capacity" data-toggle="tooltip" data-placement="top" title="* Capacity: Number of remaining votes that can be received."></span>
+									<span id='capacity_sort'></span>
+								</div>
+							</td>
+							-->
+							<td style="text-align:right;cursor: pointer;" onclick="javascript:click_sort('commission','up');">
+								<div style="white-space: nowrap;">
+								<span set-lan="html:Group share"></span>
+								<span id='commission_sort'></span>
+								</div>
+							</td>
+							<!--
+							<td style="text-align:right;cursor: pointer;">
+								<div style="white-space: nowrap;">
+								<span set-lan="html:Voter Rewards"></span>
+								</div>
+							</td>
+							-->
+							<td style="text-align:right;cursor: pointer;" onclick="javascript:click_sort('score','down');">
+								<div style="white-space: nowrap;">
+									<span set-lan="html:* Group score" data-toggle="tooltip" data-placement="top" data-original-title="* Group epoch score is the average of each member's epoch score."></span>
+									<span id='score_sort'></span>
+								</div>
+							</td>
+              <td style="with:20px;cursor: pointer;" onclick="javascript:click_sort('members','down');">
+								<div style="white-space: nowrap;">
+								<span set-lan="html:Elected/Total"/>
+								<span id='members_sort'></span>
+								</div>
+							</td>
+          </tr>
+      </thead>
+			<tbody id='datacontainer'></tbody>
+    </table>
+	</div>
+</div>
+<script type="text/javascript">
+	//
+	var total_voting_power = 0;
+	var min_elected_votes = 1e+50;
+	var elected_validator_count = 0;
+	var validator_count = 0;
+	var elected_group_count = 0;
+	//
+	var oldSort;
+	var oldFlg;
+	var arr_sort = ['address_sort','votes_sort','capacity_sort','commission_sort','members_sort','score_sort'];
+	function click_sort(flg,sort){
+		if(flg==oldFlg){
+			oldSort = order = oldSort =='down'?'up':'down';
+		}
+		else {
+			oldSort = order = sort;
+			oldFlg = flg;
+		}
+		//
+		$('#datacontainer').empty();
+		//
+		arr_sort.forEach((item, i) => {
+			$('#'+item).html(sort_normal);
+		});
+		//
+		show_groups(flg,order);
+		//
+		if(order=='down')
+			$('#'+flg+'_sort').html(sort_down);
+		else
+			$('#'+flg+'_sort').html(sort_up);
+	}
+	function groups_board(){
+		show_groups(oldFlg,oldSort);
+	}
+	//
+	function show_groups(flg,order){
+	  //output html
+	  var groups_html = '';
+	  var num = 0;
+	  var favlist = getStorage('favlist');
+		//
+		var keys = Object.keys(groups).sort(function(x,y){
+				if(flg=='votes'&&order=='down') return (groups[y][1] - groups[x][1]);
+				if(flg=='votes'&&order=='up') return (groups[x][1] - groups[y][1]);
+				if(flg=='score'&&order=='down') return (groups[y][8] - groups[x][8]);
+				if(flg=='score'&&order=='up') return (groups[x][8] - groups[y][8]);
+				if(flg=='capacity'&&order=='down') return (groups[y][2] - groups[x][2]);
+				if(flg=='capacity'&&order=='up') return (groups[x][2] - groups[y][2]);
+				if(flg=='commission'&&order=='down') return (groups[y][6] - groups[x][6]);
+				if(flg=='commission'&&order=='up') return (groups[x][6] - groups[y][6]);
+				if(flg=='members'&&order=='down') return (groups[y][4] - groups[x][4]);
+				if(flg=='members'&&order=='up') return (groups[x][4] - groups[y][4]);
+				if(flg=='address'){
+					var yname = groups[y][0];
+					var xname = groups[x][0];
+					if(yname =='') yname = y;
+					if(xname =='') xname = x;
+					if(order=='up')
+			    	return xname.localeCompare(yname);
+					if(order=='down')
+				    return yname.localeCompare(xname);
+				}
+			});
+		//
+		var cumulative_votes = 0;
+		keys.forEach(function(address){
+			//address 0:name 1:votes,2:Capacity, 3:ElectedCount 4:MemberCount 5:eligible 6:commission,7:logo
+	  		var group = groups[address];
+	      num ++;
+	      //
+	      var html = '<tr id="groups-line-'+address+'" domain="'+group[9]+'" keybase="'+group[10]+'"';
+				html += group[3]==0?'':' class="text-success" ';
+				html += ' style="cursor: pointer;'+(group[3]==0?' color:grey;"':'')+'">';
+	      //
+	      var i_class = 'iconfont iconicon_rank_star';
+	      if(favlist.indexOf(address)>-1){
+	          i_class = 'iconfont iconicon_rank_star_selec';
+	      }
+	      html += '<td class="text-center" style="padding:0;"><div>'+num+'</div>';
+	      html += '<i id="groups-heart-'+address+'" class="text-success '+i_class+'" style="cursor: pointer;font-size:16px;"></i>';
+	      html += '</td><td width="30px"><div>';
+				//header
+				if(group[7]){
+	        html += '<img src="'+thecelohost+'/logos/'+address.toLowerCase()+'.jpg" class="rounded-circle" style="border:1px solid #eeeeee;" width="36px" height="36px" />';
+	      }
+				else {
+					html += '<i class="iconfont iconuser rounded-circle p-2" style="border:1px solid #eeeeee;" style="font-size:20px;"/>';
+					//html += '<i class="iconfont iconusers" style="font-size:20px;"></i>';
+				}
+	      //address
+	      html += '</div></td><td style="word-break:break-word;" class="align-self-center">';
+				if(group[0].trim().length == 0){
+					html += formatAddress(address,false,false,true);
+				}
+				else{
+					html += '<strong '+(group[3]!=0?'class="text-success"':'')+'>' + group[0] + '</strong>';
+					if(group[9]&&group[9].trim().length>0){
+						html += '<i class="p-1 iconfont iconelected" style="font-size:16px;cursor: pointer;"';
+						html += ' data-toggle="tooltip" data-placement="top" data-type="success" title="Domain claim: '+group[9]+'"></i>';
+					}
+					//html += formatAddress(address,false,false,true,true);
+				}
+	      //votes
+	      html += '</td><td style="text-align:right;">' + formatAmount(group[1]) ;
+				var addr = address.toLowerCase();
+	      if(addvotes.hasOwnProperty(addr)){
+					var str = thousands(addvotes[addr].toFixed(2));
+					if(addvotes[addr]>0)
+						str = '+'+str;
+					if(str!='0.00')
+	        	html += '<br/><span class="text-primary">' + str +'</span>';
+	      }
+				html += '</td>';
+				//% Cumulative Share
+				html += '<td style="height:50px;text-align:right;border-left: 1px solid #ddd;border-right: 1px solid #ddd; padding:0;">';
+				html += '<div class="share-progressbar-wrapper">';
+				var cumulative_share_0 = ((cumulative_votes*100)/total_voting_power).toFixed(4);
+				var cumulative_share_1 = ((group[1]*100)/total_voting_power).toFixed(4);
+				cumulative_votes += group[1];
+				var cumulative_share_2 = (parseFloat(cumulative_share_0)+parseFloat(cumulative_share_1)).toFixed(2);
+				html += '<div class="share-progressbar_1" style="width:'+cumulative_share_0+'%"></div>';
+				html += '<div class="share-progressbar_2" style="left: '+cumulative_share_0+'%;width:'+cumulative_share_1+'%"></div>';
+				html += '<div style="margin-left: auto;margin-right:10px;">'+cumulative_share_2+'% </div></div>';
+				html += '</td>';
+				//capacity
+				/*
+				html += '<td class="text-right">' + formatAmount(group[2]) + '</td>';
+				*/
+				//commission
+				html += '<td class="text-right"><div>' + (group[6]*100) +'%</div></td>';
+				//html += '<td class="text-right"><div>n/a</div></td>';
+				html += '<td class="text-right"><div>' + (group[8]*100).toFixed(2) + '%</div></td>';
+	      html += '<td class="text-center"><span>' + group[3] + '/' + group[4] + '</span></td>';
+				//html += '<td style="text-align:right;"><i class="table-expandable-groups iconfont iconarrow_down" style="font-size:1.5em;"></i></td>';
+	      html += '</tr>';
+	      //
+	      favlist.indexOf(address)>-1?groups_html = html + groups_html:groups_html += html;
+	  });
+	  $('#datacontainer').html(groups_html);
+		//
+		heartOP('groups','favlist');
+		addressOP();
+		trOP('groups','favlist');
+		set_lan();
+		tooltip_datatoggle();
+	}
+	//
+	var addvotes = {};
+	var groups;
+	$(function(){
+			$.ajax({
+					url: thecelohost+'/api/v0.1.js?method=groups',
+					type: 'GET',dataType:'text',cache: false,
+					success:function(data){
+						var obj = JSON.parse(data);
+						groups = obj.groups;
+						//get min
+						min_elected_votes = 1e+50;
+						elected_validator_count = 0;
+						validator_count = 0;
+						elected_group_count = 0;
+						total_voting_power = 0;
+						//
+						Object.keys(groups).forEach(function(address){
+							//address 0:name 1:votes,2:Capacity, 3:ElectedCount 4:MemberCount 5:eligible 6:commission,7:logo
+							var group = groups[address];
+							total_voting_power += group[1];
+							elected_validator_count += group[3];
+							validator_count+=group[4];
+							if(group[3] > 0) {
+								if(group[3]>group[4])
+									group[3] = group[4];
+								elected_group_count++;
+
+								var avg_votes = group[1]/group[3];
+								if(avg_votes < min_elected_votes){
+										min_elected_votes = avg_votes;
+								}
+							}
+						});
+						//
+						$('#total_votes').html(formatAmount(total_voting_power));
+						$('#group_count').html(elected_group_count+'/'+Object.keys(groups).length);
+
+						$('#validator_count').html(elected_validator_count+'/'+validator_count);
+						//
+						oldSort = '';
+						oldFlg = '';
+						click_sort('votes','down');
+						//
+						$('#timespan').html('');
+						//$('#timespan').html(timeSpan(timestamp));
+						set_lan();
+						$('#body_content').show();
+						$('#footer_about').show();
+						//////////////////////////////////////////////////////////
+						var url = thecelohost+'/api/v0.1.js?method=latest_epoch_election_votes';
+						$.ajax({url:url,type: 'GET',dataType:'text',cache: false,
+								success:function(data){
+									let obj = JSON.parse(data);
+									//
+									$('#current_minimum_votes').html(formatAmount(obj.current_elected_minimum_votes));
+									$('#frontrunner_minimum_votes').html(formatAmount(obj.frontrunner_elected_minimum_votes));
+									//
+									let votes = obj.votes;
+									let total_votes_change = 0;
+									votes.forEach((item, i) => {
+										if(addvotes[item[1]]){
+											addvotes[item[1]] += item[7]/1e+18;
+											addvotes[item[1]] += item[5]/1e+18;
+										}
+										else{
+											addvotes[item[1]] = item[7]/1e+18;
+											addvotes[item[1]] += item[5]/1e+18;
+										}
+										total_votes_change += (item[7]/1e+18)+(item[5]/1e+18);
+									});
+									$('#total_votes_change').html((total_votes_change>0?'+':'')+thousands(total_votes_change.toFixed(2)));
+									//
+									show_groups(oldFlg,oldSort);
+								}
+							});
+						//////////////////////////////////////////////////////////
+					}
+			});
+		})
+</script>

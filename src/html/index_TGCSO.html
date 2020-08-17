@@ -1,0 +1,112 @@
+<div class="card-deck mb-3">
+	<div class="card shadow-sm">
+		<table class="table table-hover">
+			<thead class="card-header">
+					<tr>
+							<th class="text-center" style="border:0px;"><span set-lan="html:Rank"></span></th>
+							<th style="border:0px;"><i class='fas fa-user' aria-hidden="true" style="font-size:0.8em;"></i><span set-lan="html:Identity name"></span></th>
+							<th style="border:0px;"><div class="d-none d-md-inline-block"><span set-lan="html:Address"></span></div></th>
+							<th style="border:0px;text-align:right;">Final BTUs including buddy
+								<i class="fas fa-arrow-down" aria-hidden="true" style="cursor: pointer;"></i></th>
+							<th style="border:0px;text-align:right;" colspan="2"><span set-lan="html:BTUs with multiplier"></span></th>
+							<!-- <th style="border:0px;text-align:right;"><span set-lan="html:Attestations completed"/></th> -->
+					</tr>
+			</thead>
+			<tbody id='datacontainer_leader'></tbody>
+		</table>
+	</div>
+</div>
+<div class="m-3 text-right" style="word-wrap:break-word;">
+	<footer class="blockquote-footer"><span set-lan="html:From"></span> <a href="https://docs.google.com/spreadsheets/d/1Me56YkCHYmsN23gSMgDb1hZ_ezN0sTjNW4kyGbAO9vc/edit#gid=0">https://docs.google.com/spreadsheets/d/1Me56YkCHYmsN23gSMgDb1hZ_ezN0sTjNW4kyGbAO9vc/edit#gid=0</a></cite></footer>
+</div>
+<script type="text/javascript">
+	//
+	function btus_board(){
+	  var leader_html = '';
+	  var leader_num = 0;
+	  var pre_btus = 0;
+	  var btusfavs = getStorage('btusfavs');
+	  leader_validators.forEach( function  (validator) {
+	      if(validator[1]){
+	          var address = validator[1];
+	          var btus = validator[9].replace(/,/g, "");
+	          leader_num ++;
+	          var html = '<tr style="cursor: pointer;" id="btus-line-'+address+'">';
+	          //
+	          var i_class = 'far fa-heart';
+	          if(btusfavs.indexOf(address)>-1){
+	              i_class = 'fas fa-heart';
+	          }
+	          html += '<td class="text-center">'+leader_num+'<br/>';
+	          html += '<i id="btus-heart-'+address+'" aria-hidden="true" class="text-success '+i_class+'" style="font-size:0.8em;cursor: pointer;"></i>';
+	          //
+	          html += '</td><td style="word-break:break-all;"><strong class="text-success">' + validator[4] + '</strong>';
+	          html += '<div class="d-sm-block d-md-none d-lg-none d-xl-none">'+formatAddress(address,true,false,false)+'</div></td>';
+	          //leader_html += '<td><div class="d-none d-md-inline-block">' + validator[1] + '</div></td>';
+	          html += '<td><div class="d-none d-md-inline-block">' + formatAddress(address,true,false,false) +'</div></td>';
+	          //
+	          html += '<td class="text-right"><strong class="text-success">' + validator[9] + '</strong><!--<br/><span class="text-success">' + (pre_btus!=0?(btus-pre_btus):'') + '</span>--></td>';
+	          html += '<td class="text-right">' + validator[3] + '</td>';
+	          //html += '<td class="text-right">' + ((validator[6]*100).toFixed(2)) + '%</td>';
+						html += '<td><i class="table-expandable-groups iconfont iconarrow_down" style="font-size:1.5em;"></i></td>';
+	          html += '</tr>';
+	          pre_btus = btus;
+	          //
+	          var mhtml = '<tr>';
+	          mhtml += '<td colspan="6">';
+	          //
+	          mhtml += '<div style="word-break:break-word;"><ul><li><span class="text-secondary">Entity address: </span><b class="text-success">'+formatAddress(address,true,true,true)+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">'+get_lan('% multiplier')+': </span><b class="text-success">'+validator[3]+'</b></li>';
+
+	          mhtml += '<li><span class="text-secondary">Identity: </span><b class="text-success">'+validator[4]+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">BTUs: </span><b class="text-success">'+thousands(validator[5])+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">Penalties: </span><b class="text-success">'+validator[6]+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">BTUs less penalties: </span><b class="text-success">'+thousands(validator[7])+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">BTUs with multiplier: </span><b class="text-success">'+thousands(validator[8])+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">Final BTUs including buddy: </span><b class="text-success">'+validator[9]+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">Leaderboard reward: </span><b class="text-success">'+validator[10]+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">Community grants: </span><b class="text-success">'+thousands(validator[11])+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">Mainnet Celo Gold subject to Ts&Cs: </span><b class="text-success">'+validator[12]+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">Attestations completed: </span><b class="text-success">'+validator[13]+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">BTU boost: </span><b class="text-success">'+validator[14]+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">BTU boost(pts received): </span><b class="text-success">'+validator[15]+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">Buddy entity address: </span><b class="text-success">'+formatAddress(validator[16],true,true,true)+'</b></li>';
+	          mhtml += '<li><span class="text-secondary">% shares from buddy rewards: </span><b class="text-success">'+thousands(validator[17])+'</b></li>';
+
+	          mhtml += '</ul></ul></div>';
+
+	          html+=mhtml;
+	          //
+	          btusfavs.indexOf(address)>-1?leader_html = html +leader_html:leader_html += html;
+	        }
+	  });
+	  $('#datacontainer_leader').html(leader_html);
+	  set_lan();
+	  heartOP('btus','btusfavs');
+	  trOP('btus','btusfavs');
+	  addressOP();
+	}
+	//
+	$(function(){
+			$.ajax({
+					url: thecelohost+'/js/celo.leaderboard.data.js',
+					type: 'GET',
+					dataType:'text',
+					error:function(data){
+						alert('err');
+					},
+					success:function(data){
+						 leader_validators = leader_validators.sort(function leaderboard_descend(x,y){
+											 return y[9].replace(/,/g, "") - x[9].replace(/,/g, "");
+									 });
+							//
+							btus_board();
+							//
+							$('#timespan').html(timeSpan(leader_timstamp));
+							/////////////////////////////
+							$('#body_content').show();
+							$('#footer_about').show();
+						}
+					})
+			});
+</script>

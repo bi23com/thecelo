@@ -1,0 +1,241 @@
+<div id="page_panel" class="d-none">
+	<div class="card shadow-sm mb-3 p-3 text-secondary">
+		<div class="row">
+			<div class="col">
+				<h5 class="text-success" id="celo_lastest_price"></h5> <small>cUSD/CELO</small>
+			</div>
+			<div class="col d-none" id="total_data"><small>
+				CELO --> cUSD: <span id="celo_cusd_celo"></span> --> <span id="celo_cusd_cusd"></span> (buy: <span id="celo_cusd_price"></span>)<br/>
+				cUSD --> CELO: <span id="cusd_celo_cusd"></span> --> <span id="cusd_celo_celo"></span> (buy: <span id="cusd_celo_price"></span>)
+				</small>
+			</div>
+			<div class="col text-right">
+				<div class="btn-group btn-group-toggle bg-light btn-group-sm" data-toggle="buttons">
+					<button class="btn btn-sm btn-outline-success" onclick="javascript:reload_kline(5);return false;">
+						<input type="radio" data-toggle="button" hidden><small>5M</small>
+					</button>
+					<button class="btn btn-sm btn-outline-success" onclick="javascript:reload_kline(10);return false;">
+						<input type="radio" data-toggle="button" hidden><small>10M</small>
+					</button>
+					<button class="btn btn-sm btn-outline-success" onclick="javascript:reload_kline(30);return false;">
+						<input type="radio" data-toggle="button" hidden><small>30M</small>
+					</button>
+					<button class="btn btn-sm btn-outline-success" onclick="javascript:reload_kline(60);return false;">
+						<input type="radio" data-toggle="button" hidden><small>1H</small>
+					</button>
+					<button class="btn btn-sm btn-outline-success active" onclick="javascript:reload_kline(1440);return false;">
+						<input type="radio" data-toggle="button" checked hidden><small>1D</small>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div id="curve_chart_prices" style="width: 100%; height: 160px;"></div>
+		<!--<div><span>Volume</span></div>-->
+		<div id="chart_volume" style="width: 100%; height: 60px;"></div>
+	</div>
+	<div class="card shadow-sm mb-4 pl-3 pr-3 table-responsive" >
+		<table class="table table-condensed text-success" data-toggle="table">
+			<thead>
+				<tr class="text-secondary">
+				<th class="text-left">Time</th>
+				<th class="text-left">Type</th>
+				<th class="text-center">Amount<br/>cUSD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CELO</th>
+				<th class="text-right">Price</th>
+				</tr>
+			</thead>
+			<tbody id="trading_records" style="width: 100%; height: 100%;"></tbody>
+		</table>
+	</div>
+	<div class="m-3 text-right" style="word-wrap:break-word;">
+		<footer class="blockquote-footer"><cite>*Tip: sellAmount < 0.0001 & buyAmount < 0.0001 isn't listed!</cite></footer>
+	</div>
+</div>
+<script type="text/javascript">
+	var dataPricesTable;
+	function drawPricesChart() {
+		if(dataPricesTable){
+			var options = {
+				tooltip: {isHtml: true},
+				series: {
+					0: { color: options_googlechart.slices[0].color },
+					1: { color: options_googlechart.slices[1].color }
+				},
+				hAxis: {direction: '-1',showTextEvery:dataPricesTable.getNumberOfRows()-1,textStyle : {color: '#6c757d',fontSize : 10}},
+				vAxis:{
+					title:'cUSD | CELO',
+
+					titleTextStyle:{fontSize:8},
+					textStyle : {color: '#6c757d',fontSize : 10},
+					baselineColor:"transparent",
+					gridlines:{color:"transparent"},
+					viewWindow: {min:dataPricesTable.getColumnRange(1).min,max:dataPricesTable.getColumnRange(4).max}
+				},
+				legend: 'none',
+				chartArea:{left:50,top:10,bottom:20,right:25,width:"100%",height:"100%"}
+			};
+			var chart = new google.visualization.CandlestickChart(document.getElementById('curve_chart_prices'));
+			var view = new google.visualization.DataView(dataPricesTable);
+			view.setColumns([0,1,2,3,4,5]);
+			chart.draw(view, options);
+		}
+	}
+	//
+	function draw_exchange_volume_chart() {
+		if(dataPricesTable){
+			var options = {
+				tooltip: {isHtml: true},
+				series: {
+					0: { color: options_googlechart.slices[1].color }
+				},
+				hAxis: {direction: '-1',showTextEvery:dataPricesTable.getNumberOfRows()-1,textStyle : {color: '#6c757d',fontSize : 10}},
+				vAxis:{
+					0: {title: 'Volume',titleTextStyle:{fontSize:10}},
+					textStyle : {color: '#6c757d',fontSize : 10},
+					baselineColor:"transparent",
+					gridlines:{color:'transparent'},
+					viewWindow: {min:0,max:dataPricesTable.getColumnRange(6).max}
+				},
+				legend: 'none',
+				chartArea:{left:50,top:5,bottom:5,right:25,width:"100%",height:"100%"}
+			};
+			var chart = new google.visualization.ColumnChart(document.getElementById('chart_volume'));
+			var view = new google.visualization.DataView(dataPricesTable);
+			view.setColumns([0,6,5]);
+			chart.draw(view, options);
+		}
+	}
+	//
+	$(window).resize(function(){
+		if(navbar_tab == 'exchange'){
+			google.charts.setOnLoadCallback(drawPricesChart);
+			google.charts.setOnLoadCallback(draw_exchange_volume_chart);
+		}
+	});
+	//
+	var list_li_class = '"list-group-item p-1 border-0 d-flex justify-content-between align-items-center"';
+	//
+	var exchange_records;
+	var exchangers = {};
+	var k_time = 60*24;//Day
+	//
+	function reload_records(){
+		var table_html = '';
+		exchange_records.forEach(function(item,index){
+			//
+			let YMDhms = formatDate(parseInt(item.timestamp)*1000);
+			/////////////////////////////////
+			var sellTotal = [0,0,0];
+			var buyTotal = [0,0,0];
+			if(exchangers[item.exchanger]){
+				sellTotal = exchangers[item.exchanger][0];
+				buyTotal = exchangers[item.exchanger][1];
+			}
+			if(item.soldGold){
+				sellTotal[0]+=[item.sellAmount];
+				sellTotal[1]+=[item.buyAmount];
+				sellTotal[2]++;
+			}
+			else{
+				buyTotal[0]+=[item.sellAmount];
+				buyTotal[1]+=[item.buyAmount];
+				buyTotal[2]++;
+			}
+			exchangers[item.exchanger] = [sellTotal,buyTotal];
+			//////////////////////////////////
+			var celo_price = 0;
+			if(item.soldGold){
+				celo_price = parseFloat((item.buyAmount/item.sellAmount).toFixed(4));
+			}
+			else {
+				celo_price = parseFloat((item.sellAmount/item.buyAmount).toFixed(4));
+			}
+			/////////////////////////////////////////
+			table_html += '<tr '+(item.soldGold?'class="CELO_Red"':'')+' style="cursor: pointer;" onclick="javascript:show_trading_more('+index+')">';
+			table_html += '<td>'+YMDhms[3]+':'+YMDhms[4]+'</td>';
+			//table_html += '<td>'+timeSpan(parseInt(item.timestamp)*1000)+'</td>';
+			table_html += '<td>'+(item.soldGold?'Sell':'Buy')+'</td>';
+			if(item.soldGold){
+				table_html += '<td class="text-center">'+(item.buyAmount/1e+18).toFixed(2)+'&nbsp;&nbsp;&nbsp;<--&nbsp;&nbsp;&nbsp;'+(item.sellAmount/1e+18).toFixed(2)+'</td>';
+			}
+			else{
+				table_html += '<td class="text-center">'+(item.sellAmount/1e+18).toFixed(2)+'&nbsp;&nbsp;&nbsp;-->&nbsp;&nbsp;&nbsp;'+(item.buyAmount/1e+18).toFixed(2)+'</td>';
+			}
+			table_html += '<td class="text-right">'+celo_price+'</td>';
+			table_html += '</tr><tr class="d-none" id="trading_more_'+index+'" style="cursor: pointer;" onclick="javascript:show_trading_more('+index+')">';
+			table_html += '<td colspan="4"><span class="text-secondary">Exchanger</span>: '+formatAddress(item.exchanger,true,false,true)+'<br/><span class="text-secondary">Tx</span>: '+formatAddress(item.transactionHash,true,false)+'</td></tr>';
+		});
+		$('#trading_records').html(table_html);
+	}
+	//
+	function show_trading_more(index){
+		if($('#trading_more_'+index).hasClass('d-none'))
+			$('#trading_more_'+index).removeClass('d-none');
+		else{
+			$('#trading_more_'+index).addClass('d-none');
+		}
+	}
+	//
+	var kline_data;
+	//
+	function reload_kline(time){
+		k_time= time;
+		$.ajax({
+				url: thecelohost+'/api/v0.1.js?method=get_k_line&k_time='+k_time,type: 'GET',cache: false,dataType:'text',
+				success:function(data,result){
+					kline_data = JSON.parse(data);
+					///////////////////
+					dataPricesTable = new google.visualization.DataTable();
+					dataPricesTable.addColumn('string', 'Time');
+					dataPricesTable.addColumn('number', 'Low');
+					dataPricesTable.addColumn('number', 'Open');
+					dataPricesTable.addColumn('number', 'Close');
+					dataPricesTable.addColumn('number', 'High');
+					dataPricesTable.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
+					dataPricesTable.addColumn('number', 'Volume');
+					let keys = Object.keys(kline_data);
+					keys.forEach((key, i) => {
+						var tip = '<ul class="list-group p-1 text-secondary"><strong>'+key+'</strong>';
+						tip += '<li class='+list_li_class+'>Open&nbsp;&nbsp;<span class="text-success">'+kline_data[key].open+'</li>';
+						tip += '<li class='+list_li_class+'>Close&nbsp;&nbsp;<span class="text-success">'+kline_data[key].close+'</li>';
+						tip += '<li class='+list_li_class+'>Low&nbsp;&nbsp;<span class="text-success">'+kline_data[key].low+'</li>';
+						tip += '<li class='+list_li_class+'>High&nbsp;&nbsp;<span class="text-success">'+kline_data[key].high+'</li>';
+						tip += '<li class='+list_li_class+'>Volume(CELO)&nbsp;&nbsp;<span class="text-success">'+kline_data[key].volume.toFixed(2)+'</li></ul>';
+						dataPricesTable.addRow([key,kline_data[key].low,kline_data[key].open,kline_data[key].close,kline_data[key].high,tip,kline_data[key].volume]);
+						//
+						if(i==0){
+							///////////////////
+							var lastest_close = kline_data[key].close;
+							var lastest_open = kline_data[key].open;
+							var celo_lastest_price = lastest_close;
+							var lasetest_change_rate = ((lastest_close-lastest_open)*100)/lastest_open;;
+							//cGLD Price
+							var change_rate_color = 'text-success';
+							if(lasetest_change_rate < 0){
+								change_rate_color = 'text-danger';
+							}
+							$("#celo_lastest_price").html('<small class="text-muted">$</small>' + celo_lastest_price + '<small class="'+change_rate_color+'">( '+(lasetest_change_rate>0?'+':'')+''+lasetest_change_rate.toFixed(2)+'%  24H)</small>');
+						}
+					});
+					google.charts.setOnLoadCallback(drawPricesChart);
+					google.charts.setOnLoadCallback(draw_exchange_volume_chart);
+					//
+					$('#page_panel').removeClass('d-none');
+				}
+			})
+	}
+	//
+	reload_kline(k_time);
+	//
+	$.ajax({
+			url: thecelohost+'/api/v0.1.js?method=trading_records&count=60',type: 'GET',cache: false,dataType:'text',
+			success:function(data,result){
+				exchange_records = JSON.parse(data);
+				reload_records();
+				//
+				addressOP();
+				$('#footer_about').show();
+				$('#timespan').html('');
+				set_lan();
+			}
+		})
+</script>

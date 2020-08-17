@@ -1,0 +1,247 @@
+<div class="card-deck mb-3">
+	<div class="card p-3 shadow-sm">
+		<p set-lan="html:Supply"></p>
+		<ul class="list-group text-secondary">
+			<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">CELO<strong class="text-success" id='CELO_total_supply'/></li>
+			<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">cUSD<strong class="text-success" id='cusd_total_supply'/></li>
+		</ul>
+	</div>
+	<div class="card p-3 shadow-sm">
+		<p set-lan="html:Addresses"></p>
+		<ul class="list-group text-secondary">
+			<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">CELO<strong class="text-success" id='CELO_total_addresses'/></li>
+			<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">cUSD<strong class="text-success" id='cusd_total_addresses'/></li>
+		</ul>
+	</div>
+	<div class="card p-3 shadow-sm">
+		<p set-lan="html:Transfers"></p>
+		<ul class="list-group text-secondary">
+			<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">CELO<strong class="text-success" id='CELO_total_transfers'/></li>
+			<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">cUSD<strong class="text-success" id='cusd_total_transfers'/></li>
+		</ul>
+	</div>
+	<div class="card p-3 shadow-sm">
+		<p set-lan="html:Locked CELO"></p>
+		<ul class="list-group text-secondary">
+			<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">&nbsp;<strong class="text-success" id='total_LockedCELO'/></li>
+			<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">&nbsp;<span class="text-success" id='LockedCELOProxy_address'/></li>
+		</ul>
+	</div>
+</div>
+
+<div class="card-deck mb-3">
+	<div class="card shadow-sm table-responsive">
+		<table class="table table-hover mb-0 p-0">
+			<thead class="card-header" id="headercontainer" data-toggle="table">
+					<tr>
+							<td class="text-center"></td>
+							<td style="text-align:left;min-width:120px;white-space: nowrap;">
+								<span style="cursor: pointer;" onclick="javascript:click_sort('Address','up');" set-lan="html:Account"></span><span id='Address_sort'></span>
+							</td>
+							<td style="text-align:right;white-space: nowrap;" data-toggle="tooltip" data-placement="top" title="* CELO = balance + LockedCELO + pendingWithdrawals.">
+								<span style="cursor: pointer;" onclick="javascript:click_sort('CELO','down');" set-lan="html:* CELO"></span><span id='CELO_sort'></span>
+							</td>
+							<td style="text-align:right;white-space: nowrap;">
+								<span style="cursor: pointer;" onclick="javascript:click_sort('cUSD','down');" set-lan="html:cUSD"></span><span id='cUSD_sort'></span>
+							</td>
+							<!--
+							<td style="text-align:right;" class="d-none d-md-block d-md-table-cell">
+								<span set-lan="html:Percentage<br/>(Total Balances)"></span>
+							</td>
+							-->
+							<td style="text-align:right;white-space: nowrap;" class="d-none d-md-block d-md-table-cell">
+								<span class="d-none d-md-inline-block" set-lan="html:% Cumulative Share"></span>
+							</td>
+							<td style="text-align:right;white-space: nowrap;">
+								<span set-lan="html:Percentage<br/>(Total Supply)"></span>
+							</td>
+							<td style="text-align:right;white-space: nowrap;">
+								<span style="cursor: pointer;" onclick="javascript:click_sort('Txs','down');"  set-lan="html:Txs"></span><span id='Txs_sort'></span>
+							</td>
+					</tr>
+			</thead>
+			<tbody id='datacontainer'></tbody>
+		</table>
+	</div>
+</div>
+<div class="m-3 text-right" style="word-wrap:break-word;">
+	<footer class="blockquote-footer"><cite>*Tip: CELO < 10 & cUSD < 10 isn't listed!</cite></footer>
+</div>
+<script type="text/javascript">
+	var oldSort;
+	var oldFlg;
+	var arr_sort = ['Address_sort','CELO_sort','cUSD_sort','Txs_sort'];
+	function click_sort(flg,sort){
+		if(flg==oldFlg){
+			oldSort = order = oldSort =='down'?'up':'down';
+		}
+		else {
+			oldSort = order = sort;
+			oldFlg = flg;
+		}
+		//
+		$('#datacontainer').empty();
+		//
+		arr_sort.forEach((item, i) => {
+			$('#'+item).html(sort_normal);
+		});
+		//
+		accounts_board(flg,order);
+		//
+		if(order=='down')
+			$('#'+flg+'_sort').html(sort_down);
+		else
+			$('#'+flg+'_sort').html(sort_up);
+	}
+	//
+	function accounts_board(flg,order){
+	  var html = '';
+	  var num = 0;
+	  var accouhntfavs = getStorage('accouhntfavs');
+		var keys = Object.keys(accounts).sort(function(x,y){
+				if(flg=='CELO'&&order=='down'){
+					var tx = accounts[x][1] + accounts[x][4] + accounts[x][6];
+					var ty = accounts[y][1] + accounts[y][4] + accounts[y][6];
+					return (ty - tx);
+				};
+				if(flg=='CELO'&&order=='up'){
+					var tx = accounts[x][1] + accounts[x][4] + accounts[x][6];
+					var ty = accounts[y][1] + accounts[y][4] + accounts[y][6];
+					return (tx - ty);
+				}
+				if(flg=='cUSD'&&order=='down') return (accounts[y][2] - accounts[x][2]);
+				if(flg=='cUSD'&&order=='up') return (accounts[x][2] - accounts[y][2]);
+				if(flg=='Txs'&&order=='down') return (accounts[y][0] - accounts[x][0]);
+				if(flg=='Txs'&&order=='up') return (accounts[x][0] - accounts[y][0]);
+				if(flg=='Address'){
+					var yname = y;//accounts[y][0];
+					var xname = x;//accounts[x][0];
+					if(yname =='') yname = y;
+					if(xname =='') xname = x;
+					if(order=='up')
+			    	return xname.localeCompare(yname);
+					if(order=='down')
+				    return yname.localeCompare(xname);
+				}
+			});
+		var cumulative_CELO = 0;
+		var cumulative_cUSD = 0;
+	  keys.forEach(function(address){
+	      var account = accounts[address];
+	      num ++;
+	      html += '<tr style="cursor: pointer;" class="text-success" id="accounts-line-'+address+'">';
+	      //
+	      var i_class = 'far fa-heart';
+	      if(accouhntfavs.indexOf(address)>-1){
+	          i_class = 'fas fa-heart';
+	      }
+	      html += '<td class="text-center">'+num+'<br/>';
+	      html += '<i id="accounts-heart-'+address+'" aria-hidden="true" class="text-success '+i_class+'" style="font-size:0.8em;cursor: pointer;"></i>';
+	      //
+	      html += '</td><td style="word-break:break-all;"><div>';
+				if(account[3].length>0){
+					var name = account[3];
+					if(name.indexOf('cLabs(')!==-1){
+						name = name.split(' ')[0];
+					}
+					html += '<strong class="text-success">'+name+'</strong><br/>';
+				}
+	      html += '<span>'+formatAddress(address,true,false,true)+'</span></td>';
+				//
+				var totalCELO = account[1] + account[4] + account[6];//balance+LockedCELO+pendingWithdrawals
+				html += '<td style="text-align:right;"><div><span >' + thousands(Math.floor(totalCELO*100)/100) + ' CELO</span></div></td>';
+				html += '<td style="text-align:right;"><div><span >' + thousands(Math.floor(account[2]*100)/100) + ' cUSD</span></div></td>';
+				//Percentage (Total Balances)
+				//var percentage = parseFloat((account[1]/totalCELO)*100).toFixed(4);
+				//html += '<td style="text-align:right;" class="d-none d-md-block d-md-table-cell"><div >'+percentage+'%</div></td>';
+				//% Cumulative Share
+				html += '<td style="height:50px;text-align:right;border-left: 1px solid #ddd;border-right: 1px solid #ddd; padding:0;" class="d-none d-md-block d-md-table-cell">';
+				html += '<div class="share-progressbar-wrapper">';
+				//
+
+				var cumulative_share_0 = ((cumulative_CELO*100)/CELO_totalSupply).toFixed(4);
+				var cumulative_share_1 = parseFloat((totalCELO/CELO_totalSupply)*100).toFixed(4);
+
+				if(oldFlg=='cUSD'){
+					cumulative_share_0 = ((cumulative_cUSD*100)/cUSD_totalSupply).toFixed(4);
+					cumulative_share_1 = parseFloat((account[2]/cUSD_totalSupply)*100).toFixed(4);
+				}
+				var cumulative_share_2 = (parseFloat(cumulative_share_0)+parseFloat(cumulative_share_1)).toFixed(2);
+				//
+				cumulative_CELO += totalCELO;
+				cumulative_cUSD += account[2];
+
+				html += '<div class="share-progressbar_1" style="width:'+cumulative_share_0+'%"></div>';
+				html += '<div class="share-progressbar_2" style="left: '+cumulative_share_0+'%;width:'+cumulative_share_1+'%"></div>';
+				html += '<div style="margin-left: auto;margin-right:10px;">'+cumulative_share_2+'% </div></div>';
+				html += '</td>';
+				//Percentage (Total Supply)
+				var percentage2 = parseFloat((totalCELO/CELO_totalSupply)*100).toFixed(4);
+				html += '<td style="text-align:right;"><div >'+percentage2+'%</div></td>';
+				//txs
+				html += '<td style="text-align:right;"><div >'+account[0]+'</div></td>';
+	      //
+	      html += '</tr>';
+	  });
+	  $('#datacontainer').html(html);
+	  set_lan();
+	  heartOP('accounts','accountfavs');
+	  trOP('accounts','accountfavs');
+	  addressOP();
+	}
+	//
+	var accounts;
+	var CELO_totalSupply;
+	var cUSD_totalSupply;
+	$(function(){
+		$.ajax({
+				url:thecelohost+'/api/v0.1.js?method=accounts',
+				type: 'GET',
+				dataType:'text',
+				success:function(data){
+					var obj = JSON.parse(data);
+					CELO_totalSupply = obj.cGLD_totalSupply;
+					cUSD_totalSupply = obj.cUSD_totalSupply;
+					var totalCELO = obj.totalcGld;
+					var totalcUSD = obj.totalcUSD;
+					var CELO_total_addresses = obj.cgld_total_addresses;
+					var cusd_total_addresses = obj.cusd_total_addresses;
+					var CELO_total_transfers = obj.cgld_total_transfers;
+					var cusd_total_transfers = obj.cusd_total_transfers;
+					accounts = obj.accounts;
+					//
+					$('#CELO_total_supply').html(thousands(CELO_totalSupply.toFixed(2)));
+					$('#cusd_total_supply').html(thousands(cUSD_totalSupply.toFixed(2)));
+					$('#CELO_total_addresses').html(thousands(CELO_total_addresses));
+					$('#cusd_total_addresses').html(thousands(cusd_total_addresses));
+					$('#CELO_total_transfers').html(thousands(CELO_total_transfers));
+					$('#cusd_total_transfers').html(thousands(cusd_total_transfers));
+					//
+					var LockedCELOProxy_address = '0xF07406D8040fBD831e9983CA9cC278fBfFeB56bF'.toLowerCase();//baklava
+					var LockedCELOProxy_account = accounts[LockedCELOProxy_address];
+					if(LockedCELOProxy_account){
+					}
+					else{
+						LockedCELOProxy_address = '0x6cC083Aed9e3ebe302A6336dBC7c921C9f03349E'.toLowerCase();//rc1
+						LockedCELOProxy_account = accounts[LockedCELOProxy_address];
+					}
+					var LockedCELO_str = thousands(LockedCELOProxy_account[1].toFixed(0)) +'CELO ('+((LockedCELOProxy_account[1]*100)/CELO_totalSupply).toFixed(1)+'%)';
+					$('#total_LockedCELO').html(LockedCELO_str);
+					$('#LockedCELOProxy_address').html(formatAddress(LockedCELOProxy_address,true,false,true));
+					//
+					delete accounts[LockedCELOProxy_address];
+
+						//
+						oldSort = '';
+						oldFlg = '';
+						click_sort('CELO','down');
+						//
+						$('#timespan').html('');
+						/////////////////////////////
+						set_lan();
+						$('#body_content').show();
+						$('#footer_about').show();
+					}
+				})
+		});
+</script>

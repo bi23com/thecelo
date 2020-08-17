@@ -1,0 +1,812 @@
+<!-- -->
+	<div class="card shadow-sm mb-4" style="position:relative;">
+		<div class="row p-3">
+				<div class="col-md-8">
+					<div class="row">
+						<div class="col-3 text-center pt-4" >
+							<div id="logo" class="mb-3"><i class="iconfont icondefault-header text-success" style="font-size:80px;"></i></div>
+							<div class="btn btn-success btn-sm" style="padding:0px 4px 0px 4px;font-size:10px;" id="rank" set-lan="html:Rank"></div>
+						</div>
+						<div class="col-9 pt-4 mb-3">
+							<h4 clas="text-success" id='group_name' style="word-break:break-word;">&nbsp;</h4>
+							<div><span class="text-success" id='group_address'>&nbsp;</div>
+							<div class="mt-3" id='metadata_url'></div>
+							<div class="mt-3" id='group_links'></div>
+							<div class="text-secondary mt-3" id='group_bio' style="word-break:break-word;">&nbsp;</div>
+						</div>
+					</div>
+				</div>
+				<div class="text-secondary col-md-4">
+					<strong set-lan="html:Balance"></strong>
+					<!--<div class="align-top border-right mt-2" style="height:3em;"></div>-->
+					<ul class="list-group p-3">
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Available CELO"></span><span class="text-success" id='cGLD'/></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Locked CELO"></span><span class="text-success" id='LockedGold'/></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Pending CELO"></span><span class="text-success" id='PendingGold'/></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Available cUSD"></span><span class="text-success" id='cUSD'/></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Total CELO"></span><span class="text-success" id='Total'/></li>
+					</ul>
+				</div>
+			</div>
+			<div style="position:absolute;top:0;right:0;"><img src="/images/Group.svg" width="60" height="60"/></div>
+	</div>
+	<!-- -->
+	<div class='row mb-4 text-secondary'>
+				<div class="col-md-4">
+					<div class="card shadow-sm text-secondary p-3">
+						<strong set-lan="html:Identify"></strong>
+						<div id="badges" class="mt-3 text-right"></div>
+						<ul class="list-group p-3" id="li_list"></ul>
+						<div class="m-3 text-right" style="word-wrap:break-word;">
+							<footer class="blockquote-footer">
+								<cite><span set-lan="html:Learn about Validator Badges "></span><a href="https://github.com/celo-org/celo-monorepo/tree/master/packages/web/validator-badges" set-lan="html:here"></a></cite>
+							</footer>
+							<footer class="blockquote-footer">
+								<cite><span set-lan="html:Voting # choosing a validator group"></span> <a href="https://docs.celo.org/celo-gold-holder-guide/voting-validators#choosing-a-validator-group"><span set-lan="html:guide."></span></a></cite>
+							</footer>
+							<footer class="blockquote-footer">
+								<cite><a href="https://github.com/bi23com/thecelo/blob/master/identify.en.md" set-lan="html:Here"></a> <span set-lan="html:are some notes on group's identify."></span></cite>
+							</footer>
+						</div>
+					</div>
+					<div class="card shadow-sm mt-3 p-3 mb-3">
+						<strong set-lan="html:Info"></strong>
+						<!--<div class="d-inline-block align-top border-right mt-2" style="height:3em;"></div>-->
+						<ul class="list-group p-3">
+							<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Commission"></span> <span class="text-success" id='Commission'/></li>
+							<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Next Commission"></span> <span class="text-success" id='nextCommission'/></li>
+							<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Next Commission Block"></span> <span class="text-success" id='nextCommissionBlock'/></li>
+							<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Slashing Multiplier"></span> <span class="text-success" id='slashingMultiplier'/></li>
+							<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Last Slashed"></span> <span class="text-success" id='lastSlashed'/></li>
+							<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Members Updated"></span> <span class="text-success" id='MembersUpdated'/></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-md-8">
+						<div class="card shadow-sm p-3" id="vote_status"></div>
+						<div class="card shadow-sm mt-3 p-3">
+							<ul class="list-group">
+								<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">
+									<strong set-lan="html:Total Votes"></strong>
+									<strong class="text-success" id="total_votes"></strong>
+									<div class="btn-group btn-group-toggle bg-light btn-group-sm" data-toggle="buttons" style="height:24px;width:60px;">
+										<label class="btn btn-sm btn-outline-success active pt-0" onclick="javascript:draw_group_voters_chart(0);return false;">
+											<input type="radio" data-toggle="button" checked hidden><i class="iconfont icontrending-up" style="font-size:16px;"></i>
+										</label>
+										<label class="btn btn-sm btn-outline-success pt-0" onclick="javascript:draw_group_voters_chart(1);return false;">
+											<input type="radio" data-toggle="button" hidden><i class='iconfont iconmore_line' style="font-size:12px;"></i>
+										</label>
+									</div>
+								</li>
+							</ul>
+							<div id="chart-group-voters" style="height:140px"></div>
+						</div>
+						<div class="card shadow-sm mt-3 p-3">
+							<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">
+								<span><strong set-lan="html:Vote/Revoke Records"></strong> <i class="iconfont iconcircle_help" style="cursor: pointer;"
+								 data-toggle="tooltip" data-placement="right" data-type="success" title="* Excluding the votes rewarded per epoch"></i></span>
+								<div class="btn-group btn-group-toggle bg-light btn-group-sm" data-toggle="buttons" style="height:24px;width:60px;">
+									<label class="btn btn-sm btn-outline-success active pt-0" onclick="javascript:area_group_voters_chart(0);return false;">
+										<input type="radio" data-toggle="button" checked hidden><i class="iconfont icontrending-up" style="font-size:16px;"></i>
+									</label>
+									<label class="btn btn-sm btn-outline-success pt-0" onclick="javascript:area_group_voters_chart(1);return false;">
+										<input type="radio" data-toggle="button" hidden><i class='iconfont iconmore_line' style="font-size:12px;"></i>
+									</label>
+								</div>
+							</li>
+							<div id="area-group-voters" style="height:140px"></div>
+						</div>
+
+						<div class="card shadow-sm mt-3 p-3">
+							<ul class="list-group">
+								<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">
+									<span><strong set-lan="html:Votes Epoch Rewards APR"></strong>: <strong class="text-success" id="apr"></strong>
+										<i class="iconfont iconcircle_help" style="cursor: pointer;"
+										 data-toggle="tooltip" data-placement="right" data-type="success" title="* APR = ((1+EpochRewards/ActivatedVotes)^365-1)×100"></i>
+									</span>
+									<div class="btn-group btn-group-toggle bg-light btn-group-sm" data-toggle="buttons" style="height:24px;width:60px;">
+										<label class="btn btn-sm btn-outline-success active pt-0" onclick="javascript:group_rewards_chart(0);return false;">
+											<input type="radio" data-toggle="button" checked hidden><i class="iconfont icontrending-up" style="font-size:16px;"></i>
+									  </label>
+									  <label class="btn btn-sm btn-outline-success pt-0" onclick="javascript:group_rewards_chart(1);return false;">
+											<input type="radio" data-toggle="button" hidden><i class='iconfont iconmore_line' style="font-size:12px;"></i>
+									  </label>
+									</div>
+								</li>
+							</ul>
+							<div id="group-rewards-chart" style="height:140px"></div>
+						</div>
+				</div>
+	</div>
+	<div id="group_members"></div>
+<script type="text/javascript">
+	var votes=0;
+	var epoch_payments = {};
+	//
+	var list_li_class = '"list-group-item p-1 border-0 d-flex justify-content-between align-items-center"';
+	var item_vote = [];
+	var area_votes_dataTable;
+	var rewards_dataTable;
+	//
+	function output_list(){
+		var html='';
+		var titles = [get_lan("Domain proven"),
+									get_lan("Can receive votes"),
+									get_lan("Will get elected"),
+									get_lan("Participated in TGCSO"),
+									get_lan("Master validator challenge in TGCSO"),
+									get_lan("Reliable"),
+									get_lan("No recent slashing"),
+									get_lan("Runs an Attestation Service"),
+									get_lan("Runs a Validator on Baklava"),
+									get_lan("Receives Celo Foundation votes"),
+									get_lan("Promotes the Celo mission"),
+									get_lan("Broadens Diversity"),
+									get_lan("Participates in the community")];
+			titles.forEach((title, i) => {
+				html += '<li class="list-group-item p-0 border-0 d-flex justify-content-between align-items-center">';
+				html += '<span id="identify_0'+i+'"';
+				html += ' style="cursor:pointer;" tabindex="0"';
+				html += ' data-container="body" data-trigger="focus" data-toggle="popover" data-placement="bottom"';
+				html += '>'+title;
+				html += '<span id="identify_00'+i+'"';
+				html += '></span>';
+				html += '</span> <span class="text-success mt-2 mb-1" id="identify_'+i+'"> - </span>';
+				html += '</li>';
+			});
+			$('#li_list').html(html);
+	}
+	output_list();
+	//
+	var old_group_voters_chart = 0;
+	function draw_group_voters_chart(flg) {
+		if(item_vote){
+			var data = google.visualization.arrayToDataTable(item_vote);
+			if(flg==0){
+				var element = document.getElementById('chart-group-voters');
+				var options = {pieHole: 0.2,
+					width: '100%',
+					annotations:options_googlechart.annotations,
+					fontSize:10,
+					//tooltip: {trigger:'none'},
+					//legend: 'none',
+					legend: {position: 'right',alignment:'center',maxLines: 10,
+						textStyle:{"color":options_googlechart.slices[0].color,"fontSize":10},
+						pagingTextStyle: {
+			        color: '#616161'
+			      },
+						scrollArrows:{
+					    activeColor: options_googlechart.slices[0].color,
+					    inactiveColor:'#e0e0e0'
+					  }
+					},
+					slices: options_googlechart.slices,
+					backgroundColor:'transparent',
+					chartArea:{left:10,right:3,top:12,bottom:12,height:'100%'}
+				};
+				var chart = new google.visualization.PieChart(element);
+				var view = new google.visualization.DataView(data);
+				view.setColumns([0, 1]);
+				chart.draw(view, options);
+			}
+			else{
+				var table_html = '<div class="table-responsive"><table class="table table-fixed table-sm table-borderless"><thead><tr class="text-secondary">';
+				table_html += '<th scope="col" class="col-7 text-left">'+data.getColumnLabel(0)+'</th>';
+				table_html += '<th scope="col" class="col-3 text-right">'+data.getColumnLabel(1)+'</th>';
+				table_html += '<th scope="col" class="col-2 text-right">'+data.getColumnLabel(2)+'</th>';
+				table_html += '</tr></thead><tbody>';
+				//<tr>
+				var len = data.getNumberOfRows();
+				for (var i = len-1; i >=0; i--) {
+					table_html += '<tr class="text-success">';
+					var addr = formatAddress(data.getValue(i, 0),true,false,true);
+					table_html += '<td class="col-7">'+addr+'</td>';
+					table_html += '<td class="col-3 text-right">'+data.getFormattedValue(i, 1)+'</td>';
+					table_html += '<td class="col-2 text-right">'+data.getValue(i, 2)+'</td>';
+					table_html += '</tr>';
+				}
+				table_html += '</tbody></table></div>';
+				//
+				$('#chart-group-voters').empty();
+				$('#chart-group-voters').html(table_html);
+				addressOP();
+			}
+		}
+		old_group_voters_chart = flg;
+	}
+	//
+	var old_area_group_voters_chart = 0;
+	function area_group_voters_chart(flg) {
+		if(area_votes_dataTable){
+			if(flg==0){
+				var element = document.getElementById('area-group-voters');
+				var options = {
+					//title: '',
+					//titleTextStyle:options_googlechart.titleTextStyle,
+					fontSize:10,
+					tooltip: {isHtml: true},
+					annotations:options_googlechart.annotations,
+					hAxis: {showTextEvery:area_votes_dataTable.getNumberOfRows()-1,textStyle : {color: '#6c757d',fontSize : 10}},
+					vAxis:{minValue: area_votes_dataTable.getColumnRange(1).min,maxValue: area_votes_dataTable.getColumnRange(1).max,title:'Votting',titleTextStyle: {color: '#6c757d',fontSize:10},textStyle : {color: '#6c757d',fontSize : 10},
+						baselineColor:'transparent',gridlines:{color:'transparent'}},
+					legend: 'none',
+					pointSize: 0,
+					series: options_googlechart.slices,
+					chartArea:{left:80,right:20,top:20,bottom:20,height:'100%'}
+				};
+				var chart = new google.visualization.LineChart(element);
+				var view = new google.visualization.DataView(area_votes_dataTable);
+				view.setColumns([0, 1, 3]);
+				chart.draw(view, options);
+			}
+			else{
+				var table_html = '<div class="table-responsive"><table class="table table-fixed table-sm table-borderless"><thead><tr class="text-secondary">';
+				table_html += '<th scope="col" class="col-2 text-left">'+area_votes_dataTable.getColumnLabel(0)+'</th>';
+				table_html += '<th scope="col" class="col-5 text-right">'+area_votes_dataTable.getColumnLabel(1)+'</th>';
+				table_html += '<th scope="col" class="col-5 text-right">'+area_votes_dataTable.getColumnLabel(2)+'</th>';
+				table_html += '</tr></thead><tbody>';
+				//<tr>
+				var len = area_votes_dataTable.getNumberOfRows();
+				for (var i = len-1; i >=0; i--) {
+					table_html += '<tr class="text-success">';
+					table_html += '<td scope="row" class="col-2">'+area_votes_dataTable.getFormattedValue(i, 0).replace('Epoch','')+'</td>';
+					table_html += '<td class="col-5 text-right">'+area_votes_dataTable.getFormattedValue(i, 1)+'</td>';
+					table_html += '<td class="col-5 text-right">'+area_votes_dataTable.getFormattedValue(i, 2)+'</td>';
+					table_html += '</tr>';
+				}
+				table_html += '</tbody></table></div>';
+				//
+				$('#area-group-voters').empty();
+				$('#area-group-voters').html(table_html);
+			}
+		}
+		old_area_group_voters_chart = flg;
+	}
+	//
+	var old_group_rewards_chart = 0;
+	function group_rewards_chart(flg) {
+		if(rewards_dataTable){
+			if(flg==0){
+				var element = document.getElementById('group-rewards-chart');
+				var options = {
+					title: '',
+					titleTextStyle:options_googlechart.titleTextStyle,
+					fontSize:10,
+					tooltip: {isHtml: true},
+					annotations:options_googlechart.annotations,
+	        hAxis: {showTextEvery:rewards_dataTable.getNumberOfRows()-1,textStyle : {color: '#6c757d',fontSize : 10}},
+					vAxis:{minValue: 0,maxValue: 7,title:'APR(%)',titleTextStyle: {color: '#6c757d',fontSize:10},textStyle : {color: '#6c757d',fontSize : 10},
+						baselineColor:'transparent',gridlines:{color:'transparent'}},
+					legend: 'none',
+					pointSize: 0,
+					width:'100%',
+					series: options_googlechart.slices,
+					chartArea:{left:50,right:20,top:20,bottom:20,height:'100%'}
+				};
+				var chart = new google.visualization.LineChart(element);
+				var view = new google.visualization.DataView(rewards_dataTable);
+				view.setColumns([0, 1, 3]);
+				chart.draw(view, options);
+			}
+			else{
+				var table_html = '<div class="table-responsive"><table class="table table-fixed table-sm table-borderless"><thead><tr class="text-secondary">';
+				table_html += '<th scope="col" class="col-2 text-left">'+rewards_dataTable.getColumnLabel(0)+'</th>';
+				table_html += '<th scope="col" class="col-5 text-right">'+rewards_dataTable.getColumnLabel(1)+'</th>';
+				table_html += '<th scope="col" class="col-5 text-right">'+rewards_dataTable.getColumnLabel(2)+'</th>';
+				table_html += '</tr></thead><tbody>';
+				//<tr>
+				var len = rewards_dataTable.getNumberOfRows();
+				for (var i = len-1; i >=0; i--) {
+					table_html += '<tr class="text-success">';
+					table_html += '<td scope="row" class="col-2">'+rewards_dataTable.getFormattedValue(i, 0).replace('Epoch','')+'</td>';
+					table_html += '<td class="col-5 text-right">'+rewards_dataTable.getFormattedValue(i, 1)+'%</td>';
+					table_html += '<td class="col-5 text-right">'+rewards_dataTable.getFormattedValue(i, 2)+'</td>';
+					table_html += '</tr>';
+				}
+				table_html += '</tbody></table></div>';
+				//
+				$('#group-rewards-chart').empty();
+				$('#group-rewards-chart').html(table_html);
+			}
+		}
+		old_group_rewards_chart = flg;
+	}
+	//
+	var payments_flgs = [];
+	function draw_payments_chart(validator,flg) {
+			if(epoch_payments[validator]){
+				var datatable = new google.visualization.DataTable();
+				datatable.addColumn('string', get_lan('Epoch'));
+				datatable.addColumn('number', get_lan('Validator Payment'));
+				datatable.addColumn('number', get_lan('Group Payment'));
+				//datatable.addColumn({type: 'string', role: 'style'});
+				datatable.addRows(epoch_payments[validator]);
+				if(flg==0){
+					var options = {
+						bar: { groupWidth: '50%' },
+	        	isStacked: true,
+						hAxis: {titleTextStyle:{color: 'transparent'},showTextEvery:datatable.getNumberOfRows()-1,textStyle : {color: '#6c757d',fontSize : 10}},
+						vAxis:{minValue: 0,title:'cUSD',titleTextStyle: {color: '#6c757d',"fontSize":10},baselineColor:'transparent',gridlines:{color:'transparent'}},
+						//annotations:options_googlechart.annotations,
+						//title: get_lan('Validator Epoch Payment Distributed'),
+						//titleTextStyle:options_googlechart.titleTextStyle,
+						fontSize:10,
+						titlePosition: 'out',
+						legend: {position: 'bottom',alignment:'center',
+							textStyle:{"color":"#6ccd86","fontSize":12}},
+						series: options_googlechart.slices,
+						backgroundColor:'transparent',
+						chartArea:{left:20,right:20,top:10,bottom:50,height:'150px'}
+					};
+					var chart = new google.visualization.ColumnChart(document.getElementById('chart-validator-payment-'+validator));
+					chart.draw(datatable, options);
+				}
+				else{
+					var table_html = '<div class="table-responsive"><table class="table table-fixed table-sm table-borderless"><thead><tr class="text-secondary">';
+					table_html += '<th scope="col" class="col-2 text-left">'+datatable.getColumnLabel(0)+'</th>';
+					table_html += '<th scope="col" class="col-5 text-right">'+datatable.getColumnLabel(1)+'</th>';
+					table_html += '<th scope="col" class="col-5 text-right">'+datatable.getColumnLabel(2)+'</th>';
+					table_html += '</tr></thead><tbody style="height:180px;">';
+					//
+					var len = datatable.getNumberOfRows();
+					for (var i = len-1; i >=0; i--) {
+						table_html += '<tr class="text-success">';
+						table_html += '<td scope="row" class="col-2">'+datatable.getFormattedValue(i, 0).replace(' Epoch','')+'</td>';
+						table_html += '<td class="col-5 text-right">'+datatable.getFormattedValue(i, 1)+' cUSD</td>';
+						table_html += '<td class="col-5 text-right">'+datatable.getFormattedValue(i, 2)+' cUSD</td>';
+						table_html += '</tr>';
+					}
+					table_html += '</tbody></table></div>';
+					//
+					$('#chart-validator-payment-'+validator).empty();
+					$('#chart-validator-payment-'+validator).html(table_html);
+				}
+			}
+			payments_flgs[validator] = flg;
+	}
+	//
+	$(window).resize(function(){
+		if(navbar_tab == 'group'){
+			google.charts.setOnLoadCallback(function(){draw_group_voters_chart(old_group_voters_chart);});
+			google.charts.setOnLoadCallback(function(){area_group_voters_chart(old_area_group_voters_chart);});
+			google.charts.setOnLoadCallback(function(){group_rewards_chart(old_group_rewards_chart);});
+			//
+			Object.keys(epoch_payments).forEach((item, i) => {
+				google.charts.setOnLoadCallback(function(){draw_payments_chart(item,payments_flgs[item]);});
+			});
+		}
+	});
+	//
+	function load_voteds(address){
+		$(function(){
+			var url = thecelohost+'/api/v0.1.js?method=voteds&address='+address;
+			$.ajax({
+					url:url,
+					type: 'GET',cache: false,dataType:'text',
+					success:function(data){
+						var obj = JSON.parse(data);
+						var current_epoch = Math.ceil(obj.blockNumber/17280);
+
+						var votes = obj.voteds;
+						item_vote = [];
+						item_vote.push(['Address',"Voting","Percent"]);
+
+						var voters = {};
+						var blocks = {};
+						var weights = 0;
+						//
+						var total_activated_votes = 0;
+						var epoch_activated_votes = {};
+						//
+						for(var i=0;i<votes.length;i++){
+							var vote = votes[i];
+							var from = vote[0];
+							var weight = vote[1]/1e+18;
+							if(voters[from]) voters[from] += weight;
+							else voters[from] = weight;
+							//
+							weights += weight;
+							blocks[vote[2]] = weights;
+							//
+							total_activated_votes += parseInt(vote[3])+parseInt(vote[4]);
+							epoch_activated_votes[Math.ceil(vote[2]/17280)] = total_activated_votes;
+						}
+						//
+						Object.keys(voters).forEach((key, i) => {
+							if(voters[key]>0){
+								var percent = (voters[key]*100/(total_activated_votes/1e+18)).toFixed(2)+'%';
+								item_vote.push([key,voters[key],percent]);
+							}
+						});
+						item_vote = item_vote.sort(function(x,y){ return y[1]-x[1];});
+						google.charts.setOnLoadCallback(function(){draw_group_voters_chart(old_group_voters_chart);});
+						//
+						var epoch_votes = {};
+						var pre_th_epoch = 0;
+						Object.keys(blocks).forEach((key, i) => {
+							var th_epoch = Math.ceil(key/17280);
+							//
+							var addVotes = 0;
+							if(epoch_votes[th_epoch])
+								addVotes = epoch_votes[th_epoch][1];
+							//
+							var preVotes = 0;
+							if(pre_th_epoch>0)
+								preVotes = epoch_votes[pre_th_epoch];
+							//
+							addVotes += parseFloat(blocks[key]) - parseFloat(preVotes);
+							epoch_votes[th_epoch] = [blocks[key],addVotes];
+							//
+							pre_th_epoch = th_epoch;
+						});
+						////////////////////////
+						area_votes_dataTable = new google.visualization.DataTable();
+						area_votes_dataTable.addColumn('string', get_lan('Epoch'));
+						area_votes_dataTable.addColumn('number', get_lan('Votes'));
+						area_votes_dataTable.addColumn('string', get_lan('+/-'));
+						area_votes_dataTable.addColumn({type: 'string', role: 'tooltip', p: {html:true}});
+						var votes = 0;
+						Object.keys(epoch_votes).forEach((epoch, i) => {
+						//for(var i=1;i<=current_epoch;i++){
+							var addVotes = 0;
+							if(epoch_votes[epoch]){
+								votes = epoch_votes[epoch][0];
+								addVotes = epoch_votes[epoch][1];
+							}
+							if(addVotes!=0){
+								if(Math.abs(addVotes)>=0.0001){
+									addVotes = (addVotes>0?'+':'') + thousands(addVotes.toFixed(4));
+								}
+								else{
+									addVotes = addVotes.toFixed(18);
+								}
+								var tip = '<ul class="list-group p-1 text-secondary"><strong>'+get_lan('Epoch')+': '+epoch+'th</strong>';
+								tip += '<li class='+list_li_class+'>'+get_lan('Votes')+': <span class="text-success">'+thousands(votes.toFixed(2))+'</span></li>';
+								tip += '<li class='+list_li_class+'><span></span> <span class="text-success">'+ addVotes +'</span></li></ul>';
+								area_votes_dataTable.addRow([rankStr(epoch)+' '+get_lan('Epoch'),votes,addVotes,tip]);
+							}
+						});
+						google.charts.setOnLoadCallback(function(){area_group_voters_chart(old_area_group_voters_chart);});
+						//////////////////////////////////////////////////////////
+					}
+				})
+			})
+		};
+	//
+	function load_info(address){
+		//
+		$.ajax({
+			url:thecelohost+'/api/v0.1.js?method=metadata&address='+address,
+			type: 'GET',cache: false,
+			dataType:'text',
+			success:function(data){
+				var meta = JSON.parse(data);
+				//
+				var badges_html = '';
+				for(let i=0;i<meta.badges.length;i++){
+					badges_html += '<img class="p-1 border-0" src="https://thecelo.com/images/'+meta.badges[i]+'.png" width="50px" height="50px">';
+				}
+				$('#badges').html(badges_html);
+				//
+				if(meta.metadataURL && meta.metadataURL.trim().length>0){
+						var metadataURL_html='';
+					if(meta.identify[0].trim().length>0){
+						metadataURL_html = '<span class="text-secondary">'+get_lan('Domain')+' : </span><a class="text-success" href="https://'+meta.identify[0]+'">'+meta.identify[0]+'</a>';
+					}
+					//
+					var shorturl = meta.metadataURL;
+					if(shorturl.length>40){
+						shorturl = meta.metadataURL.substr(0,25)+'......'+meta.metadataURL.substr(meta.metadataURL.length-10);
+					}
+					metadataURL_html += '<br/><div class="mb-3 text-secondary">'+get_lan('Metadata')+' : <span class="text-success">'+shorturl+'</span> <a href="'+meta.metadataURL+'"><i class="iconfont iconlink text-success" style="font-size:10px;cursor: pointer;font-size:16px;"></i></a></div>';
+					$('#metadata_url').html(metadataURL_html);
+				}
+				else {
+					$('#metadata_url').hide();
+				}
+				var iconchecked = '<i class="iconfont iconchecked" style="font-size:12px;"></i>';
+				//
+				for(var i=0;i < meta.identify.length;i++) {
+					if(meta.identify[i].trim().length > 0){
+						$('#identify_'+i).html(iconchecked);
+						$('#identify_0'+i).attr('data-content', meta.identify[i]);
+						$('#identify_00'+i).html(sort_down);
+					}
+					else{
+						if(i==4) {$('#identify_0'+i).hide(); $('#identify_00'+i).hide();$('#identify_'+i).hide();}
+					}
+				};
+				$('[data-toggle="popover"]').popover();
+			}
+		})
+		//
+		$.ajax({
+			url:thecelohost+'/api/v0.1.js?method=get_group_epoch_votes&address='+address,
+			type: 'GET',cache: false,
+			dataType:'text',
+			success:function(data){
+				var group_epoch_votes = JSON.parse(data);
+				var epoch = Math.max.apply(null, Object.keys(group_epoch_votes));
+				var votes_status = group_epoch_votes[epoch];
+				var votes_capacity = votes_status.numVotesReceivable;
+				var active_votes = votes_status.activeVotesForGroup;
+				var active_votes_rate = parseFloat(active_votes*100/votes_capacity).toFixed(2);
+				var pending_votes = votes_status.pendingVotesForGroup;
+				var pending_votes_rate = parseFloat(pending_votes*100/votes_capacity).toFixed(2);
+				var remaining_votes = votes_capacity - active_votes - pending_votes;
+				var remaining_votes_rate = parseFloat(100 - active_votes_rate - pending_votes_rate).toFixed(2);
+				//
+				var vote_html='<div class="text-secondary">';
+				vote_html+='<ul class="list-group">';
+				vote_html+='<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><strong>'+get_lan('Total Voting Capacity')+'</strong> <strong class="text-success">'+formatAmount(votes_capacity)+'</strong></li>';
+				vote_html+='</ul>';
+				vote_html+='<div class="text-secondary p-3">';
+				vote_html+='<ul class="list-group">';
+				vote_html+='<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">'+get_lan('Active Votes')+' <span class="text-success">'+formatAmount(active_votes)+' ('+active_votes_rate+'%)</span></li>';
+				vote_html+='<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">'+get_lan('Pending Votes')+' <span class="text-success">'+formatAmount(pending_votes)+' ('+pending_votes_rate+'%)</span></li>';
+				vote_html+='<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">'+get_lan('Remaining Votes Receivable')+' <span class="text-success">'+formatAmount(remaining_votes)+' ('+remaining_votes_rate+'%)</span></li>';
+				vote_html+='</ul>';
+				vote_html+='<div class="progress text-secondary mt-3" style="height:20px">';
+				vote_html+='<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width:'+active_votes_rate+'%;height:20px">'+active_votes_rate+'%</div>';
+				vote_html+='<div class="progress-bar progress-bar-striped" style="width:'+pending_votes_rate+'%;height:20px">'+pending_votes_rate+'%</div>';
+				vote_html+='<div class="progress-bar text-success" style="width:'+remaining_votes_rate+'%;height:20px;background-color: #e9ecef;">'+remaining_votes_rate+'%</div>';
+				vote_html+='</div>';
+				vote_html+='</div>';
+				$('#vote_status').html(vote_html);
+				//////////////////////////////
+				var url = thecelohost+'/api/v0.1.js?method=epochRewardsDistributedToVoters&address='+address;
+				$.ajax({url:url,type: 'GET',dataType:'text',cache: false,
+						success:function(data){
+							rewards_dataTable = new google.visualization.DataTable();
+							rewards_dataTable.addColumn('string', get_lan('Epoch'));
+							rewards_dataTable.addColumn('number', get_lan('APR'));
+							rewards_dataTable.addColumn('number', get_lan('Rewards'));
+							rewards_dataTable.addColumn({type: 'string', role: 'tooltip', p: {html:true}});
+							//
+							var obj = JSON.parse(data);
+							var apr = 0;
+							var activated_votes = 0;
+							var epoch = 1;
+							for(;epoch<obj.epoch;epoch++){
+								var rewards = 0;
+								if(obj.result[epoch])
+									rewards = obj.result[epoch]/1e+18;
+								var activated_votes = group_epoch_votes[epoch].activeVotesForGroup/1e+18;
+								if(activated_votes>0){
+									//apr = (rewards*365*100)/activated_votes;
+									apr = (Math.pow(1+rewards/activated_votes,365)-1)*100;
+								}
+								apr = Number(apr.toFixed(3));
+								//
+								if(epoch>=27){
+									var tip = '<ul class="list-group p-1 text-secondary"><strong>'+get_lan('Epoch')+': '+epoch+'th</strong>';
+									tip += '<li class='+list_li_class+'>'+get_lan('APR')+': <span class="text-success">'+apr+'%</span></li>';
+									tip += '<li class='+list_li_class+'>'+get_lan('ActivatedVotes')+':&nbsp;&nbsp;<span class="text-success">'+activated_votes.toFixed(2)+'</span></li>';
+									tip += '<li class='+list_li_class+'><span>'+get_lan('Rewards')+':&nbsp;&nbsp;</span> <span class="text-success">'+rewards.toFixed(2)+'&nbsp;CELO</span></li></ul>';
+									rewards_dataTable.addRow([rankStr(epoch)+' '+get_lan('Epoch'),apr,rewards,tip]);
+								}
+							}
+							//
+							$('#apr').html(apr+'%');
+							//
+							google.charts.setOnLoadCallback(function(){group_rewards_chart(old_group_rewards_chart);});
+						}
+					});
+				////////////
+			}
+		});
+		//
+		$(function(){
+			var url = thecelohost+'/api/v0.1.js?method=user&address='+address;
+			$.ajax({url:url,type: 'GET',cache: false,dataType:'text',
+					success:function(data){
+						var links_html='';
+						if(data){
+							var user = JSON.parse(data);
+							//group info
+							if(user.logo && user.logo.trim().length>0){
+								var logo_html = '<img src="'+thecelohost+'/logos/'+address.toLowerCase()+'.jpg" class="rounded-circle" style="border:1px solid #eeeeee;" width="80px" height="80px" />';
+								$('#logo').html(logo_html);
+							}
+							//
+							if(user.bio && user.bio.trim().length>0){
+								$('#group_bio').html(user.bio);
+							}
+							else {
+								$('#group_bio').hide();
+							}
+							//website
+							if(user.website && user.website.trim().length>0){
+								links_html += '<a href="'+user.website+'" class="m-1 text-decoration-none">';
+								links_html += '<i class="iconfont icongloable text-success" style="font-size:16px;" title="'+user.website+'"></i>';
+								links_html += '</a>';
+							}
+							//twitter
+							if(user.twitter && user.twitter.trim().length>0){
+								links_html += '<a href="'+user.twitter+'" class="m-1 text-decoration-none">';
+								links_html += '<i class="iconfont icontwitter_blank text-success" style="font-size:16px;" title="'+user.twitter+'"></i>';
+								links_html += '</a>';
+							}
+							//github
+							if(user.github && user.github.trim().length>0){
+								links_html += '<a href="'+user.github+'" class="m-1 text-decoration-none">';
+								links_html += '<i class="iconfont icongithub1 text-success" style="font-size:16px;" title="'+user.github+'"></i>';
+								links_html += '</a>';
+							}
+							//keybase
+							if(user.username && user.username.trim().length>0){
+								var keybase = 'https://keybase.io/'+user.username;
+								links_html += '<a href="'+keybase+'" class="m-1 text-decoration-none">';
+								links_html += '<i class="iconfont iconkeybase text-success" style="font-size:16px;" title="'+keybase+'"></i>';
+								links_html += '</a>';
+							}
+							if(links_html.trim().length>0){
+								$('#group_links').empty();
+								$('#group_links').html(links_html);
+							}
+							else {
+								$('#group_links').hide();
+							}
+						}
+					}
+				})
+			})
+		};
+	//
+	function load_more(address){
+    var url = thecelohost+'/api/v0.1.js?method=group&address='+address;
+    $.ajax({url:url,type: 'GET',dataType:'text',cache: false,traditional: true,success:function(data){
+        var obj = JSON.parse(data);
+				var rank = obj.rank;
+				var group = obj.group;
+				votes = formatAmount(group[2]);
+				$('#total_votes').html(votes);
+
+				$('#rank').html('Rank: <strong>'+rank+'</strong>');
+				$('#group_name').html(group[1]+'&nbsp;');
+				$('#group_address').html(formatAddress(group[0],true,true,true));
+				 $('#Commission').html((group[7]*100).toFixed(2)+'%');
+				 if(parseInt(group[9])==0){
+					 $('#nextCommission').html('-');
+					 $('#nextCommissionBlock').html('-');
+				 }
+				 else{
+					 $('#nextCommission').html((group[8]*100).toFixed(2)+'%');
+					 $('#nextCommissionBlock').html(group[9]);
+				 }
+				 $('#slashingMultiplier').html(group[10]);
+				 $('#lastSlashed').html(group[11]);
+				 $('#MembersUpdated').html(timeSpan(group[12]*1000,'',''));
+				 //
+				 $('#cUSD').html(formatAmount(group[5]));
+				 $('#LockedGold').html(formatAmount(group[4]));
+				 $('#cGLD').html(formatAmount(group[3]));
+				 $('#PendingGold').html(formatAmount(group[6]));
+				 var total = formatAmount(group[3],false) + formatAmount(group[4],false) + formatAmount(group[6],false);
+				 $('#Total').html(thousands(total.toFixed(2)));
+         //
+         var members = group[13];
+         var elected = 0;
+				 var members_html='';
+				 var i = 0;
+				 var li_class = 'class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"';
+         members.forEach(function(member) {
+           members_html += '<div class="card p-3 shadow-sm mb-3 text-secondary"><div class="row">';
+           var fas = 'iconuser-check';
+           if(member[5]){
+              elected++;
+           }
+           else{
+              fas ='iconuser-x';
+           }
+
+           members_html += '<div class="col-md-4 pl-3"><i class="text-success iconfont '+fas+'"></i> <strong>'+member[0]+'</strong>';
+					 members_html += '<span class="text-success float-right">'+formatAddress(member[1],true,false,true)+'</span>';
+           members_html += '<ul class="list-group pl-3 pt-3">';
+           members_html += '<li '+li_class+'>'+get_lan('Attestations fulfilled/requested')+'<span class="text-success">'+member[14]+'/'+member[15]+'</span></li>';
+           members_html += '<li '+li_class+'>'+get_lan('Score')+'<span class="text-success">'+((member[2]*100).toFixed(2))+'%</span></li>';
+           //mhtml += '<li>Pending: '+formatAmount(member[3])+'</li>';
+           //mhtml += '<li>Active: '+formatAmount(member[4])+'</li>';
+           members_html += '<li '+li_class+'>'+get_lan('Available CELO')+'<span class="text-success">'+formatAmount(member[6])+'</span></li>';
+           members_html += '<li '+li_class+'>'+get_lan('Locked CELO')+'<span class="text-success">'+formatAmount(member[7])+'</span></li>';
+           members_html += '<li '+li_class+'>'+get_lan('Available cUSD')+'<span class="text-success">'+formatAmount(member[8])+'</span></li>';
+           members_html += '<li '+li_class+'>'+get_lan('Pending CELO')+'<span class="text-success">'+formatAmount(member[9])+'</span></li>';
+					 var total = Number.parseFloat(member[3])+Number.parseFloat(member[6])+Number.parseFloat(member[7]);
+					 members_html += '<li '+li_class+'>'+get_lan('Total CELO')+'<span class="text-success">'+formatAmount(total)+'</span></li>';
+
+           members_html += '<li '+li_class+'>'+get_lan('Elected');
+           members_html += '<span class="text-success"><i class="iconfont ' + ((member[5]==true)?'iconchecked':'iconunelected') + '" style="font-size:14px;"></i></span></li>';
+
+					 members_html += '<li '+li_class+'>'+get_lan('Frontrunner');
+           members_html += '<span class="text-success"><i class="iconfont ' + ((member[11]==true)?'iconchecked':'iconunelected') + '" style="font-size:14px;"></i></span></li>';
+           members_html += '</ul></div>';
+					 //
+					 members_html += '<div class="col-md-8 mt-3">';
+					 //signers
+					 members_html += '<div></div>';
+					 //payment
+					 members_html += '<div>';
+					 members_html += '<li '+li_class+'><strong>'+get_lan('Validator Epoch Payment Distributed')+'</strong>';
+					 members_html += '<div class="btn-group btn-group-toggle bg-light btn-group-sm p-0 float" data-toggle="buttons" style="height:24px;width:60px;">';
+					 members_html += '<label class="btn btn-sm btn-outline-success p-0 active" onclick="javascript:draw_payments_chart(\''+member[1]+'\',0);return false;">';
+					 members_html += '<input type="radio" data-toggle="button" checked><i class="iconfont icontrending-up" style="font-size:16px;"></i>';
+					 members_html += '</label>';
+					 members_html += '<label class="btn btn-sm btn-outline-success p-0" onclick="javascript:draw_payments_chart(\''+member[1]+'\',1);return false;">';
+					 members_html += '<input type="radio" data-toggle="button" class="p-0"><i class="iconfont iconmore_line p-0" style="font-size:12px;"></i>';
+					 members_html += '</label>';
+					 members_html += '</div></li>';
+					 members_html += '</div>';
+					 //
+					 members_html += '<div id="chart-validator-payment-'+member[1]+'" style="height:200px;"></div>';
+					 members_html += '</div>';
+					 //
+           members_html += '</div></div>';
+					 i++;
+         });
+         $('#group_members').html(members_html);
+
+				 //
+				 members.forEach(function(member) {
+					var validator = member[1];
+	 	      var url = thecelohost+'/api/v0.1.js?method=validatorEpochPaymentDistributed&group='+address+'&validator='+validator;
+	 	      $.ajax({url:url,type: 'GET',dataType:'text',cache: false,traditional: true,success:function(data){
+	 						var obj = JSON.parse(data);
+							var dataTable = [];
+							for(var i=11;i<obj.epoch;i++){
+								if(obj.result[i])
+									dataTable.push([rankStr(i)+' '+get_lan('Epoch'),obj.result[i][0],obj.result[i][1]]);
+								else
+									dataTable.push([rankStr(i)+' '+get_lan('Epoch'),0,0]);
+							}
+							epoch_payments[validator] = dataTable;
+							//
+							payments_flgs[validator] = 0;
+							google.charts.setOnLoadCallback(function(){draw_payments_chart(validator,payments_flgs[validator]);});
+						}
+					});
+				});
+				//
+				addressOP();
+				$('#footer_about').show();
+				$('#timespan').html('');
+			}
+  	});
+	}
+	//
+	function goto_load(){
+		if(!address||address.trim().length==0)
+			alert('Address is empty!');
+		else{
+			load_more(address);
+			load_info(address);
+			load_voteds(address);
+			set_lan();
+		}
+	}
+	//
+	var address = getQueryVariable('address');
+	if(address && address.indexOf('0x')===0){
+		goto_load();
+	}
+	else{
+		var pathnames = window.location.pathname.split('/');
+		if(pathnames.length>2){
+			address = pathnames[2];
+			if(address&&address.indexOf('0x')===0){
+				goto_load();
+			}
+			else if(address&&address.length>0){
+				var url = thecelohost+'/api/v0.1.js?method=find_address&name='+encodeURI(address);
+				console.info("url:"+url);
+		    $.ajax({url:url,type: 'GET',dataType:'text',cache: false,traditional: true,success:function(data){
+					console.info("data:"+data);
+					var obj = JSON.parse(data);
+					address = obj.address;
+					goto_load();
+				}
+				});
+			}
+		}
+	}
+
+</script>

@@ -1,0 +1,78 @@
+<!-- -->
+	<div class="card shadow-sm mb-4" style="position:relative;">
+		<div class="row p-3">
+				<div class="text-secondary col-md-6">
+					<h4 clas="text-success" id='account_name' style="word-break:break-word;">&nbsp;</h4>
+					<div><span class="text-success" id='account_address'>&nbsp;</div>
+					<ul class="list-group p-3">
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Available CELO"></span><span class="text-success" id='cGLD'/></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Locked CELO"></span><span class="text-success" id='LockedGold'/></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:NonVoting LockedGold CELO"></span><span class="text-success" id='nonVotingLockedGold'/></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Pending Withdrawals CELO"></span><span class="text-success" id='pendingWithdrawals'/></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Available cUSD"></span><span class="text-success" id='cUSD'/></li>
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center"><span set-lan="html:Total CELO"></span><span class="text-success" id='Total'/></li>
+					</ul>
+				</div>
+				<div class="col-md-6">
+				</div>
+			</div>
+			<div style="position:absolute;top:0;right:0;"><img src="/images/Account.svg" width="60" height="60"/></div>
+	</div>
+
+<script type="text/javascript">
+	function goto_load(){
+		$(function(){
+			var url = thecelohost+'/api/v0.1.js?method=account&address='+address;
+			$.ajax({
+					url:url,
+					type: 'GET',
+					dataType:'text',
+					success:function(data){
+						var obj = JSON.parse(data);
+						$('#account_name').html(obj.name);
+						$('#account_address').html(formatAddress(address,true,true,true));
+						var cgld = (obj.cgld/1e+18).toFixed(2);
+						$('#cGLD').html(thousands(cgld));
+						var lockedGold = (obj.lockedGold/1e+18).toFixed(2);
+						$('#LockedGold').html(thousands(lockedGold));
+						var nonVotingLockedGold = (obj.nonVotingLockedGold/1e+18).toFixed(2)
+						$('#nonVotingLockedGold').html(thousands(nonVotingLockedGold));
+						var pendingWithdrawals = (obj.pendingWithdrawals/1e+18).toFixed(2);
+						$('#pendingWithdrawals').html(thousands(pendingWithdrawals));
+						$('#cUSD').html(thousands((obj.cusd/1e+18).toFixed(2)));
+						$('#Total').html(thousands(parseFloat(cgld)+parseFloat(lockedGold)+parseFloat(pendingWithdrawals)));
+						//
+						$('#timespan').html('');
+						set_lan();
+						addressOP();
+					}
+				});
+			});
+		}
+		//
+		var address = getQueryVariable('address');
+		if(address && address.indexOf('0x')===0){
+			goto_load();
+
+		}
+		else{
+			var pathnames = window.location.pathname.split('/');
+			if(pathnames.length>2){
+				address = pathnames[2];
+				if(address&&address.indexOf('0x')===0){
+					goto_load();
+				}
+				else if(address&&address.length>0){
+					var url = thecelohost+'/api/v0.1.js?method=find_address&name='+address;
+					console.info("url:"+url);
+			    $.ajax({url:url,type: 'GET',dataType:'text',traditional: true,success:function(data){
+						console.info("data:"+data);
+						var obj = JSON.parse(data);
+						address = obj.address;
+						goto_load();
+					}
+					});
+				}
+			}
+		}
+</script>
