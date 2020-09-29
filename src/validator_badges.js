@@ -1,6 +1,6 @@
 //https://github.com/celo-org/celo-monorepo/tree/master/packages/web/validator-badges
 const validator_badges = {
-  "badges_founder_validator":[
+  badges_founder_validator: [
     "0x7194DFE766a92308880A943fD70F31c8E7c50e66",
     "0x7C75B0B81A54359E9dCCDa9cb663ca2e3De6B710",
     "0x0d4f8cEA48cDaDEAe345431577a64983c0535B12",
@@ -49,8 +49,9 @@ const validator_badges = {
     "0x580F29aB04b7ED4E5aA86584D38c9317d9CF0358",
     "0xc24baeac0Fd189637112B7e33d22FfF2730aF993",
     "0xCc4B2Bcbbc9639ef1E91F47acfD12Bd131525e79",
-    "0x602B65795BCc64b2fb329AC004236E194f077158"],
-  "badges_attestation_maven":[
+    "0x602B65795BCc64b2fb329AC004236E194f077158",
+  ],
+  badges_attestation_maven: [
     "0x7194DFE766a92308880A943fD70F31c8E7c50e66",
     "0x7C75B0B81A54359E9dCCDa9cb663ca2e3De6B710",
     "0x0d4f8cEA48cDaDEAe345431577a64983c0535B12",
@@ -81,8 +82,9 @@ const validator_badges = {
     "0xC7d5409fEe80B3Ac37Dbc111664dC511a5982469",
     "0xc64DF5Be250264bf2888591D87cdeB13BFADC501",
     "0x249a6B2B260000b08f50A2480e2d703bAf02E8BE",
-    "0xc24baeac0Fd189637112B7e33d22FfF2730aF993"],
-  "badges_master_validator":[
+    "0xc24baeac0Fd189637112B7e33d22FfF2730aF993",
+  ],
+  badges_master_validator: [
     "0x7194DFE766a92308880A943fD70F31c8E7c50e66",
     "0x0f66619058BB9675f3d394FCc2cE236a29901571",
     "0x8851F4852ce427191Dc8D9065d720619889e3260",
@@ -93,8 +95,9 @@ const validator_badges = {
     "0xAcdf897493A6000dbe256791E8A2beCbb405FD4F",
     "0x6CF4bB9ff947610944c6D8E0E5Ea26B1dEa73196",
     "0x061E9958028dcAa66fd8B255AD95194203b6c4Da",
-    "0x580F29aB04b7ED4E5aA86584D38c9317d9CF0358"],
-  "badges_genesis_validator":[
+    "0x580F29aB04b7ED4E5aA86584D38c9317d9CF0358",
+  ],
+  badges_genesis_validator: [
     "0x7194DFE766a92308880A943fD70F31c8E7c50e66",
     "0x7C75B0B81A54359E9dCCDa9cb663ca2e3De6B710",
     "0x0d4f8cEA48cDaDEAe345431577a64983c0535B12",
@@ -143,10 +146,11 @@ const validator_badges = {
     "0x580F29aB04b7ED4E5aA86584D38c9317d9CF0358",
     "0xc24baeac0Fd189637112B7e33d22FfF2730aF993",
     "0xCc4B2Bcbbc9639ef1E91F47acfD12Bd131525e79",
-    "0x602B65795BCc64b2fb329AC004236E194f077158"],
-  "badges_1st_proposer":["0x067e453918f2c44D937b05a7eE9DBFB804C54ADd"],
-  "badges_1st_transaction":[],
-  "badges_vote_recipient":[
+    "0x602B65795BCc64b2fb329AC004236E194f077158",
+  ],
+  badges_1st_proposer: ["0x067e453918f2c44D937b05a7eE9DBFB804C54ADd"],
+  badges_1st_transaction: [],
+  badges_vote_recipient: [
     "0x7194DFE766a92308880A943fD70F31c8E7c50e66",
     "0x7C75B0B81A54359E9dCCDa9cb663ca2e3De6B710",
     "0x0d4f8cEA48cDaDEAe345431577a64983c0535B12",
@@ -195,19 +199,24 @@ const validator_badges = {
     "0x580F29aB04b7ED4E5aA86584D38c9317d9CF0358",
     "0xc24baeac0Fd189637112B7e33d22FfF2730aF993",
     "0xCc4B2Bcbbc9639ef1E91F47acfD12Bd131525e79",
-    "0x602B65795BCc64b2fb329AC004236E194f077158"]
+    "0x602B65795BCc64b2fb329AC004236E194f077158",
+  ],
 };
 //
-function getBadges(address){
+function getBadges(address) {
   var badges = [];
   Object.keys(validator_badges).forEach((key, i) => {
-    if(validator_badges[key].find(k => k.toLowerCase() === address.toLowerCase())){
+    if (
+      validator_badges[key].find(
+        (k) => k.toLowerCase() === address.toLowerCase()
+      )
+    ) {
       badges.push(key);
     }
   });
   return badges;
-};
+}
 //
 module.exports = {
-  getBadges
-}
+  getBadges,
+};

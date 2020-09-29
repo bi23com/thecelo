@@ -49,9 +49,9 @@ TransferWhitelist: 0x0000000000000000000000000000000000000000
 Validators: 0xaEb865bCa93DdC8F47b8e29F40C5399cE34d0C58 (implementation at 0xbD42aDBe4904c50827287536635C042f70721bF7)
 */
 ///////////////
-const totalSupplyCode = '0x18160ddd';
-const balanceOfCode = '0x70a08231';
-const GoldLocked = '0x0f0f2fc5';
+const totalSupplyCode = "0x18160ddd";
+const balanceOfCode = "0x70a08231";
+const GoldLocked = "0x0f0f2fc5";
 ///////////////////////////////////////////////////////////////////////////
 /////////////////  20: rc1 network //////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -59,31 +59,32 @@ const GoldLocked = '0x0f0f2fc5';
 //ValidatorsProxy Contract Address
 
 //
-var GoldLocked_Topic = '0x0f0f2fc5b4c987a49e1663ce2c2d65de12f3b701ff02b4d09461421e63e609e7';
+var GoldLocked_Topic =
+  "0x0f0f2fc5b4c987a49e1663ce2c2d65de12f3b701ff02b4d09461421e63e609e7";
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-const accounts_key = 'accounts';
-const eth_dataset_key ='eth_dataset';
-const eth_blockdata_key ='eth_blockdata';
-const users_key = 'users';
+const accounts_key = "accounts";
+const eth_dataset_key = "eth_dataset";
+const eth_blockdata_key = "eth_blockdata";
+const users_key = "users";
 //
-const groups_key = 'groups';
-const election_current_key = 'election_current';
-const validators_key = 'validators';
+const groups_key = "groups";
+const election_current_key = "election_current";
+const validators_key = "validators";
 //
-const network_parameters_key = 'network_parameters';
+const network_parameters_key = "network_parameters";
 //
-const votes_key = 'votes_key';
-const voteds_key = 'voteds_key';
-const voters_key = 'voters_key';
+const votes_key = "votes_key";
+const voteds_key = "voteds_key";
+const voters_key = "voters_key";
 //
-const lockedGoldHistory_key = 'lockedGoldHistory_key';
+const lockedGoldHistory_key = "lockedGoldHistory_key";
 //
-const groups_metadata_key = 'groups_metadata';
+const groups_metadata_key = "groups_metadata";
 //
-const proposalList_key = 'proposalList';
+const proposalList_key = "proposalList";
 //
 const EPOCH_SIZE = 17280;
 ///////////////////////////////////////////////////////////////////////////
@@ -91,11 +92,21 @@ const EPOCH_SIZE = 17280;
 ///////////////////////////////////////////////////////////////////////////
 //
 module.exports = {
-    EPOCH_SIZE,
-    accounts_key,eth_dataset_key,eth_blockdata_key,users_key,groups_metadata_key,
-    votes_key,voteds_key,voters_key,proposalList_key,
-    network_parameters_key,
-    lockedGoldHistory_key,
-    groups_key,validators_key,election_current_key,
-    totalSupplyCode,balanceOfCode
-}
+  EPOCH_SIZE,
+  accounts_key,
+  eth_dataset_key,
+  eth_blockdata_key,
+  users_key,
+  groups_metadata_key,
+  votes_key,
+  voteds_key,
+  voters_key,
+  proposalList_key,
+  network_parameters_key,
+  lockedGoldHistory_key,
+  groups_key,
+  validators_key,
+  election_current_key,
+  totalSupplyCode,
+  balanceOfCode,
+};
