@@ -1,0 +1,53 @@
+{
+  "name": "thecelo",
+  "version": "0.0.1",
+  "description": "BT Fork of TheCelo.com",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "npm run build && node dist/test.js",
+    "start": "node dist/v0.1.js",
+    "start:full": "npm run build && npm run start",
+    "build": "npm run clean && npm run transpile",
+    "transpile": "babel ./api --out-dir dist",
+    "clean": "rm -rf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bisontrails/thecelo.git"
+  },
+  "keywords": [
+    "celo"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bisontrails/thecelo/issues"
+  },
+  "homepage": "https://github.com/bisontrails/thecelo#readme",
+  "dependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@celo/contractkit": "^0.4.14",
+    "@types/node": "^14.0.26",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "child_process": "^1.0.2",
+    "express": "^4.17.1",
+    "redis": "^3.0.2",
+    "regenerator-runtime": "^0.13.7",
+    "web3": "^1.3.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@types/express": "^4.17.8",
+    "typescript": "^4.0.3"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
+    ]
+  }
+}

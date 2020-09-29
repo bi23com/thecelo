@@ -1,6 +1,6 @@
 let
   util = require('util');
-  execSync = require('child_process').execSync;
+  let execSync = require('child_process').execSync;
   //
   var celo_network = 'rc1';//baklava
   var os = require('os');
@@ -9,6 +9,8 @@ let
   if('blockchain-server3'==hostName){
     celo_network = 'baklava';
   }
+const web3wrapper = require('./web3wrapper').default;
+
   //
 function containsKey(object, key) {
   return Object.keys(object).find(k => k.toLowerCase() === key.toLowerCase());
@@ -45,7 +47,7 @@ function execCmd(cmd,loop = 3,seconds = 10,print=false){
     return reponse;
 }
 function eth_rpc(method,params,req = '-X POST'){
-  const host = 'http://127.0.0.1:8545';
+  const host = web3wrapper.rpcUrl();;
   //
   var cmd = 'curl '+req+' -H "Content-Type: application/json" --data \'{"jsonrpc":"2.0","method":"' + method + '","params":'+params+',"id":1}\' ' + host;
   //console.log(cmd);

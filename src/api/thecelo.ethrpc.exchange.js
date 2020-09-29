@@ -1,6 +1,7 @@
-//
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://xxx.xxx.xxx.xxx:8545'))
+const web3wrapper = require('./web3wrapper').default
+const web3 = web3wrapper.web3http();
+const web3ws = web3wrapper.web3ws();
+
 const thecelo = require("./thecelo.utils.js");
 const req = require('request');
 const redis = require("./thecelo.redis.js");
@@ -229,8 +230,7 @@ setInterval(function(){update_exchange_prices();},60*1000);
 //
 let logs_blockNumber = 0;
 //
-const web3socket = new Web3(new Web3.providers.WebsocketProvider('http://192.168.28.109:8546'));
-var subscription = web3socket.eth.subscribe('logs', {
+var subscription = web3ws.eth.subscribe('logs', {
   address: exchange_proxy,
   topics: [null]
 }, function(error, result){

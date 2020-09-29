@@ -1,5 +1,6 @@
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://xxx.xxx.xxx.xxx:8545'))
+const web3wrapper = require('./web3wrapper').default
+const web3 = web3wrapper.web3http();
+
 //
 const request = require('request');
 const thecelo = require("./thecelo.utils.js");

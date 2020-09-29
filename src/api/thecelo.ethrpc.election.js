@@ -1,5 +1,6 @@
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://xxx.xxx.xxx.xxx:8545'))
+const web3wrapper = require('./web3wrapper').default
+let web3 = web3wrapper.web3http();
+let web3ws = web3wrapper.web3ws();
 
 const thecelo = require("./thecelo.utils.js");
 const redis = require("./thecelo.redis.js");
@@ -290,7 +291,7 @@ function epochRewardsDistributedToVoters(group){
 }
 //
 function web3_subscription(){
-  var subscription = web3.eth.subscribe('logs', {
+  var subscription = web3ws.eth.subscribe('logs', {
       address: '0x123456..',
       topics: ['0x12345...']
   }, function(error, result){
@@ -302,19 +303,6 @@ function web3_subscription(){
       if(success)
           console.log('Successfully unsubscribed!');
   });
-}
-//
-//
-function getEpochNumber(){
-  var data = web3.eth.abi.encodeFunctionCall({
-      name: 'getEpochNumber',
-      type: 'function',
-      inputs: []
-  },[]);
-  var result = thecelo.eth_rpc('eth_call','[{"to": "'+electionproxy_address+'", "data":"'+data+'"}, "latest"]');
-  var datatype = 'uint256';
-  result = web3.eth.abi.decodeParameter(datatype, result);
-  return result;
 }
 
 //

@@ -2,14 +2,13 @@ const redis = require("./thecelo.redis.js");
 const thecelo = require("./thecelo.utils.js");
 const theceloconst = require("./thecelo.const.js");
 //
-const Web3 = require('web3')
-//const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'))
-const web3 = new Web3(new Web3.providers.WebsocketProvider('http://xxx.xxx.xxx.xxx:8546'));
+const web3wrapper = require('./web3wrapper').default
+const web3ws = web3wrapper.web3ws();
 
 ///////////////////////////////////////////////
 ///////////////////////////////////////////////
 ///////////////////////////////////////////////
-var subscription = web3.eth.subscribe('pendingTransactions', function(error, result){
+var subscription = web3ws.eth.subscribe('pendingTransactions', function(error, result){
     if (!error)
         thecelo.log_out(result);
 })
