@@ -1,14 +1,10 @@
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://xxx.xxx.xxx.xxx:8545'))
-//
 const thecelo = require("./thecelo.utils.js");
+const Web3 = require('web3')
+const web3 = new Web3(new Web3.providers.HttpProvider(thecelo.http_host))
+//
 const theceloconst = require("./thecelo.const.js");
 const redis = require("./thecelo.redis.js");
 
-var validatorsproxy_address = '0xaEb865bCa93DdC8F47b8e29F40C5399cE34d0C58';
-if('rc1' != thecelo.celo_network){
-  validatorsproxy_address = '0xcb3A2f0520edBb4Fc37Ecb646d06877E339bBC9D';
-}
 //
 var validatorgroup_register_topic ='0xbf4b45570f1907a94775f8449817051a492a676918e38108bb762e991e6b58dc';
 var validator_register_topic ='0x213377eec2c15b21fa7abcbb0cb87a67e893cdb94a2564aa4bb4d380869473c8';
@@ -20,21 +16,21 @@ var members  = {};
 //
 function validatorgroup_register(){
   var result = thecelo.eth_rpc('eth_getLogs',
-    '[{"fromBlock": "earliest","toBlock":"latest","address":"'+validatorsproxy_address+'","topics":["'+validatorgroup_register_topic+'"]}]');
+    '[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.Contracts.Validators+'","topics":["'+validatorgroup_register_topic+'"]}]');
 
 }
 //
 function validator_register_topic(){
   var result = thecelo.eth_rpc('eth_getLogs',
-    '[{"fromBlock": "earliest","toBlock":"latest","address":"'+validatorsproxy_address+'","topics":["'+validator_register_topic+'"]}]');
+    '[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.Contracts.Validators+'","topics":["'+validator_register_topic+'"]}]');
 }
 //
 function validatorgroup_member(){
   var result = thecelo.eth_rpc('eth_getLogs',
-    '[{"fromBlock": "earliest","toBlock":"latest","address":"'+validatorsproxy_address+'","topics":["'+validatorgroup_member_topic+'"]}]');
+    '[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.Contracts.Validators+'","topics":["'+validatorgroup_member_topic+'"]}]');
 }
 //
-function validatorEpochPaymentDistributed(validator,group){
+function validatorEpochPaymentDistributed(validator,group = ''){
   var fromBlock = "earliest";
   var toBlock = "latest";
   //
@@ -45,9 +41,12 @@ function validatorEpochPaymentDistributed(validator,group){
   var validatorEpochPaymentDistributed = web3.eth.abi.encodeEventSignature({"type":"event","name":"ValidatorEpochPaymentDistributed",
       "inputs":input});
   var validator1 = web3.eth.abi.encodeParameter('address', validator);
-  var group1 = web3.eth.abi.encodeParameter('address', group);
+  var group1 = null;
+  if(group && group.trim().length > 0)
+    group1 = web3.eth.abi.encodeParameter('address', group);
   var topics = [validatorEpochPaymentDistributed,validator1,group1];
-  var parameters = [{fromBlock,toBlock,validatorsproxy_address,topics}];
+  var address = theceloconst.Contracts.Validators;
+  var parameters = [{fromBlock,toBlock,address,topics}];
   var result = thecelo.eth_rpc('eth_getLogs',JSON.stringify(parameters));
   //
   var epoch_payments={};
@@ -70,9 +69,9 @@ function validatorScoreUpdated(validator){
       "inputs":input});
   var validator1 = web3.eth.abi.encodeParameter('address', validator);
   var topics = [validatorScoreUpdated,validator1];
-  var parameters = [{fromBlock,toBlock,validatorsproxy_address,topics}];
+  var address = theceloconst.Contracts.Validators;
+  var parameters = [{fromBlock,toBlock,address,topics}];
   var result = thecelo.eth_rpc('eth_getLogs',JSON.stringify(parameters));
-  //console.log(result);
   //
   var scores = {};
   result.forEach((item, i) => {
@@ -89,7 +88,7 @@ function getRegisteredValidatorGroups(){
       type: 'function',
       inputs: []
   },[]);
-  var result = thecelo.eth_rpc('eth_call','[{"to": "'+validatorsproxy_address+'", "data":"'+data+'"}, "latest"]');
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.Validators+'", "data":"'+data+'"}, "latest"]');
   var datatype = 'address[]';
   result = web3.eth.abi.decodeParameter(datatype, result);
   return result;
@@ -101,7 +100,7 @@ function getRegisteredValidatorSigners(){
       type: 'function',
       inputs: []
   },[]);
-  var result = thecelo.eth_rpc('eth_call','[{"to": "'+validatorsproxy_address+'", "data":"'+data+'"}, "latest"]');
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.Validators+'", "data":"'+data+'"}, "latest"]');
   var datatype = 'address[]';
   result = web3.eth.abi.decodeParameter(datatype, result);
   return result;
@@ -113,7 +112,7 @@ function getRegisteredValidators(){
       type: 'function',
       inputs: []
   },[]);
-  var result = thecelo.eth_rpc('eth_call','[{"to": "'+validatorsproxy_address+'", "data":"'+data+'"}, "latest"]');
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.Validators+'", "data":"'+data+'"}, "latest"]');
   var datatype = 'address[]';
   result = web3.eth.abi.decodeParameter(datatype, result);
   return result;
@@ -128,62 +127,11 @@ function getMembershipInLastEpochFromSigner(address){
           name: 'address'
       }]
   },[address]);
-  var result = thecelo.eth_rpc('eth_call','[{"to": "'+validatorsproxy_address+'", "data":"'+data+'"}, "latest"]');
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.Validators+'", "data":"'+data+'"}, "latest"]');
   var datatype = 'address';
   result = web3.eth.abi.decodeParameter(datatype, result);
   return result;
 }
-//getMetadataURL
-//getAttestationState
-///////////////////////////////////////////////
-///////////////////////////////////////////////
-///////////////////////////////////////////////
-var signers_groups = {};
-const web3socket = new Web3(new Web3.providers.WebsocketProvider('http://192.168.28.109:8546'));
-var subscription = web3socket.eth.subscribe('newBlockHeaders', function(error, result){
-    if (!error) {
-        //console.log(result);
-        //result = JSON.parse(result);
-        let eth_blockNumber = '0x'+result.number.toString(16);
-        //
-        if(Object.keys(signers_groups).length == 0 ||
-          result.number % theceloconst.EPOCH_SIZE == 1){
-          let signers = getRegisteredValidatorSigners();
-          signers.forEach((signer, i) => {
-            signers_groups[signer] = getMembershipInLastEpochFromSigner(signer);
-          });
-        }
-        //
-        let eth_gasLimit = result.gasLimit;
-        let eth_gasUsed = result.gasUsed;
-        let eth_group = signers_groups[result.miner];
-        var eth_blockdata = {eth_blockNumber,eth_gasLimit,eth_group,eth_gasUsed};
-        //console.log(JSON.stringify(eth_blockdata));
-        //redis.redis_client.set(theceloconst.eth_blockdata_key,JSON.stringify(eth_blockdata));
-        redis.redis_client.publish(theceloconst.eth_blockdata_key,JSON.stringify(eth_blockdata),function(err,result){});
-        return;
-    }
-    console.error(error);
-})
-.on("connected", function(subscriptionId){
-    console.log(subscriptionId);
-})
-.on("connected", function(subscriptionId){
-    console.log(subscriptionId);
-})
-.on("data", function(blockHeader){
-    //console.log(blockHeader);
-})
-.on("error", console.error);
-// unsubscribes the subscription
-subscription.unsubscribe(function(error, success){
-    if (success) {
-        console.log('Successfully unsubscribed!');
-    }
-});
-///////////////////////////////////////////////
-///////////////////////////////////////////////
-///////////////////////////////////////////////
 module.exports = {
   validatorEpochPaymentDistributed,validatorScoreUpdated,
   getRegisteredValidatorGroups,getRegisteredValidatorSigners,getRegisteredValidators,getMembershipInLastEpochFromSigner

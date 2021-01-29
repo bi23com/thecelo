@@ -1,0 +1,77 @@
+<div class='table-responsive'>
+  <table class="table table-condensed text-success p-0" data-toggle="table">
+    <thead>
+      <tr class="text-secondary">
+      <td class="text-left border-top-0">From</td>
+      <td class="text-left border-top-0">To</td>
+      <td class="text-left border-top-0">Type</td>
+      <td class="text-right border-top-0">Amount</td>
+      <td class="text-left border-top-0">Height</td>
+      <td class="text-center border-top-0">Time</td>
+      <td class="text-center border-top-0">Tx Hash</td>
+      </tr>
+    </thead>
+    <tbody id="logs_transfer" style="width: 100%; height: 100%;">
+      <tr><td colspan="7" class="text-center"><p class="text-success m-3">loading...</p></td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="w-100 pr-2 text-secondary"><ul class="pagination pagination-sm justify-content-end" id="pager_transfer"></ul></div>
+<script type="text/javascript">
+  //
+  function logs_transfer(page,count=5){
+    //$('#logs_transfer').html('<tr><td colspan="6" class="text-center"><p class="text-success m-3">loading...</p></td></tr>');
+    $('#pager_transfer').html('<li class="page-item"><a class="page-link">Loading</a></li>');
+    let url = thecelohost+'/api/?method=get_logs&type=transfer&page='+page+'&count='+count+'&address='+address;
+    console.info(url);
+    $.ajax({
+        url: url,type: 'GET',cache: false,dataType:'text',
+        success:function(data,result){
+          let obj = JSON.parse(data);
+          let hasNextPage = obj.hasNextPage;
+          if(obj.logs_records.length==0){
+            $('#logs_transfer').html('<tr><td colspan="7" class="text-center"><p class="text-success m-3">Nothing</p></td></tr>');
+            $('#pager_transfer').html('');
+          }
+          else{
+            var table_html = '';
+            obj.logs_records.forEach(function(item,index){
+              //
+              let YMDhms = formatDate(parseInt(item[2])*1000);
+              table_html += '<tr>';
+
+              table_html += '<td>'+formatAddress(item[4],true,false,true,false,true)+'</td>';
+              table_html += '<td>'+formatAddress(item[5],true,false,true,false,true)+'</td>';
+              table_html += '<td class="text-primary">'+item[0]+'</td>';
+              let amount = thousands(item[6].toFixed(2));
+              let coin = 'CELO';
+              if(item[0]=='Transfer') coin = item[7];
+              table_html += '<td class="text-right">'+amount+' <span class="text-info">'+coin+'</span></td>';
+              table_html += '<td>'+parseInt(item[1])+'</td>';
+              table_html += '<td class="text-center">'+timeSpan(item[2]*1000,'','')+'</td>';
+              //table_html += '<td>'+YMDhms[1]+'-'+YMDhms[2]+' '+YMDhms[3]+':'+YMDhms[4]+'</td>';
+              table_html += '<td class="text-center">'+formatAddress(item[3],true,false,true)+'</td>';
+              table_html += '</tr>';
+            });
+            $('#logs_transfer').html(table_html);
+            //
+            addressOP();
+            $('#footer_about').show();
+            $('#timespan').html('');
+            //
+            let pagerHtml = '';
+            if(page > 0){
+              pagerHtml += '<li class="page-item"><a class="page-link" style="cursor:pointer;" onclick="logs_transfer('+(page-1)+','+count+')">Prev</a></li>';
+            }
+            page = page + 1;
+            pagerHtml += '<li class="page-item"><a class="page-link">'+page+'</a></li>';
+            if(hasNextPage){
+              pagerHtml += '<li class="page-item"><a class="page-link" style="cursor:pointer;" onclick="logs_transfer('+page+','+count+')">Next</a></li>';
+            }
+            $('#pager_transfer').html(pagerHtml);
+          }
+        }
+      })
+  }
+  logs_transfer(0);
+</script>

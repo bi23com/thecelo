@@ -129,7 +129,7 @@ function load_lans(){
       save_val(old_key);
       load_lans();
       $(function(){
-        var url = thecelohost+'/api/v0.1.js?method=save_lans';
+        var url = thecelohost+'/api/?method=save_lans';
         $.ajax({
             url:url,
             type: 'POST',

@@ -36,13 +36,14 @@
 					<tr>
 							<td class="text-center"></td>
 							<td style="text-align:left;min-width:120px;white-space: nowrap;">
-								<span style="cursor: pointer;" onclick="javascript:click_sort('Address','up');" set-lan="html:Account"></span><span id='Address_sort'></span>
+								<span set-lan="html:Account"></span>
 							</td>
+							<td class="text-center">Type</td>
 							<td style="text-align:right;white-space: nowrap;" data-toggle="tooltip" data-placement="top" title="* CELO = balance + LockedCELO + pendingWithdrawals.">
-								<span style="cursor: pointer;" onclick="javascript:click_sort('CELO','down');" set-lan="html:* CELO"></span><span id='CELO_sort'></span>
+								<span style="cursor: pointer;" onclick="javascript:get_accounts(0,0);" set-lan="html:* CELO"></span><span id='CELO_sort'></span>
 							</td>
 							<td style="text-align:right;white-space: nowrap;">
-								<span style="cursor: pointer;" onclick="javascript:click_sort('cUSD','down');" set-lan="html:cUSD"></span><span id='cUSD_sort'></span>
+								<span style="cursor: pointer;" onclick="javascript:get_accounts(0,1);" set-lan="html:cUSD"></span><span id='cUSD_sort'></span>
 							</td>
 							<!--
 							<td style="text-align:right;" class="d-none d-md-block d-md-table-cell">
@@ -56,7 +57,7 @@
 								<span set-lan="html:Percentage<br/>(Total Supply)"></span>
 							</td>
 							<td style="text-align:right;white-space: nowrap;">
-								<span style="cursor: pointer;" onclick="javascript:click_sort('Txs','down');"  set-lan="html:Txs"></span><span id='Txs_sort'></span>
+								<span style="cursor: pointer;" onclick="javascript:get_accounts(0,2);"  set-lan="html:Txs"></span><!--<span id='Txs_sort'></span>-->
 							</td>
 					</tr>
 			</thead>
@@ -64,93 +65,51 @@
 		</table>
 	</div>
 </div>
-<div class="m-3 text-right" style="word-wrap:break-word;">
-	<footer class="blockquote-footer"><cite>*Tip: CELO < 10 & cUSD < 10 isn't listed!</cite></footer>
-</div>
+<div class="w-100 mb-4 text-secondary"><ul class="pagination pagination-sm justify-content-end" id="pager"></div>
 <script type="text/javascript">
-	var oldSort;
-	var oldFlg;
-	var arr_sort = ['Address_sort','CELO_sort','cUSD_sort','Txs_sort'];
-	function click_sort(flg,sort){
-		if(flg==oldFlg){
-			oldSort = order = oldSort =='down'?'up':'down';
-		}
-		else {
-			oldSort = order = sort;
-			oldFlg = flg;
-		}
-		//
-		$('#datacontainer').empty();
+	//
+	var arr_sort = ['CELO_sort','cUSD_sort','Txs_sort'];
+	//
+	function accounts_board(sort_flg){
+	  var html = '';
+	  var num = 0;
+	  var accouhntfavs = getStorage('accouhntfavs');
 		//
 		arr_sort.forEach((item, i) => {
 			$('#'+item).html(sort_normal);
 		});
+		$('#'+arr_sort[sort_flg]).html(sort_down);
 		//
-		accounts_board(flg,order);
-		//
-		if(order=='down')
-			$('#'+flg+'_sort').html(sort_down);
-		else
-			$('#'+flg+'_sort').html(sort_up);
-	}
-	//
-	function accounts_board(flg,order){
-	  var html = '';
-	  var num = 0;
-	  var accouhntfavs = getStorage('accouhntfavs');
-		var keys = Object.keys(accounts).sort(function(x,y){
-				if(flg=='CELO'&&order=='down'){
-					var tx = accounts[x][1] + accounts[x][4] + accounts[x][6];
-					var ty = accounts[y][1] + accounts[y][4] + accounts[y][6];
-					return (ty - tx);
-				};
-				if(flg=='CELO'&&order=='up'){
-					var tx = accounts[x][1] + accounts[x][4] + accounts[x][6];
-					var ty = accounts[y][1] + accounts[y][4] + accounts[y][6];
-					return (tx - ty);
-				}
-				if(flg=='cUSD'&&order=='down') return (accounts[y][2] - accounts[x][2]);
-				if(flg=='cUSD'&&order=='up') return (accounts[x][2] - accounts[y][2]);
-				if(flg=='Txs'&&order=='down') return (accounts[y][0] - accounts[x][0]);
-				if(flg=='Txs'&&order=='up') return (accounts[x][0] - accounts[y][0]);
-				if(flg=='Address'){
-					var yname = y;//accounts[y][0];
-					var xname = x;//accounts[x][0];
-					if(yname =='') yname = y;
-					if(xname =='') xname = x;
-					if(order=='up')
-			    	return xname.localeCompare(yname);
-					if(order=='down')
-				    return yname.localeCompare(xname);
-				}
-			});
 		var cumulative_CELO = 0;
 		var cumulative_cUSD = 0;
-	  keys.forEach(function(address){
+	  Object.keys(accounts).forEach(function(address){
 	      var account = accounts[address];
-	      num ++;
+	      ++num ;
 	      html += '<tr style="cursor: pointer;" class="text-success" id="accounts-line-'+address+'">';
 	      //
 	      var i_class = 'far fa-heart';
 	      if(accouhntfavs.indexOf(address)>-1){
 	          i_class = 'fas fa-heart';
 	      }
-	      html += '<td class="text-center">'+num+'<br/>';
+	      html += '<td class="text-center">'+parseInt((page*100)+num)+'<br/>';
 	      html += '<i id="accounts-heart-'+address+'" aria-hidden="true" class="text-success '+i_class+'" style="font-size:0.8em;cursor: pointer;"></i>';
 	      //
+				var name = account[10];
 	      html += '</td><td style="word-break:break-all;"><div>';
 				if(account[3].length>0){
-					var name = account[3];
+					name = account[3];
 					if(name.indexOf('cLabs(')!==-1){
 						name = name.split(' ')[0];
 					}
-					html += '<strong class="text-success">'+name+'</strong><br/>';
 				}
-	      html += '<span>'+formatAddress(address,true,false,true)+'</span></td>';
+				if(name.length>0) html += '<strong class="text-success">'+name+'</strong><br/>';
+	      html += '<span class="text-primary">'+formatAddress(address,true,false,true,false,true)+'</span></td>';
+				//
+				html += '<td class="text-center"><div><span >' + account[11] + '</span></div></td>';
 				//
 				var totalCELO = account[1] + account[4] + account[6];//balance+LockedCELO+pendingWithdrawals
-				html += '<td style="text-align:right;"><div><span >' + thousands(Math.floor(totalCELO*100)/100) + ' CELO</span></div></td>';
-				html += '<td style="text-align:right;"><div><span >' + thousands(Math.floor(account[2]*100)/100) + ' cUSD</span></div></td>';
+				html += '<td style="text-align:right;"><div><span >' + thousands(Math.floor(totalCELO*100)/100) + '</span></div></td>';
+				html += '<td style="text-align:right;"><div><span >' + thousands(Math.floor(account[2]*100)/100) + '</span></div></td>';
 				//Percentage (Total Balances)
 				//var percentage = parseFloat((account[1]/totalCELO)*100).toFixed(4);
 				//html += '<td style="text-align:right;" class="d-none d-md-block d-md-table-cell"><div >'+percentage+'%</div></td>';
@@ -159,12 +118,11 @@
 				html += '<div class="share-progressbar-wrapper">';
 				//
 
-				var cumulative_share_0 = ((cumulative_CELO*100)/CELO_totalSupply).toFixed(4);
-				var cumulative_share_1 = parseFloat((totalCELO/CELO_totalSupply)*100).toFixed(4);
-
-				if(oldFlg=='cUSD'){
-					cumulative_share_0 = ((cumulative_cUSD*100)/cUSD_totalSupply).toFixed(4);
-					cumulative_share_1 = parseFloat((account[2]/cUSD_totalSupply)*100).toFixed(4);
+				var cumulative_share_0 = 0;
+				var cumulative_share_1 = 0;
+				if(sort_flg==0||sort_flg==1){
+					cumulative_share_0 = account[8];
+					cumulative_share_1 = parseFloat(account[9]) ;
 				}
 				var cumulative_share_2 = (parseFloat(cumulative_share_0)+parseFloat(cumulative_share_1)).toFixed(2);
 				//
@@ -190,12 +148,14 @@
 	  addressOP();
 	}
 	//
-	var accounts;
-	var CELO_totalSupply;
-	var cUSD_totalSupply;
-	$(function(){
+	function get_accounts(pageNum,sort_flg){
+		$('#datacontainer').html('<tr><td colspan="8" class="text-center"><p class="text-success m-3">loading...</p></td></tr>');
+		$('#pager').html('');
+		page = pageNum;
+		var url = thecelohost+'/api/?method=accounts&page='+page+'&aa=ddd&sort_flg='+sort_flg
+		console.info(url)
 		$.ajax({
-				url:thecelohost+'/api/v0.1.js?method=accounts',
+				url:url,
 				type: 'GET',
 				dataType:'text',
 				success:function(data){
@@ -225,23 +185,39 @@
 						LockedCELOProxy_address = '0x6cC083Aed9e3ebe302A6336dBC7c921C9f03349E'.toLowerCase();//rc1
 						LockedCELOProxy_account = accounts[LockedCELOProxy_address];
 					}
-					var LockedCELO_str = thousands(LockedCELOProxy_account[1].toFixed(0)) +'CELO ('+((LockedCELOProxy_account[1]*100)/CELO_totalSupply).toFixed(1)+'%)';
-					$('#total_LockedCELO').html(LockedCELO_str);
-					$('#LockedCELOProxy_address').html(formatAddress(LockedCELOProxy_address,true,false,true));
-					//
-					delete accounts[LockedCELOProxy_address];
-
-						//
-						oldSort = '';
-						oldFlg = '';
-						click_sort('CELO','down');
-						//
-						$('#timespan').html('');
-						/////////////////////////////
-						set_lan();
-						$('#body_content').show();
-						$('#footer_about').show();
+					if(LockedCELOProxy_account){
+						var LockedCELO_str = thousands(LockedCELOProxy_account[1].toFixed(0)) +'CELO ('+((LockedCELOProxy_account[1]*100)/CELO_totalSupply).toFixed(1)+'%)';
+						$('#total_LockedCELO').html(LockedCELO_str);
+						$('#LockedCELOProxy_address').html(formatAddress([LockedCELOProxy_address,'LockedGoldProxy'],true,false,true,false,true));
+						delete accounts[LockedCELOProxy_address];
 					}
-				})
-		});
+					//
+					accounts_board(sort_flg);
+					//
+					$('#timespan').html('');
+					/////////////////////////////
+					set_lan();
+					$('#body_content').show();
+					$('#footer_about').show();
+					//
+					let pagerHtml = '';
+					if(page > 0){
+						pagerHtml += '<li class="page-item"><a class="page-link" style="cursor:pointer;" onclick="javascript:get_accounts('+(page-1)+','+sort_flg+');">Prev</a></li>';
+					}
+					page = page + 1;
+					pagerHtml += '<li class="page-item"><a class="page-link">'+page+'</a></li>';
+					if((page * 30) < CELO_total_addresses){
+						pagerHtml += '<li class="page-item"><a class="page-link" style="cursor:pointer;" onclick="javascript:get_accounts('+page+','+sort_flg+');">Next</a></li>';
+					}
+					$('#pager').html(pagerHtml);
+				}
+			})
+		};
+	//
+	var accounts;
+	var CELO_totalSupply;
+	var cUSD_totalSupply;
+	var page =0;
+	var sort_flg = 0;//0:celo 1:cusd
+	get_accounts(page,sort_flg);
 </script>

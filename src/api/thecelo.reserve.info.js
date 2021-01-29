@@ -1,12 +1,12 @@
+const thecelo = require("./thecelo.utils.js");
+const theceloconst = require("./thecelo.const.js");
 const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://xxx.xxx.xxx.xxx:8545'))
+const web3 = new Web3(new Web3.providers.HttpProvider(thecelo.http_host))
 
 const request = require('request');
 const redis = require("./thecelo.redis.js");
-const thecelo = require("./thecelo.utils.js");
 const ethrpc = require("./thecelo.ethrpc.js");
 //
-var celo_addr_1 = '0x9380fA34Fd9e4Fd14c06305fd7B6199089eD4eb9';
 var celo_addr_2 = '0x246f4599eFD3fA67AC44335Ed5e749E518Ffd8bB';
 var btc_addr = '38EPdP4SPshc5CiUCzKcLP9v7Vqo5u1HBL';
 var eth_addr = '0xe1955eA2D14e60414eBF5D649699356D8baE98eE';
@@ -16,24 +16,21 @@ var bittrex_celo_url = 'https://bittrex.com/v3/markets/CELO-USDT/candles/DAY_1/r
 var binance_eth_url = 'https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT';
 var binance_btc_url = 'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT';
 var gate_dai_url = 'https://data.gateio.la/api2/1/ticker/dai_usdt';
-
-var reserve_proxy = '0x9380fA34Fd9e4Fd14c06305fd7B6199089eD4eb9';
-
 //
 async function getReserveInfo(){
   var result = {};
 
-  var celo_1 = ethrpc.getBalanceOf(celo_addr_1);
+  var celo_1 = ethrpc.getBalanceOf(theceloconst.Contracts.Reserve);
   var celo_2 = ethrpc.getBalanceOf(celo_addr_2);
   //
-  var btc_info = await thecelo.get_http_data(request,'https://blockchain.info/rawaddr/'+btc_addr);
+  var btc_info = await thecelo.get_http_data(request,'https://api.blockcypher.com/v1/btc/main/addrs/'+btc_addr);
   var eth_info = await thecelo.get_http_data(request,'https://api.blockcypher.com/v1/eth/main/addrs/'+eth_addr);
   var dai_info = await thecelo.get_http_data(request,'https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0x6b175474e89094c44da98b954eedeac495271d0f&address='+dai_addr+'&tag=latest&apikey=MYQGYSV57WPNINCP1Z9A3QP6C67V9KUDFB');
   //celo_price
   var data = await redis.get_redis_data('bittrex_day_prices');
   var celo_price = JSON.parse(data);
   celo_price = celo_price[celo_price.length-1].close;
-  result['celo1'] = [celo_addr_1,celo_1.cgld/1e+18,celo_1.cusd/1e+18,parseFloat(celo_price)];
+  result['celo1'] = [theceloconst.Contracts.Reserve,celo_1.cgld/1e+18,celo_1.cusd/1e+18,parseFloat(celo_price)];
   result['celo2'] = [celo_addr_2,celo_2.cgld/1e+18,celo_2.cusd/1e+18,parseFloat(celo_price)];
   //
   var btc_price = await thecelo.get_http_data(request,binance_btc_url);
@@ -73,8 +70,7 @@ function eth_call(method){
       type: 'function',
       inputs: []
   }, []);
-  var result = thecelo.eth_rpc('eth_call','[{"to": "'+reserve_proxy+'", "data":"'+data+'"}, "latest"]');
-  console.log(result);
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.Reserve+'", "data":"'+data+'"}, "latest"]');
   return web3.eth.abi.decodeParameter('uint256', result);
 }
 //

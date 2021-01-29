@@ -2,7 +2,7 @@ const thecelo = require("./thecelo.utils.js");
 const theceloconst = require("./thecelo.const.js");
 const redis = require("./thecelo.redis.js");
 const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://xxx.xxx.xxx.xxx:8545'))
+const web3 = new Web3(new Web3.providers.HttpProvider(thecelo.http_host))
 //
 var method_ProposalQueued = '0x1bfe527f3548d9258c2512b6689f0acfccdd0557d80a53845db25fc57e93d8fe';
 var method_ProposalUpvoted = '0xd19965d25ef670a1e322fbf05475924b7b12d81fd6b96ab718b261782efb3d62';
@@ -17,18 +17,14 @@ var approval_timestamp = 24*60*60;//1 day
 var vote_timestamp = 5*24*60*60;//5 days
 var execute_timestamp = 3*24*60*60;//3 days
 //
-var proposal_contract_address = '0xD533Ca259b330c7A88f74E000a3FaEa2d63B7972';
 if('rc1' != thecelo.celo_network){
   upvote_timestamp = 4*60*60; //4 hours
   vote_timestamp = 24*60*60; //1 days
   execute_timestamp = 7*24*60*60; //7 days
-  //
-  proposal_contract_address = '0x28443b1d87db521320a6517A4F1B6Ead77F8C811';
 }
 //
-var proposalList = {};
-//
 function getProposal(proposalId){
+  //
   var data = web3.eth.abi.encodeFunctionCall({
       name: 'getProposal',
       type: 'function',
@@ -37,16 +33,16 @@ function getProposal(proposalId){
           name: 'proposalId'
       }]
   }, [proposalId]);
-  var result = thecelo.eth_rpc('eth_call','[{"to": "'+proposal_contract_address+'", "data":"'+data+'"}, "latest"]');
-  //console.log(result);
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.Governance+'", "data":"'+data+'"}, "latest"]');
   let datatype = ['address','uint256','uint256','uint256','string'];
   return web3.eth.abi.decodeParameters(datatype, result);
 }
 //
 function update_proposalList() {
+  var proposalList = {};
   thecelo.log_out('update_proposalList begin....');
   var result = thecelo.eth_rpc('eth_getLogs',
-                        '[{"fromBlock": "earliest","toBlock":"latest","address":"'+proposal_contract_address+'","topics":["'+method_ProposalQueued+'"]}]');
+                        '[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.Contracts.Governance+'","topics":["'+method_ProposalQueued+'"]}]');
   result.forEach((item, i) => {
     var proposal ={"status":"Queued","timespan":0,'descriptionUrl':'',
           "ProposalQueued":{},
@@ -75,7 +71,7 @@ function update_proposalList() {
     proposal['ProposalQueued'] = {proposer,deposit,timestamp,blockNumber,transactionHash};
     //ProposalUpvoted
     var result1 = thecelo.eth_rpc('eth_getLogs',
-                          '[{"fromBlock": "earliest","toBlock":"latest","address":"'+proposal_contract_address+'","topics":["'+method_ProposalUpvoted+'","'+item['topics'][1]+'"]}]');
+                          '[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.Contracts.Governance+'","topics":["'+method_ProposalUpvoted+'","'+item['topics'][1]+'"]}]');
     result1.forEach((item1, i1) => {
       var account = (item1['topics'][2]).replace('0x000000000000000000000000','');
       var upvotes = parseInt(item1['data']);
@@ -85,7 +81,7 @@ function update_proposalList() {
     });
     //ProposalDequeued
     var result11 = thecelo.eth_rpc('eth_getLogs',
-                          '[{"fromBlock": "earliest","toBlock":"latest","address":"'+proposal_contract_address+'","topics":["'+method_ProposalDequeue+'","'+item['topics'][1]+'"]}]');
+                          '[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.Contracts.Governance+'","topics":["'+method_ProposalDequeue+'","'+item['topics'][1]+'"]}]');
     result11.forEach((item11, i11) => {
       var timestamp = parseInt(item11['data']);
       var blockNumber = item11['blockNumber'];
@@ -98,7 +94,7 @@ function update_proposalList() {
     });
     //ProposalApproval
     var result12 = thecelo.eth_rpc('eth_getLogs',
-                          '[{"fromBlock": "earliest","toBlock":"latest","address":"'+proposal_contract_address+'","topics":["'+method_ProposalApproval+'","'+item['topics'][1]+'"]}]');
+                          '[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.Contracts.Governance+'","topics":["'+method_ProposalApproval+'","'+item['topics'][1]+'"]}]');
     result12.forEach((item12, i12) => {
       var blockNumber = item12['blockNumber'];
       var transactionHash = item12['transactionHash'];
@@ -110,7 +106,7 @@ function update_proposalList() {
     });
     //ProposalVoted
     var result2 = thecelo.eth_rpc('eth_getLogs',
-                          '[{"fromBlock": "earliest","toBlock":"latest","address":"'+proposal_contract_address+'","topics":["'+method_ProposalVoted+'","'+item['topics'][1]+'"]}]');
+                          '[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.Contracts.Governance+'","topics":["'+method_ProposalVoted+'","'+item['topics'][1]+'"]}]');
     result2.forEach((item2, i2) => {
       var account = (item2['topics'][2]).replace('0x000000000000000000000000','');
       var data = item2['data'];
@@ -123,7 +119,7 @@ function update_proposalList() {
     });
     //ProposalExecuted
     var result3 = thecelo.eth_rpc('eth_getLogs',
-                          '[{"fromBlock": "earliest","toBlock":"latest","address":"'+proposal_contract_address+'","topics":["'+method_ProposalExecuted+'","'+item['topics'][1]+'"]}]');
+                          '[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.Contracts.Governance+'","topics":["'+method_ProposalExecuted+'","'+item['topics'][1]+'"]}]');
     result3.forEach((item3, i3) => {
       var blockNumber = item3['blockNumber'];
       var transactionHash = item3['transactionHash'];
@@ -190,30 +186,7 @@ function update_proposalList() {
   //thecelo.log_out(JSON.stringify(proposalList));
   thecelo.log_out('update_proposalList end....');
 }
-///////////////////////////////////////////////
-////////////Governance//////////////
-///////////////////////////////////////////////
-setInterval(function(){update_proposalList();},1*60*1000);
 //
-let logs_blockNumber = 0;
-const web3socket = new Web3(new Web3.providers.WebsocketProvider('http://192.168.28.109:8546'));
-var subscription = web3socket.eth.subscribe('logs', {
-  address: proposal_contract_address,
-  topics: [null]
-}, function(error, result){
-    if (!error){
-        console.log(result);
-        if(result.blockNumber != logs_blockNumber){
-          logs_blockheigh = result.blockNumber;
-          update_proposalList();
-        }
-      }
-})
-.on("connected", function(subscriptionId){
-    console.log(subscriptionId);
-})
-.on("data", function(log){
-    console.log(log);
-})
-.on("changed", function(log){
-});
+module.exports = {
+  update_proposalList
+}

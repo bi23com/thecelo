@@ -1,16 +1,10 @@
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://xxx.xxx.xxx.xxx:8545'))
-
 const thecelo = require("./thecelo.utils.js");
+const Web3 = require('web3')
+const web3 = new Web3(new Web3.providers.HttpProvider(thecelo.http_host))
+
+
 const redis = require("./thecelo.redis.js");
 const theceloconst = require("./thecelo.const.js");
-
-var electionproxy_address = '0x8D6677192144292870907E3Fa8A5527fE55A7ff6';
-if('rc1' != thecelo.celo_network){
-  electionproxy_address = '0x7eb2b2f696C60A48Afd7632f280c7De91c8E5aa5';
-}
-//
-var fromBlock = 'earliest';
 //
 var validatorGroupVoteCast_input = [{"type":"address","name":"account","indexed":true},
               {"type":"address","name":"group","indexed":true},
@@ -49,7 +43,7 @@ redis.redis_client.get(votes_key, function(err, data) {
 }
 */
 //
-function elected_minimum_votes (cmd,blockNumber) {
+function elected_minimum_votes(cmd,blockNumber) {
   let groups = {};//numMember,activedVotes,pendingVotes
   let rep = thecelo.execCmd(cmd);
   let lines = rep.toString().trim().split('\n');
@@ -63,16 +57,17 @@ function elected_minimum_votes (cmd,blockNumber) {
 
         let subvalues = subline.split(' ');
         let affiliation = subvalues[0];
-
-        if(groups[affiliation])
-          groups[affiliation][0]++;
-        else
-          groups[affiliation]= [1,0,0];
+        if(affiliation!='0x0000000000000000000000000000000000000000'){
+          if(groups[affiliation])
+            groups[affiliation][0]++;
+          else
+            groups[affiliation]= [1,0,0];
+        }
     }
   });
   //
   Object.keys(groups).forEach((address, i) => {
-    let activeVotesForGroup = eth_call_0(electionproxy_address,'getTotalVotesForGroup',address,'uint256',blockNumber);
+    let activeVotesForGroup = eth_call_0(theceloconst.Contracts.Election,'getTotalVotesForGroup',address,'uint256',blockNumber);
     groups[address][1] = activeVotesForGroup;
   });
   //
@@ -80,7 +75,8 @@ function elected_minimum_votes (cmd,blockNumber) {
   Object.keys(groups).forEach((address, i) => {
     var avg_votes = groups[address][1]/groups[address][0];
     if(avg_votes < min_votes){
-        min_votes = avg_votes;
+      thecelo.log_out(address);
+      min_votes = avg_votes;
     }
   });
   thecelo.log_out(min_votes);
@@ -89,6 +85,7 @@ function elected_minimum_votes (cmd,blockNumber) {
 //
 function latest_epoch_election_votes(){
   let current_epoch = getEpochNumber()-1;
+  thecelo.log_out(current_epoch);
   let fromBlock = '0x'+(theceloconst.EPOCH_SIZE * current_epoch).toString(16);
   let votes = election_vote(fromBlock,"latest",false);
   //celocli election:current
@@ -106,7 +103,7 @@ function election_vote(fromBlock = "earliest",toBlock = "latest",redis_set = tru
   var votes = [];
   var voteds = {};
   var voters = {};
-  var address = electionproxy_address;
+  var address = theceloconst.Contracts.Election;
   //
   var topics = [validatorGroupVoteCast];
   var parameters = [{fromBlock,toBlock,address,topics}];
@@ -204,7 +201,6 @@ function eth_call_0(contract,method,address,datatype,blockNumber){
       }]
   }, [address]);
   var result = thecelo.eth_rpc('eth_call','[{"to": "'+contract+'", "data":"'+data+'"}, "'+blockNumber+'"]');
-  //console.log(result);
   return web3.eth.abi.decodeParameter(datatype, result);
 }
 //
@@ -225,14 +221,14 @@ function eth_call_1(contract,method,address,value,datatype,blockNumber){
 }
 //
 function getGroupVotesStatus(group,blockNumber='latest'){
-  console.log(electionproxy_address);
-  var totalVotesForGroup = eth_call_0(electionproxy_address,'getTotalVotesForGroup',group,'uint256',blockNumber);
-  var activeVoteUnitsForGroup = eth_call_0(electionproxy_address,'getActiveVoteUnitsForGroup',group,'uint256',blockNumber);
-  var activeVotesForGroup = eth_call_0(electionproxy_address,'getActiveVotesForGroup',group,'uint256',blockNumber);
-  var pendingVotesForGroup = eth_call_0(electionproxy_address,'getPendingVotesForGroup',group,'uint256',blockNumber);
-  var groupEligibility = eth_call_0(electionproxy_address,'getGroupEligibility',group,'uint256',blockNumber);
-  var canReceiveVotes = eth_call_1(electionproxy_address,'canReceiveVotes',group,1,'uint256',blockNumber);
-  var numVotesReceivable = eth_call_0(electionproxy_address,'getNumVotesReceivable',group,'uint256',blockNumber);
+  console.log(theceloconst.Contracts.Election);
+  var totalVotesForGroup = eth_call_0(theceloconst.Contracts.Election,'getTotalVotesForGroup',group,'uint256',blockNumber);
+  var activeVoteUnitsForGroup = eth_call_0(theceloconst.Contracts.Election,'getActiveVoteUnitsForGroup',group,'uint256',blockNumber);
+  var activeVotesForGroup = eth_call_0(theceloconst.Contracts.Election,'getActiveVotesForGroup',group,'uint256',blockNumber);
+  var pendingVotesForGroup = eth_call_0(theceloconst.Contracts.Election,'getPendingVotesForGroup',group,'uint256',blockNumber);
+  var groupEligibility = eth_call_0(theceloconst.Contracts.Election,'getGroupEligibility',group,'uint256',blockNumber);
+  var canReceiveVotes = eth_call_1(theceloconst.Contracts.Election,'canReceiveVotes',group,1,'uint256',blockNumber);
+  var numVotesReceivable = eth_call_0(theceloconst.Contracts.Election,'getNumVotesReceivable',group,'uint256',blockNumber);
   return {totalVotesForGroup,activeVoteUnitsForGroup,activeVotesForGroup,pendingVotesForGroup,groupEligibility,canReceiveVotes,numVotesReceivable};
 }
 //
@@ -242,7 +238,7 @@ function getEpochNumber(){
       type: 'function',
       inputs: []
   },[]);
-  var result = thecelo.eth_rpc('eth_call','[{"to": "'+electionproxy_address+'", "data":"'+data+'"}, "latest"]');
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.Election+'", "data":"'+data+'"}, "latest"]');
   var datatype = 'uint256';
   result = web3.eth.abi.decodeParameter(datatype, result);
   return result;
@@ -279,7 +275,8 @@ function epochRewardsDistributedToVoters(group){
       "inputs":input});
   var address = web3.eth.abi.encodeParameter('address', group);
   var topics = [event_topic,address];
-  var parameters = [{fromBlock,toBlock,electionproxy_address,topics}];
+  address = theceloconst.Contracts.Election
+  var parameters = [{fromBlock,toBlock,address,topics}];
   var result = thecelo.eth_rpc('eth_getLogs',JSON.stringify(parameters));
   //
   var epoch_rewards={};
@@ -289,29 +286,13 @@ function epochRewardsDistributedToVoters(group){
   return epoch_rewards;
 }
 //
-function web3_subscription(){
-  var subscription = web3.eth.subscribe('logs', {
-      address: '0x123456..',
-      topics: ['0x12345...']
-  }, function(error, result){
-      if (!error)
-          console.log(result);
-  });
-  // unsubscribes the subscription
-  subscription.unsubscribe(function(error, success){
-      if(success)
-          console.log('Successfully unsubscribed!');
-  });
-}
-//
-//
 function getEpochNumber(){
   var data = web3.eth.abi.encodeFunctionCall({
       name: 'getEpochNumber',
       type: 'function',
       inputs: []
   },[]);
-  var result = thecelo.eth_rpc('eth_call','[{"to": "'+electionproxy_address+'", "data":"'+data+'"}, "latest"]');
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.Election+'", "data":"'+data+'"}, "latest"]');
   var datatype = 'uint256';
   result = web3.eth.abi.decodeParameter(datatype, result);
   return result;

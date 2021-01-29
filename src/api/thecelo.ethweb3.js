@@ -1,22 +1,11 @@
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://xxx.xxx.xxx.xxx:8545'))
-
 const thecelo = require("./thecelo.utils.js");
+const Web3 = require('web3')
+const web3 = new Web3(new Web3.providers.HttpProvider(thecelo.http_host))
+
 const redis = require("./thecelo.redis.js");
 const theceloconst = require("./thecelo.const.js");
-//
-var AccountsProxy = '0x7d21685C17607338b313a7174bAb6620baD0aaB7';
-var LockedGoldProxy = '0x6cC083Aed9e3ebe302A6336dBC7c921C9f03349E';
-var cgld_address = '0x471ece3750da237f93b8e339c536989b8978a438';
-var cusd_address = '0x765de816845861e75a25fca122bb6898b8b1282a';
-//
-if('rc1'!=thecelo.celo_network){
-  AccountsProxy = '0x64FF4e6F7e08119d877Fd2E26F4C20B537819080';
-  LockedGoldProxy = '0xF07406D8040fBD831e9983CA9cC278fBfFeB56bF';
-  cgld_address = '0xdDc9bE57f553fe75752D61606B94CBD7e0264eF8';
-  cusd_address = '0x62492A644A588FD904270BeD06ad52B9abfEA1aE';
-}
-//
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 function getAccountInfo(contract,method,address,datatype){
   var data = web3.eth.abi.encodeFunctionCall({
       name: method,
@@ -27,42 +16,42 @@ function getAccountInfo(contract,method,address,datatype){
       }]
   }, [address]);
   var result = thecelo.eth_rpc('eth_call','[{"to": "'+contract+'", "data":"'+data+'"}, "latest"]');
-  console.log(contract+':'+method+':'+result);
+  //console.log(contract+':'+method+':'+result);
   return web3.eth.abi.decodeParameter(datatype, result);
 }
 //
 function getAccount(address){
-  var name = getAccountInfo(AccountsProxy,'getName',address,'string');
+  var name = getAccountInfo(theceloconst.Contracts.Accounts,'getName',address,'string');
   if(name.indexOf('cLabs')!==-1){
     name = name.split(' ')[0];
   }
-  var metadataURL = getAccountInfo(AccountsProxy,'getMetadataURL',address,'string');
+  var metadataURL = getAccountInfo(theceloconst.Contracts.Accounts,'getMetadataURL',address,'string');
   //thecelo.log_out(metadataURL);
-  var lockedGold = getAccountInfo(LockedGoldProxy,'getAccountTotalLockedGold',address,'uint256');
+  var lockedGold = getAccountInfo(theceloconst.Contracts.LockedGold,'getAccountTotalLockedGold',address,'uint256');
   //thecelo.log_out(lockedGold);
-  var nonVotingLockedGold = getAccountInfo(LockedGoldProxy,'getAccountNonvotingLockedGold',address,'uint256');
+  var nonVotingLockedGold = getAccountInfo(theceloconst.Contracts.LockedGold,'getAccountNonvotingLockedGold',address,'uint256');
   //thecelo.log_out(nonVotingLockedGold);
-  var pendingWithdrawals = getAccountInfo(LockedGoldProxy,'getTotalPendingWithdrawals',address,'uint256');
+  var pendingWithdrawals = getAccountInfo(theceloconst.Contracts.LockedGold,'getTotalPendingWithdrawals',address,'uint256');
   //thecelo.log_out(pendingWithdrawals);
   return {name,lockedGold,nonVotingLockedGold,pendingWithdrawals,metadataURL};
 }
 //
 function getTotalData(blockNum){
   var method = '0x30a61d59';//getTotalLockedGold
-  var totalLockedGold = thecelo.eth_rpc('eth_call','[{"to": "'+LockedGoldProxy+'", "data":"'+method+'"}, "'+blockNum+'"]');
+  var totalLockedGold = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.LockedGold+'", "data":"'+method+'"}, "'+blockNum+'"]');
   totalLockedGold = totalLockedGold/(1e+18);
   method = '0x807876b7';//getNonvotingLockedGold
-  var nonvotingLockedGold = thecelo.eth_rpc('eth_call','[{"to": "'+LockedGoldProxy+'", "data":"'+method+'"}, "'+blockNum+'"]');
+  var nonvotingLockedGold = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.LockedGold+'", "data":"'+method+'"}, "'+blockNum+'"]');
   nonvotingLockedGold = nonvotingLockedGold/(1e+18);
   //method = '0x9a0e7d66';//getTotalVotes
-  //var totalVotes = thecelo.eth_rpc('eth_call','[{"to": "'+LockedGoldProxy+'", "data":"'+method+'"}, "'+blockNum+'"]');
+  //var totalVotes = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.LockedGold+'", "data":"'+method+'"}, "'+blockNum+'"]');
   //totalVotes = totalVotes/(1e+18);
   totalVotes = totalLockedGold - nonvotingLockedGold;
   //
-  var cgldSupply = thecelo.eth_rpc('eth_call','[{"to": "'+cgld_address+'", "data":"'+theceloconst.totalSupplyCode+'"}, "'+blockNum+'"]');
+  var cgldSupply = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.GoldToken+'", "data":"'+theceloconst.totalSupplyCode+'"}, "'+blockNum+'"]');
   cgldSupply = cgldSupply/(1e+18);
   //
-  var cusdSupply = thecelo.eth_rpc('eth_call','[{"to": "'+cusd_address+'", "data":"'+theceloconst.totalSupplyCode+'"}, "'+blockNum+'"]');
+  var cusdSupply = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.StableToken+'", "data":"'+theceloconst.totalSupplyCode+'"}, "'+blockNum+'"]');
   cusdSupply = cusdSupply/(1e+18);
   //
   var result = {cgldSupply,cusdSupply,totalLockedGold,totalVotes,nonvotingLockedGold};
@@ -93,9 +82,53 @@ function getTotalDataHistory(){
 //var account = getAccount('0xf823E8A4BA6adddb02E97B5b8886D18e41b2723e');
 //thecelo.log_out(JSON.stringify(account));
 //
+//
+let getPastLogs = function (fromBlock,toBlock,topics,contracts){
+  return new Promise(function(resolve, reject){
+
+    web3.eth.getPastLogs({
+      fromBlock: fromBlock,
+      toBlock: toBlock,
+      address: contracts,
+      topics: topics},
+      function(err, data) {
+        if(err){reject(err);}else{resolve(data);}
+      })
+    })
+  }
+let call = function (block,contract,data){
+  return new Promise(function(resolve, reject){
+    web3.eth.defaultBlock = block;
+    web3.eth.call({
+      to:contract,
+      data:data},
+      function(err, data) {
+        if(err){reject(err);}else{resolve(data);}
+      })
+      web3.eth.defaultBlock = 'latest'
+    })
+  }
+let getBlock = function (blockHashOrBlockNumber){
+  return new Promise(function(resolve, reject){
+    web3.eth.getBlock(blockHashOrBlockNumber,
+      function(err, data) {
+        if(err){reject(err);}else{resolve(data);}
+      })
+    })
+  }
+let getBlockNumber = function (){
+  return new Promise(function(resolve, reject){
+    web3.eth.getBlockNumber(
+      function(err, data) {
+        if(err){reject(err);}else{resolve(data);}
+      })
+    })
+  }
+//
 module.exports = {
        getAccountInfo,getAccount,
-       getTotalDataHistory
+       getTotalDataHistory,
+       getPastLogs,call,getBlock,getBlockNumber
      }
 /*
 let topics = ["0x0b5629fec5b6b5a1c2cfe0de7495111627a8cf297dced72e0669527425d3f01b","0x000000000000000000000000d5fb8a8e6e81bc77d7d807c05b5b8aeae7c2a458"];

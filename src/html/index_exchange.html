@@ -2,7 +2,7 @@
 	<div class="card shadow-sm mb-3 p-3 text-secondary">
 		<div class="row">
 			<div class="col">
-				<h5 class="text-success" id="celo_lastest_price"></h5> <small>cUSD/CELO</small>
+				<h5 class="text-success" id="celo_lastest_price"></h5> <small>CELO/cUSD</small>
 			</div>
 			<div class="col d-none" id="total_data"><small>
 				CELO --> cUSD: <span id="celo_cusd_celo"></span> --> <span id="celo_cusd_cusd"></span> (buy: <span id="celo_cusd_price"></span>)<br/>
@@ -33,22 +33,47 @@
 		<!--<div><span>Volume</span></div>-->
 		<div id="chart_volume" style="width: 100%; height: 60px;"></div>
 	</div>
-	<div class="card shadow-sm mb-4 pl-3 pr-3 table-responsive" >
+	<div class="row m-3">
+			<div class="btn-group btn-group-toggle bg-light btn-group mb-3 mr-3" data-toggle="buttons">
+				<button class="btn btn-outline-success active" id="btn_all">
+					<input type="radio" data-toggle="button" checked hidden><small>&nbsp;&nbsp;All&nbsp;&nbsp;</small>
+				</button>
+				<button class="btn btn-outline-success" id="btn_buy">
+					<input type="radio" data-toggle="button" hidden><small>Bought</small>
+				</button>
+				<button class="btn btn-outline-success" id="btn_sold">
+					<input type="radio" data-toggle="button" hidden><small>&nbsp;&nbsp;Sold&nbsp;&nbsp;</small>
+				</button>
+			</div>
+			<div class="float-right">
+				<form class="form-inline" role="form">
+					<div class="input-group"><input type="text" id="go_address" class="form-control" placeholder="Type address 0x.....">
+					<div class="input-group-append"><button type="button" class="btn btn-success btn-sm" id="btn_search"> GO </button></div>
+					</div>
+				</form>
+			</div>
+	</div>
+	<div class="card shadow-sm mb-4 table-responsive" >
 		<table class="table table-condensed text-success" data-toggle="table">
 			<thead>
 				<tr class="text-secondary">
-				<th class="text-left">Time</th>
-				<th class="text-left">Type</th>
-				<th class="text-center">Amount<br/>cUSD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CELO</th>
-				<th class="text-right">Price</th>
+				<td class="text-left">Time</td>
+				<td>Exchanger</td>
+				<td class="text-left">Type</td>
+				<td class="text-center">Amount<br/>cUSD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CELO</td>
+				<td class="text-right">Price</td>
+				<td class="text-right">TxHash</td>
 				</tr>
 			</thead>
-			<tbody id="trading_records" style="width: 100%; height: 100%;"></tbody>
+			<tbody id="trading_records" style="width: 100%; height: 100%;">
+				<tr><td colspan="6" class="text-center"><p class="text-success m-3">loading...</p></td></tr>
+			</tbody>
 		</table>
 	</div>
 	<div class="m-3 text-right" style="word-wrap:break-word;">
 		<footer class="blockquote-footer"><cite>*Tip: sellAmount < 0.0001 & buyAmount < 0.0001 isn't listed!</cite></footer>
 	</div>
+	<div class="w-100 mb-4 text-secondary"><ul class="pagination pagination-sm justify-content-end" id="pager"></div>
 </div>
 <script type="text/javascript">
 	var dataPricesTable;
@@ -150,29 +175,22 @@
 				celo_price = parseFloat((item.sellAmount/item.buyAmount).toFixed(4));
 			}
 			/////////////////////////////////////////
-			table_html += '<tr '+(item.soldGold?'class="CELO_Red"':'')+' style="cursor: pointer;" onclick="javascript:show_trading_more('+index+')">';
-			table_html += '<td>'+YMDhms[3]+':'+YMDhms[4]+'</td>';
+			table_html += '<tr '+(item.soldGold?'class="CELO_Red"':'')+'>';
+			table_html += '<td>'+YMDhms[1]+'-'+YMDhms[2]+' '+YMDhms[3]+':'+YMDhms[4]+'</td>';
 			//table_html += '<td>'+timeSpan(parseInt(item.timestamp)*1000)+'</td>';
-			table_html += '<td>'+(item.soldGold?'Sell':'Buy')+'</td>';
+			table_html += '<td>'+formatAddress(item.exchanger,true,false,true,false,true)+'</td>';
+			table_html += '<td>'+(item.soldGold?'Sold':'Bought')+'</td>';
 			if(item.soldGold){
-				table_html += '<td class="text-center">'+(item.buyAmount/1e+18).toFixed(2)+'&nbsp;&nbsp;&nbsp;<--&nbsp;&nbsp;&nbsp;'+(item.sellAmount/1e+18).toFixed(2)+'</td>';
+				table_html += '<td class="text-center">'+(item.buyAmount/1e+18).toFixed(2)+'<--'+(item.sellAmount/1e+18).toFixed(2)+'</td>';
 			}
 			else{
-				table_html += '<td class="text-center">'+(item.sellAmount/1e+18).toFixed(2)+'&nbsp;&nbsp;&nbsp;-->&nbsp;&nbsp;&nbsp;'+(item.buyAmount/1e+18).toFixed(2)+'</td>';
+				table_html += '<td class="text-center">'+(item.sellAmount/1e+18).toFixed(2)+'-->'+(item.buyAmount/1e+18).toFixed(2)+'</td>';
 			}
 			table_html += '<td class="text-right">'+celo_price+'</td>';
-			table_html += '</tr><tr class="d-none" id="trading_more_'+index+'" style="cursor: pointer;" onclick="javascript:show_trading_more('+index+')">';
-			table_html += '<td colspan="4"><span class="text-secondary">Exchanger</span>: '+formatAddress(item.exchanger,true,false,true)+'<br/><span class="text-secondary">Tx</span>: '+formatAddress(item.transactionHash,true,false)+'</td></tr>';
+			table_html += '<td class="text-right">'+formatAddress(item.transactionHash,true,false,true)+'</td>';
+			table_html += '</tr>';
 		});
 		$('#trading_records').html(table_html);
-	}
-	//
-	function show_trading_more(index){
-		if($('#trading_more_'+index).hasClass('d-none'))
-			$('#trading_more_'+index).removeClass('d-none');
-		else{
-			$('#trading_more_'+index).addClass('d-none');
-		}
 	}
 	//
 	var kline_data;
@@ -180,7 +198,7 @@
 	function reload_kline(time){
 		k_time= time;
 		$.ajax({
-				url: thecelohost+'/api/v0.1.js?method=get_k_line&k_time='+k_time,type: 'GET',cache: false,dataType:'text',
+				url: thecelohost+'/api/?method=get_k_line&k_time='+k_time,type: 'GET',cache: false,dataType:'text',
 				success:function(data,result){
 					kline_data = JSON.parse(data);
 					///////////////////
@@ -226,16 +244,47 @@
 	//
 	reload_kline(k_time);
 	//
-	$.ajax({
-			url: thecelohost+'/api/v0.1.js?method=trading_records&count=60',type: 'GET',cache: false,dataType:'text',
-			success:function(data,result){
-				exchange_records = JSON.parse(data);
-				reload_records();
-				//
-				addressOP();
-				$('#footer_about').show();
-				$('#timespan').html('');
-				set_lan();
-			}
-		})
+	trading_records(0);
+	//
+	function trading_records(page,type=0,address=''){
+		$('#trading_records').html('<tr><td colspan="6" class="text-center"><p class="text-success m-3">loading...</p></td></tr>');
+		$('#pager').html('');
+		$.ajax({
+				url: thecelohost+'/api/?method=trading_records&type='+type+'&page='+page+'&address='+address,type: 'GET',cache: false,dataType:'text',
+				success:function(data,result){
+					let obj = JSON.parse(data);
+					let totalCount = obj.totalCount;
+					exchange_records = obj.trading_records;
+					reload_records();
+					//
+					addressOP();
+					$('#footer_about').show();
+					$('#timespan').html('');
+					set_lan();
+					//
+					let pagerHtml = '';
+					if(page > 0){
+						pagerHtml += '<li class="page-item"><a class="page-link" style="cursor:pointer;" onclick=trading_records('+(page-1)+','+type+',"'+address+'")>Prev</a></li>';
+					}
+					page = page + 1;
+					pagerHtml += '<li class="page-item"><a class="page-link">'+page+'</a></li>';
+					if((page * 60) < totalCount){
+						pagerHtml += '<li class="page-item"><a class="page-link" style="cursor:pointer;" onclick=trading_records('+page+','+type+',"'+address+'")>Next</a></li>';
+					}
+					$('#pager').html(pagerHtml);
+				}
+			})
+	}
+	$("#btn_go").click(function(){
+		trading_records(0,0,$('#go_address').val());
+	});
+	$("#btn_all").click(function(){
+		trading_records(0,0,$('#go_address').val());
+	});
+	$("#btn_buy").click(function(){
+		trading_records(0,1,$('#go_address').val());
+	});
+	$("#btn_sold").click(function(){
+		trading_records(0,2,$('#go_address').val());
+	});
 </script>

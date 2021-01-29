@@ -1,0 +1,286 @@
+<div id="page_panel">
+	<div class="card shadow-sm mb-4 p-4">
+			<div id="attestation_chart"></div>
+			<div class="mb-3"></div>
+			<div id="attestation_rate_chart"></div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<form class="form-inline float-sm-right" role="form">
+				<div class="form-group  mb-4 mr-4 input-group-sm">
+					<select id="validators_options" class="form-control text-secondary">
+						<option value="">--select validator--</option>
+					</select>
+				</div>
+				<div class="form-group mb-4 mr-4 input-group-sm">
+					<input type="text" id="validator_address" class="form-control text-secondary" size="50" placeholder="Validator Address">
+				</div>
+				<button type="button" class="btn btn-success mb-4 btn-sm" id="btn_go"> GO </button>
+			</form>
+		</div>
+	</div>
+	<div class="card shadow-sm mb-4 table-responsive">
+		<table class="table table-condensed text-success mb-0 p-0" data-toggle="table">
+			<thead class="card-header">
+				<tr class="text-secondary">
+				<td class="text-center">Identifier</td>
+				<td class="text-center" style="border-left: 1px solid #ddd;border-right: 1px solid #ddd;">
+					<p>Requested</p>
+					<ul class="list-group p-1 text-secondary">
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center" style="background-color:rgba(0,0,0,.005);">
+							<span>Time</span><span>Accounts</span><span>Count</span></li>
+					</ul>
+				</td>
+				<td class="text-center">
+					<p>Selected</p>
+					<ul class="list-group p-1 text-secondary">
+						<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center" style="background-color:rgba(0,0,0,.005);">
+							<span>Selected Time</span><span>Issuer(Validator)</span><span>Completed</span></li>
+					</ul>
+				</td>
+				</tr>
+			</thead>
+			<tbody id="attestation_identifiers" style="width: 100%; height: 100%;">
+				<tr><td colspan="3" class="text-center"><p class="text-success m-3">loading...</p></td></tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="w-100 mb-4 text-secondary"><ul class="pagination pagination-sm justify-content-end" id="pager"></div>
+</div>
+<script type="text/javascript">
+	var list_li_class = 'list-group-item p-1 border-0 d-flex justify-content-between align-items-center';
+	//
+	var attestationCountTable;
+	var old_attestationCountTable_flg = 0;
+	function drawAttestationChart(flg) {
+		if(attestationCountTable){
+			if(flg==0){
+				var options = {lineWidth:3,tooltip: {isHtml: true},
+					series: {0: { color: options_googlechart.slices[0].color },1: { color: options_googlechart.slices[1].color }},
+					hAxis: {showTextEvery:attestationCountTable.getNumberOfRows()-1,textStyle : {color: '#6c757d',fontSize : 10}},
+					vAxis:{
+						title:'Attestation Stats',
+						titleTextStyle: {color: 'transparent'},
+						baselineColor:'transparent',
+						//gridlines:{color:'#6c757d'},
+						viewWindowMode:'maximized',
+						textStyle : {color: '#6c757d',fontSize : 10}
+						//viewWindow: {min:attestationCountTable.getColumnRange(1).min+2,max:attestationCountTable.getColumnRange(1).max+2}
+					},
+					height:200,
+					curveType: 'function',
+					legend: {position: 'top',alignment:'end',maxLines:2,textStyle:{"color":"#6ccd86","fontSize":12}},
+					//legend: 'none',
+					chartArea:{left:50,top:20,bottom:30,right:20,height:'100%',width:'100%'}
+				};
+				//////////////////////////
+				var chart = new google.visualization.LineChart(document.getElementById('attestation_chart'));
+				//chart.draw(attestationCountTable, options);
+				var view = new google.visualization.DataView(attestationCountTable);
+				view.setColumns([0,1,2]);
+				chart.draw(view, options);
+				//////////////////////////
+				var chart1 = new google.visualization.LineChart(document.getElementById('attestation_rate_chart'));
+				//chart.draw(attestationCountTable, options);
+				var view1 = new google.visualization.DataView(attestationCountTable);
+				view1.setColumns([0,5,6]);
+				//options.legend.position = 'bottom';
+				//options.legend.alignment = 'center';
+				chart1.draw(view1, options);
+			}
+			else{
+				var table_html = '<div class="table-responsive"><table class="table table-fixed table-sm table-borderless"><thead><tr class="text-secondary">';
+				table_html += '<th scope="col" class="col-6 text-left">'+attestationCountTable.getColumnLabel(0)+'</th>';
+				table_html += '<th scope="col" class="col-6 text-right">'+attestationCountTable.getColumnLabel(1)+'</th>';
+				table_html += '</tr></thead><tbody>';
+				//<tr>
+				var len = attestationCountTable.getNumberOfRows();
+				for (var i = len-1; i >=0; i--) {
+					table_html += '<tr class="text-success">';
+					table_html += '<td scope="row" class="col-6">'+attestationCountTable.getFormattedValue(i, 0)+'</td>';
+					table_html += '<td class="col-6 text-right">'+attestationCountTable.getFormattedValue(i, 1)+'</td>';
+					table_html += '</tr>';
+				}
+				table_html += '</tbody></table></div>';
+				//
+				$('#attestation_chart').empty();
+				$('#attestation_chart').html(table_html);
+			}
+		}
+		old_attestationCountTable_flg = flg;
+	}
+	//
+	function get_attestation_count(){
+		$.ajax({
+				url: thecelohost+'/api/?method=attestationcount_epoch',
+				type: 'GET',
+				cache: false,
+				dataType:'text',
+				success:function(data,result){
+					let obj = JSON.parse(data);
+					let requestedTotal = 0;
+					let completedTotal = 0;
+					attestationCountTable = new google.visualization.DataTable();
+					attestationCountTable.addColumn('string', 'Date');
+					attestationCountTable.addColumn('number', 'Total Requested');
+					attestationCountTable.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
+					attestationCountTable.addColumn('number', 'Total Completed');
+					attestationCountTable.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
+					attestationCountTable.addColumn('number', 'Completed Rate (%)');
+					attestationCountTable.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
+					attestationCountTable.addColumn('number', 'Total Completed Rate (%)');
+					attestationCountTable.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
+
+					Object.keys(obj).forEach((epoch, i) => {
+						let item = obj[epoch];
+						let epoch_date = getEpochDate(epoch);
+						//
+						requestedTotal += item[0];
+						completedTotal += item[2];
+						let completedTotalRate = (100*(completedTotal/requestedTotal)).toFixed(2);
+						let completedRate = (100*(item[2]/item[0])).toFixed(2);
+						//
+						var tip = '<ul class="list-group p-1 text-secondary">';
+						tip += '<li class="'+list_li_class+'"><strong>'+epoch_date.substr(5,11)+'</strong><strong>'+rankStr(epoch)+' Epoch</strong></li>';
+						tip += '<li class="'+list_li_class+'">Requested <span class="text-success">'+thousands(item[0])+'&nbsp;/&nbsp;'+thousands(requestedTotal)+'</span></li>';
+						tip += '<li class="'+list_li_class+'">Completed <span class="text-success">'+thousands(item[2])+'&nbsp;/&nbsp;'+thousands(completedTotal)+'</span></li>';
+						tip += '<li class="'+list_li_class+'">CompletedRate&nbsp;&nbsp;&nbsp; <span class="text-success">'+completedRate+'%&nbsp;/&nbsp;'+completedTotalRate+'%</li>';
+						//
+						attestationCountTable.addRow([epoch_date.substr(5,6),item[0],tip,item[2],tip,parseFloat(completedRate),tip,parseFloat(completedTotalRate),tip]);
+						//
+					})
+					google.charts.setOnLoadCallback(function(){drawAttestationChart(old_attestationCountTable_flg);});
+				}
+			})
+		}
+	//
+	google.setOnLoadCallback(get_attestation_count);
+	//
+	$(window).resize(function(){
+		if(navbar_tab == 'attestations'){
+			google.charts.setOnLoadCallback(function(){drawAttestationChart(old_attestationCountTable_flg);});
+		}
+	});
+	//
+	function getUTCTime(timestamp){
+		timestamp = parseInt(timestamp);
+		if(timestamp>0){
+			//timestamp = new Date(parseInt(timestamp)*1000).toUTCString().substr(5,20);
+			//timestamp = timestamp.split(' ');
+			//return timestamp[0]+' '+timestamp[1]+' '+timestamp[3];
+			return (new Date(timestamp*1000)).Format("MM-dd hh:mm:ss");
+		}
+		else
+			return '';
+	}
+	Date.prototype.Format = function (fmt) {
+		var o = {
+		"M+": this.getMonth() + 1, //月份
+		"d+": this.getDate(), //日
+		"h+": this.getHours(), //小时
+		"m+": this.getMinutes(), //分
+		"s+": this.getSeconds(), //秒
+		"q+": Math.floor((this.getMonth() + 3) / 3), //季度
+		"S": this.getMilliseconds() //毫秒
+		};
+		if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+		for (var k in o)
+		if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+		return fmt;
+	}
+	//
+	function get_attestation_identifiers(page,address=""){
+		$('#attestation_identifiers').html('<tr><td colspan="3" class="text-center"><p class="text-success m-3">loading...</p></td></tr>');
+		$('#pager').html('');
+		$.ajax({
+				url: thecelohost+'/api/?method=attestation_identifiers&page='+page+'&address='+address,
+				type: 'GET',
+				cache: false,
+				dataType:'text',
+				success:function(data,result){
+					let obj = JSON.parse(data);
+					let identifiers = obj.result;
+					let totalIdentifiers = obj.totalIdentifiers;
+					let html = '';
+					Object.keys(identifiers).forEach((identifier, i) => {
+						let item = identifiers[identifier];
+						//
+						let requests = item[0];
+						let col2 = '<ul class="list-group p-1 text-success">';
+						requests.forEach((request, i) => {
+							col2 += '<li class="'+list_li_class+'">'+getUTCTime(request[1])+'<span>'+formatAddress(request[2],true,false,true,false,true)+'</span><span class="text-success">'+request[3]+'</li>';
+						});
+						col2 += '</ul>';
+						//
+						let completeds = item[1];
+						let col3 = '<ul class="list-group p-1">';
+						completeds.forEach((completed, i) => {
+							//
+							let highlight = (address == completed[2]) ? ' text-primary' : '';
+							let name = validators[completed[2]][0];
+							if(name.trim().length==0){
+								name = formatAddress(completed[2],true,false,true,false,true);
+							}
+							else{
+								name = '<a target="_self" href="'+thecelohost+'/account/'+completed[2]+'">'+name+'</a>';
+								name += formatAddress(completed[2],true,false,true,true);
+							}
+							//
+							col3 += '<li class="'+list_li_class + highlight + '">'+getUTCTime(completed[1])+'<span>'+name;
+							let seconds = (parseInt(completed[4])-parseInt(completed[1]))+'s';
+							if(completed[4]==0) seconds = '---';
+							col3 += '</span><span>'+seconds+'</li>';
+						});
+						col3 += '</ul>';
+						//
+						html += '<tr><td>'+formatAddress(identifier,false,false,true)+'</td><td style="border-left: 1px solid #ddd;border-right: 1px solid #ddd;">'+col2+'</td><td>'+col3+'</td></tr>'
+					});
+					//
+					$('#attestation_identifiers').html(html);
+					addressOP();
+					$('#timespan').html('');
+					//
+					let pagerHtml = '';
+					if(page > 0){
+						pagerHtml += '<li class="page-item"><a class="page-link" style="cursor:pointer;" onclick=get_attestation_identifiers('+(page-1)+',"'+address+'")>Prev</a></li>';
+					}
+					page = page + 1;
+					pagerHtml += '<li class="page-item"><a class="page-link">'+page+'</a></li>';
+					if((page * 30) < totalIdentifiers){
+						pagerHtml += '<li class="page-item"><a class="page-link" style="cursor:pointer;" onclick=get_attestation_identifiers('+page+',"'+address+'")>Next</a></li>';
+					}
+					$('#pager').html(pagerHtml);
+				}
+			});
+		};
+		//
+		var validators;
+		$(function(){
+			$.ajax({
+					url: thecelohost+'/api/?method=validators',
+					type: 'GET',
+					dataType:'text',
+					success:function(data){
+						var obj = JSON.parse(data);
+						validators = obj.validators;
+						let options = '<option value="">--select validator--</option>';
+						Object.keys(validators).forEach((address, i) => {
+							let name = validators[address][0];
+							if(name.trim().length==0) name = formatAddress(address,false,false,false);
+							options += '<option value="'+address+'">'+name+'</option>';
+						});
+						$('#validators_options').html(options);
+						$('#validators_options').change(function(){
+							let address = $(this).children('option:selected').val();
+							$('#validator_address').val(address);
+							get_attestation_identifiers(0,address);
+						});
+						//
+						get_attestation_identifiers(0);
+					}
+				})
+			});
+			$("#btn_go").click(function(){
+				get_attestation_identifiers(0,$('#validator_address').val());
+			});
+</script>

@@ -1,17 +1,162 @@
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://xxx.xxx.xxx.xxx:8545'))
 //
-const request = require('request');
 const thecelo = require("./thecelo.utils.js");
 const theceloconst = require("./thecelo.const.js");
+const celomainnetreleasegoldall = require("./thecelo.celomainnetreleasegoldall.js");
+const Web3 = require('web3')
+const web3 = new Web3(new Web3.providers.HttpProvider(thecelo.http_host))
+const ethweb3 = require("./thecelo.ethweb3.js");
+//
+const request = require('request');
+//
 const redis = require("./thecelo.redis.js");
 const validatorsproxy = require("./thecelo.ethrpc.validatorsproxy.js");
-
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 //
-var accountsProxy_address = '0x7d21685C17607338b313a7174bAb6620baD0aaB7';
-if('rc1' != thecelo.celo_network){
-  accountsProxy_address = '0x64FF4e6F7e08119d877Fd2E26F4C20B537819080';
+async function getAccountBalance(address,blockNum='latest'){
+  let inputs = [{type: 'address',name: 'account'}];
+  let datatype = 'uint256';
+  let type = 'function';
+  //
+  let method = 'getAccountTotalLockedGold';
+  let data = web3.eth.abi.encodeFunctionCall({name: method,type: type,inputs: inputs}, [address]);
+  let result = await ethweb3.call(blockNum,theceloconst.Contracts.LockedGold,data);
+  let totalLockedGold = parseInt(web3.eth.abi.decodeParameter(datatype, result))/1e+18;
+  //
+  method = 'getAccountNonvotingLockedGold';
+  data = web3.eth.abi.encodeFunctionCall({name: method,type: type,inputs: inputs}, [address]);
+  result = await ethweb3.call(blockNum,theceloconst.Contracts.LockedGold,data);
+  let nonvotingLockedGold = parseInt(web3.eth.abi.decodeParameter(datatype, result))/1e+18;
+  //
+  method = 'getTotalPendingWithdrawals';
+  data = web3.eth.abi.encodeFunctionCall({name: method,type: type,inputs: inputs}, [address]);
+  result = await ethweb3.call(blockNum,theceloconst.Contracts.LockedGold,data);
+  let pendingWithdrawals = parseInt(web3.eth.abi.decodeParameter(datatype, result))/1e+18;
+  //
+  method = 'balanceOf';
+  data = web3.eth.abi.encodeFunctionCall({name: method,type: type,inputs: inputs}, [address]);
+  result = await ethweb3.call(blockNum,theceloconst.Contracts.GoldToken,data);
+  let celo = parseInt(web3.eth.abi.decodeParameter(datatype, result))/1e+18;
+  //
+  method = 'balanceOf';
+  data = web3.eth.abi.encodeFunctionCall({name: method,type: type,inputs: inputs}, [address]);
+  result = await ethweb3.call(blockNum,theceloconst.Contracts.StableToken,data);
+  let cusd = parseInt(web3.eth.abi.decodeParameter(datatype, result))/1e+18;
+  //
+  result = {totalLockedGold,nonvotingLockedGold,pendingWithdrawals,celo,cusd};
+  return result;
 }
+//
+function getReleaseGold(address){
+  let releasegold = {}
+  let keys = ['beneficiary','releaseOwner','refundAddress','canValidate','canVote',
+                'liquidityProvisionMet','releaseStartTime','releaseCliff','numReleasePeriods','releasePeriod','amountReleasedPerPeriod',
+              'isRevoked','revocable','canExpire','releasedBalanceAtRevoke','revokeTime',
+              'totalWithdrawn','currentReleasedTotalAmount']
+  let cmd = 'celocli releasegold:show --contract '+address;
+  let rep = thecelo.execCmd(cmd);
+  let lines = rep.toString().trim().split('\n')
+  lines.forEach(function(line) {
+    keys.forEach(function(key) {
+      if(line.indexOf(key)>=0){
+        releasegold[key] = line.replace(key,'').replace(':','').trim()
+      }
+    })
+  })
+  return releasegold
+}
+//
+async function getAccountEpochBalance(address){
+  let key = address+'_epoch_balances';
+  let epoch = 1;
+  let balance_pre = [];
+  let balances = {};
+  let data = await redis.get_redis_data(key);
+  if(data && data.length > 0){
+    balances = JSON.parse(data);
+    epoch = Math.max.apply(Math, Object.keys(balances));
+    balance_pre = balances[epoch];
+  }
+  let lastest = await ethweb3.getBlockNumber()
+  let lastest_epoch = Math.ceil(lastest / theceloconst.EPOCH_SIZE)
+  for(;epoch <= lastest_epoch;epoch++){
+    let blockNum = epoch * theceloconst.EPOCH_SIZE;
+    blockNum = blockNum > lastest ? lastest : blockNum
+    console.log({epoch,blockNum})
+    let balance = await getAccountBalance(address,blockNum)
+    if(JSON.stringify(balance_pre) != JSON.stringify(balance)){
+      balances[epoch] = [balance.totalLockedGold,balance.nonvotingLockedGold,balance.pendingWithdrawals,balance.celo,balance.cusd]
+      balance_pre = balance
+    }
+  }
+  redis.redis_client.set(key,JSON.stringify(balances))
+  return balances;
+}
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+async function getName(address){
+  let name = thecelo.findKey(theceloconst.Contracts,address);
+  if(name) return name+'Proxy';
+  let data = web3.eth.abi.encodeFunctionCall({
+      name: 'getName',
+      type: 'function',
+      inputs: [{"type":"address","name":"address"}]
+  },[address]);
+  //let result = thecelo.eth_rpc('eth_call','[{"to": "'+theceloconst.Contracts.Accounts+'", "data":"'+data+'"}, "latest"]');
+  let result = await ethweb3.call('latest',theceloconst.Contracts.Accounts,data);
+  let datatype = ['string'];
+  //
+  name = web3.eth.abi.decodeParameters(datatype, result);
+  return name[0];
+}
+//
+async function getType(address){
+  let type = '';//1:celo_contract_proxy 2:releasegold_contract 3:accountt 4:contrac
+  if(thecelo.containsValue(Object.values(theceloconst.Contracts),address))
+    type = 'CeloContract'
+  else {
+    if(celomainnetreleasegoldall.isReleaseGold(address))
+      type = 'Releasegold'
+    else {
+      let data = web3.eth.abi.encodeFunctionCall({
+          name: 'isAccount',
+          type: 'function',
+          inputs: [{"type":"address","name":"address"}]
+      },[address]);
+      let result = await ethweb3.call('latest',theceloconst.Contracts.Accounts,data);
+      let datatype = ['bool'];
+      let isAccount = web3.eth.abi.decodeParameters(datatype, result);
+      if(isAccount[0])
+        type = 'Account'
+      else{
+        let code = await web3.eth.getCode(address)
+        //console.log('code:'+code);
+        if(code.length > ('0x'.length) ? true : false)
+          type = 'Contract'
+      }
+    }
+  }
+  return type;
+}
+//
+async function getMetadataURL(address){
+  let data = web3.eth.abi.encodeFunctionCall({
+      name: 'getMetadataURL',
+      type: 'function',
+      inputs: [{"type":"address","name":"address"}]
+  },[address]);
+  let result = await ethweb3.call('latest',theceloconst.Contracts.Accounts,data);
+  let datatype = ['string'];
+  //
+  let metadataURL = web3.eth.abi.decodeParameters(datatype, result);
+  return metadataURL[0];
+}
+
+//let testAddress = '0x9380fa34fd9e4fd14c06305fd7b6199089ed4eb9';
+//getName(testAddress).then(console.log);;
+//getMetadataURL(testAddress).then(console.log);
+//getAccountEpochBalance(testAddress);
+//getAccountMoney(testAddress,theceloconst.EPOCH_SIZE *1 ).then(console.log);
 //
 async function batchGetMetadataURL(){
   var groups = validatorsproxy.getRegisteredValidatorGroups();
@@ -20,8 +165,7 @@ async function batchGetMetadataURL(){
       type: 'function',
       inputs: [{"type":"address[]","name":"accountsToQuery"}]
   },[groups]);
-  var block = 'latest';
-  var result = thecelo.eth_rpc('eth_call','[{"to": "'+accountsProxy_address+'", "data":"'+data+'"}, "'+block+'"]');
+  let result = await ethweb3.call('latest',theceloconst.Contracts.Accounts,data);
   var datatype = ['uint256[]', 'bytes'];
   //
   result = web3.eth.abi.decodeParameters(datatype, result);
@@ -109,7 +253,6 @@ async function findAddress(name){
       }
     }
   });
-  console.log(result)
   return result;
 }
 //
@@ -120,5 +263,5 @@ async function findAddress(name){
 //var address = findAddress('keyko');
 //
 module.exports = {
-  batchGetMetadataURL,getMetaInfo,findAddress
+  batchGetMetadataURL,getMetaInfo,findAddress,getName,getAccountEpochBalance,getType,getAccountBalance,getMetadataURL,getReleaseGold
 }

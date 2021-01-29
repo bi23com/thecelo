@@ -1,21 +1,15 @@
-//
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://xxx.xxx.xxx.xxx:8545'))
 const thecelo = require("./thecelo.utils.js");
+const theceloconst = require("./thecelo.const.js");
+const Web3 = require('web3')
+const web3 = new Web3(new Web3.providers.HttpProvider(thecelo.http_host))
 const req = require('request');
 const redis = require("./thecelo.redis.js");
 
-//
-const exchange_proxy = '0x67316300f17f063085Ca8bCa4bd3f7a5a3C66275';
 const exchanged_topic = '0x402ac9185b4616422c2794bf5b118bfcc68ed496d52c0d9841dfa114fdeb05ba';
-if('rc1' != thecelo.celo_network){
-  exchange_proxy = '0x190480908c11Efca37EDEA4405f4cE1703b68b23';
-}
-//
-let fromHeight = 'earliest';
-let toHeight = 'latest';
 //
 async function get_exchange_history(){
+  let fromHeight = 'earliest';
+  let toHeight = 'latest';
   thecelo.log_out('===get_exchange_history begin....===');
   var exchange_records = [];
   var records = await redis.get_redis_data('celo_exchange_records');
@@ -24,12 +18,11 @@ async function get_exchange_history(){
     if(exchange_records.length>0){
       // next block begin
       fromHeight = '0x'+(parseInt(exchange_records[0].blockNumber)+1).toString(16);
-      console.log("fromHeight:"+fromHeight);
     }
   }
   let blockNumber = 0x0;
   let timestamp = 0x0;
-  let result = thecelo.eth_rpc('eth_getLogs','[{"fromBlock": "'+fromHeight+'","toBlock":"'+toHeight+'","address":"'+exchange_proxy+'","topics":["'+exchanged_topic+'"]}]');
+  let result = thecelo.eth_rpc('eth_getLogs','[{"fromBlock": "'+fromHeight+'","toBlock":"'+toHeight+'","address":"'+theceloconst.Contracts.Exchange+'","topics":["'+exchanged_topic+'"]}]');
   result.forEach((item, i) => {
     //
     let exchanger = web3.eth.abi.decodeParameter('address',item.topics[1]);
@@ -64,18 +57,15 @@ async function get_exchange_history(){
   return exchange_records;
 }
 /////////////////////////////////////////////////
-var exchange_prices_list = {};
-var bittrex_prices_list = {};
 //
 async function update_exchange_prices(){
-  if(Object.keys(exchange_prices_list).length == 0){
-    var data = await redis.get_redis_data('exchange_prices');
-    if(data) exchange_prices_list = JSON.parse(data);
-  }
-  if(Object.keys(bittrex_prices_list).length == 0){
-    var data = await redis.get_redis_data('bittrex_prices');
-    if(data) bittrex_prices_list = JSON.parse(data);
-  }
+  thecelo.log_out('===update_exchange_prices begin....===');
+  var exchange_prices_list = {};
+  var bittrex_prices_list = {};
+  var data = await redis.get_redis_data('exchange_prices');
+  if(data) exchange_prices_list = JSON.parse(data);
+  var data = await redis.get_redis_data('bittrex_prices');
+  if(data) bittrex_prices_list = JSON.parse(data);
   //
   try {
     var timestamp = new Date().getTime();
@@ -84,10 +74,15 @@ async function update_exchange_prices(){
     var cmd = 'celocli exchange:show';
     var rep = thecelo.execCmd(cmd);
     var lines = rep.toString().trim().split('\n');
-    var values = lines[0].trim().split(/\s+/);
+    let bIndex = 0;
+    if(lines[bIndex].indexOf('Warning')>=0){
+      bIndex = 1;
+    }
+    var values = lines[bIndex].trim().split(/\s+/);
     var exchange_prices = {};
     exchange_prices['CELO'] = (values[3]/values[0]).toFixed(4);
-    values = lines[1].trim().split(/\s+/);
+    bIndex = bIndex + 1;
+    values = lines[bIndex].trim().split(/\s+/);
     exchange_prices['cUSD'] = (values[3]/values[0]).toFixed(4);
     //
     exchange_prices_list[timestamp] = exchange_prices;
@@ -112,6 +107,20 @@ async function update_exchange_prices(){
         redis.redis_client.set('bittrex_prices',JSON.stringify(bittrex_prices_list));
       }
     })
+    //get pro.coinbase
+    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
+    //https://api.pro.coinbase.com/products/CGLD-USD/candles?start=2020-04-01&end=2020-09-22T18:21:00&granularity=86400
+    let d = new Date();
+    d.setHours(d.getHours(), d.getMinutes() - d.getTimezoneOffset());
+    let coinbase_day_url = 'https://api.pro.coinbase.com/products/CGLD-USD/candles?start=2020-04-01&end='+d.toISOString()+'&granularity=86400';
+    req.get({url: coinbase_day_url, encoding: 'utf8',headers: { 'User-Agent': 'Mozilla/5.0' }}, function (err, res, content) {
+      if(!err){
+        redis.redis_client.set('coinbase_day_prices',content);
+      }
+    })
+    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
     //get bittrex
     //https://bilaxy.com/api/v2/market/period?symbol=409&step=14400
     //candleInterval: string  MINUTE_1, MINUTE_5, HOUR_1, DAY_1
@@ -144,15 +153,15 @@ async function update_exchange_prices(){
           }
         });
         //
-        console.log(JSON.stringify(week_prices));
+        //console.log(JSON.stringify(week_prices));
         redis.redis_client.set('bittrex_week_prices',JSON.stringify(week_prices));
       }
     })
-    //
   }
   catch(err) {
       if (err) throw err;
   }
+  thecelo.log_out('===update_exchange_prices end....===');
 }
 //
 async function get_k_line(k_time){
@@ -201,12 +210,14 @@ async function get_k_line(k_time){
   			time_span = YMDhms[0]+'-'+YMDhms[1]+'-'+YMDhms[2];
   		}
   		//
-  		var open = celo_price;
-  		var close = celo_price;
-  		var high = celo_price;
-  		var low = celo_price;
-  		var volume = item.soldGold ? item.sellAmount : item.buyAmount;
-  		volume = parseFloat((volume/1e+18).toFixed(2));
+  		let open = celo_price;
+  		let close = celo_price;
+  		let high = celo_price;
+  		let low = celo_price;
+  		let volume = item.soldGold ? item.buyAmount : item.sellAmount;
+      volume = parseFloat((volume/1e+18).toFixed(2));
+      let base_volume = item.soldGold ? item.sellAmount : item.buyAmount;
+      base_volume = parseFloat((base_volume/1e+18).toFixed(2));
   		if(prices_data_rows[time_span]){
   			//
   			close = prices_data_rows[time_span].close;
@@ -215,43 +226,33 @@ async function get_k_line(k_time){
   			low = prices_data_rows[time_span].low;
   			if(celo_price <low) low = celo_price;
   			volume = parseFloat(prices_data_rows[time_span].volume) + volume;
+        base_volume = parseFloat(prices_data_rows[time_span].base_volume) + base_volume;
   		}
-  		prices_data_rows[time_span] = {open,high,low,close,volume};
+  		prices_data_rows[time_span] = {open,high,low,close,volume,base_volume};
     }
 	});
   redis.redis_client.set('celo_exchange_kline_'+k_time,JSON.stringify(prices_data_rows));
   return prices_data_rows;
 }
 ///////////////////////////////////////////////
-//////////////exchange_proxy///////////////////////
-///////////////////////////////////////////////
-setInterval(function(){update_exchange_prices();},60*1000);
 //
-let logs_blockNumber = 0;
-//
-const web3socket = new Web3(new Web3.providers.WebsocketProvider('http://192.168.28.109:8546'));
-var subscription = web3socket.eth.subscribe('logs', {
-  address: exchange_proxy,
-  topics: [null]
-}, function(error, result){
-    if (!error){
-        console.log(result);
-        if(result.blockNumber != logs_blockNumber){
-          logs_blockheigh = result.blockNumber;
-          get_exchange_history();
-        }
-      }
-})
-.on("connected", function(subscriptionId){
-    console.log(subscriptionId);
-})
-.on("data", function(log){
-    console.log('data:'+log);
-})
-.on("changed", function(log){
-});
-// unsubscribes the subscription
-subscription.unsubscribe(function(error, success){
-    if(success)
-        console.log('Successfully unsubscribed!');
-});
+function getBuyAndSellBuckets(contract){
+  let data = web3.eth.abi.encodeFunctionCall({
+      name: 'getBuyAndSellBuckets',
+      type: 'function',
+      inputs: [{
+          type: 'bool',
+          name: 'sellGold'
+      }]
+  }, [true]);
+  let result = thecelo.eth_rpc('eth_call','[{"to": "'+contract+'", "data":"'+data+'"}, "latest"]');
+  result = web3.eth.abi.decodeParameters(['uint256', 'uint256'], result);
+  let stableBucket = result[0];
+  let goldBucket = result[1];
+  let asks_bids = thecelo.execCmd('python exchange_bids_asks.py '+stableBucket+' '+goldBucket+'');
+  //
+  redis.redis_client.set('celo_exchange_bids_asks','{"stableBucket":'+stableBucket + ',"goldBucket":'+goldBucket +','+ asks_bids+'}');
+}
+module.exports = {
+    getBuyAndSellBuckets,get_exchange_history,update_exchange_prices
+}

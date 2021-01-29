@@ -173,19 +173,26 @@ function rankStr(num){
     return num+'th';
 }
 //
-function formatAddress(address,link=true,whole=false,cp=false,onlyicon=false) {
-  if(address.trim().length==0) return '';
-  var result ='';
-  if(whole){
-    result=address;
+function formatAddress(address,link=true,whole=false,cp=false,onlyicon=false,ishref=false) {
+  let title ='';
+  if(Array.isArray(address)) {
+    title = address[1];
+    address = address[0];
   }
-  else {
-    result=address.substr(0, 6) + '....' + address.substr(address.length-4, address.length)
+  if(address.trim().length == 0) return '';
+  if(title.length == 0){
+    if(whole){
+      title = address;
+    }
+    else {
+      title = address.substr(0, 6) + '....' + address.substr(address.length-4, address.length)
+    }
   }
-  if(onlyicon) result = '';
-  if(link)result+=' <i id="address-link-'+address+'" class="iconfont iconlink" style="cursor: pointer;"></i>';
-  if(cp)result+='  <i id="address-copy-'+address+'" class="iconfont iconcopy" style="cursor: pointer;"></i>'
-  return result;
+  if(onlyicon) title = '';
+  if(title.length > 0 && ishref) title = '<a target="_self" href="'+thecelohost+'/account/'+address+'">'+title+'</a>';
+  if(link)title+=' <i id="address-link-'+address+'" class="iconfont iconlink" style="cursor: pointer;"></i>'
+  if(cp)title+='  <i id="address-copy-'+address+'" class="iconfont iconcopy" style="cursor: pointer;"></i>'
+  return title;
 }
 //
 function addressOP(){
@@ -244,7 +251,8 @@ function addressOP(){
 //
 function hideBords(lanok=true){
   //
-  lanok?$('#timespan').html(get_lan('loading...')):$('#timespan').html('loading...');
+  //lanok?$('#timespan').html(get_lan('loading...')):$('#timespan').html('loading...');
+  $('#timespan').html('<img src="https://thecelo.com/images/EllipsisSpinner3.svg"/>');
   $('#timespan_body').show();
   //$('#body_content').hide();
   $('#footer_about').hide();
@@ -308,7 +316,11 @@ function trOP(flag,favstr){
         window.location.href = url;
       }
       else if(flag=='status'){
-        if($(this).attr("group").length > 0){
+        if($(this).attr("account").length > 0){
+          var url = thecelohost+'/account/'+$(this).attr("account");
+          window.location.href = url;
+        }
+        else if($(this).attr("group").length > 0){
           var url = thecelohost+'/group/'+$(this).attr("group");
           window.location.href = url;
         }
@@ -338,7 +350,7 @@ var sort_up ='<i class="iconfont iconarrow_up1 text-primary" style="font-size:20
 var sort_normal ='<i class="iconfont iconarrow_sort text-success" style="font-size:20px;"></i>';
 //
 var network = 'rc1';
-var blockscoutlink ='https://rc1-blockscout.celo-testnet.org/';
+var blockscoutlink ='https://explorer.celo.org/';
 if(window.location.host.indexOf('baklava')!=-1){
   network = 'baklava';
   blockscoutlink ='https://baklava-blockscout.celo-testnet.org/';
@@ -386,7 +398,7 @@ function switchTab(which,address=''){
   $('#body_content').empty();
   //$('#body_content').hide();
   //
-  var url = thecelohost+'/api/v0.1.js?method=html&filename=index_' + which;
+  var url = thecelohost+'/api/?method=html&filename=index_' + which;
   if(address.length>0)
     url +='&address='+address;
   $(function(){

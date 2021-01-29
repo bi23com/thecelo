@@ -1,14 +1,105 @@
 <!-- -->
 	<div class="card shadow-sm mb-4" style="position:relative;">
 		<div class="card-header text-center">
-				<strong set-lan="html:TheCelo sitemap"></strong>
+				<strong>Attestation Stats</strong>
 		</div>
+		<!--
 		<div id="sitemap_chart" style="width: 100%; height: 400px;"></div>
+		-->
+		<div id="attestation_chart" style="width: 100%; height: 250px;"></div>
 	</div>
 
 <script type="text/javascript">
-	google.charts.load('current', {packages:['wordtree']});
-  google.charts.setOnLoadCallback(drawChart);
+	var attestationCountTable;
+	var old_attestationCountTable_flg = 0;
+	function drawAttestationChart(flg) {
+		if(attestationCountTable){
+			if(flg==0){
+				var options = {lineWidth:3,tooltip: {isHtml: true},
+					series: {0: { color: options_googlechart.slices[0].color },1: { color: options_googlechart.slices[1].color }},
+					hAxis: {showTextEvery:attestationCountTable.getNumberOfRows()-1,textStyle : {color: '#6c757d',fontSize : 10}},
+					vAxis:{
+						title:'Attestation Stats',
+						titleTextStyle: {color: 'transparent'},
+						baselineColor:'transparent',
+						gridlines:{color:'transparent'},
+						viewWindowMode:'maximized'
+						//viewWindow: {min:attestationCountTable.getColumnRange(1).min+2,max:attestationCountTable.getColumnRange(1).max+2}
+					},
+					curveType: 'function',
+					legend: {position: 'in',alignment:'start',textStyle:{"color":"#6ccd86","fontSize":12}},
+					//legend: 'none',
+					chartArea:{left:20,top:0,bottom:50,right:20}
+				};
+				var chart = new google.visualization.LineChart(document.getElementById('attestation_chart'));
+				chart.draw(attestationCountTable, options);
+			}
+			else{
+				var table_html = '<div class="table-responsive"><table class="table table-fixed table-sm table-borderless"><thead><tr class="text-secondary">';
+				table_html += '<th scope="col" class="col-6 text-left">'+attestationCountTable.getColumnLabel(0)+'</th>';
+				table_html += '<th scope="col" class="col-6 text-right">'+attestationCountTable.getColumnLabel(1)+'</th>';
+      	table_html += '</tr></thead><tbody>';
+				//<tr>
+				var len = attestationCountTable.getNumberOfRows();
+				for (var i = len-1; i >=0; i--) {
+					table_html += '<tr class="text-success">';
+	      	table_html += '<td scope="row" class="col-6">'+attestationCountTable.getFormattedValue(i, 0)+'</td>';
+	      	table_html += '<td class="col-6 text-right">'+attestationCountTable.getFormattedValue(i, 1)+'</td>';
+	      	table_html += '</tr>';
+				}
+      	table_html += '</tbody></table></div>';
+				//
+				$('#attestation_chart').empty();
+				$('#attestation_chart').html(table_html);
+			}
+		}
+		old_attestationCountTable_flg = flg;
+	}
+	//
+	var list_li_class = '"list-group-item p-1 border-0 d-flex justify-content-between align-items-center"';
+	function get_attestation_count(){
+		$.ajax({
+				url: thecelohost+'/api/?method=attestationcount_epoch',
+				type: 'GET',
+				cache: false,
+				dataType:'text',
+				success:function(data,result){
+					let obj = JSON.parse(data);
+					let requestedTotal = 0;
+					let completedTotal = 0;
+					attestationCountTable = new google.visualization.DataTable();
+					attestationCountTable.addColumn('string', 'Date');
+					attestationCountTable.addColumn('number', 'Requested Total');
+					attestationCountTable.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
+					attestationCountTable.addColumn('number', 'Completed Total');
+					attestationCountTable.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
+					Object.keys(obj).forEach((epoch, i) => {
+						let item = obj[epoch];
+						let epoch_date = getEpochDate(epoch);
+						//
+						requestedTotal += item[0];
+						completedTotal += item[2];
+						let completedTotalRate = (100*(completedTotal/requestedTotal)).toFixed(2);
+						let completedRate = (100*(item[2]/item[0])).toFixed(2);
+						//
+						var tip = '<ul class="list-group p-1 text-secondary">';
+						tip += '<li class='+list_li_class+'><strong>'+epoch_date.substr(5,11)+'</strong><strong>'+rankStr(epoch)+' Epoch</strong></li>';
+						tip += '<li class='+list_li_class+'>Requested <span class="text-success">'+thousands(item[0])+'&nbsp;/&nbsp;'+thousands(requestedTotal)+'</span></li>';
+						tip += '<li class='+list_li_class+'>Completed <span class="text-success">'+thousands(item[2])+'&nbsp;/&nbsp;'+thousands(completedTotal)+'</span></li>';
+						tip += '<li class='+list_li_class+'>CompletedRate&nbsp;&nbsp;&nbsp; <span class="text-success">'+completedRate+'%&nbsp;/&nbsp;'+completedTotalRate+'%</li>';
+						//
+						attestationCountTable.addRow([epoch_date.substr(5,6),item[0],tip,item[2],tip]);
+						//
+					})
+					google.charts.setOnLoadCallback(function(){drawAttestationChart(old_attestationCountTable_flg);});
+				}
+			})
+		}
+	//
+	google.charts.setOnLoadCallback(function(){get_attestation_count();});
+	//google.charts.load('current', {packages:['wordtree']});
+	//google.charts.setOnLoadCallback(drawChart);
+
   function drawChart() {
 		var data = new google.visualization.arrayToDataTable([
           ['id', 'childLabel', 'parent', 'size', { role: 'style' }],
@@ -30,7 +121,6 @@
 					[11, 'eg. https://thecelo.com/group/sunxmldapp', 10, 5, 'blue'],
 					[12, 'https://thecelo.com/group/< domain >', 7, 5, 'blue'],
 					[13, 'eg. https://thecelo.com/group/0x07fa1874ad4655AD0C763a7876503509be11e29E', 12, 5, 'blue'],
-
 
           ]);
 

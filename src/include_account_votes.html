@@ -1,0 +1,104 @@
+<div class="card shadow-sm mt-3 p-3 text-secondary d-none" id="account_votes_panel">
+  <ul class="list-group">
+    <li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">
+      <strong>Total Votes : <span class="text-success" id="total_votes"></span></strong>
+      <div class="btn-group btn-group-toggle bg-light btn-group-sm" data-toggle="buttons" style="height:24px;width:60px;">
+        <label class="btn btn-sm btn-outline-success active pt-0" onclick="javascript:draw_account_voters_chart(0);return false;">
+          <input type="radio" data-toggle="button" checked hidden><i class="iconfont icontrending-up" style="font-size:16px;"></i>
+        </label>
+        <label class="btn btn-sm btn-outline-success pt-0" onclick="javascript:draw_account_voters_chart(1);return false;">
+          <input type="radio" data-toggle="button" hidden><i class='iconfont iconmore_line' style="font-size:12px;"></i>
+        </label>
+      </div>
+    </li>
+  </ul>
+  <div class="mt-3" id="chart-account-voters" style="height:140px"><p class="text-success m-3 text-center">Loading...</p></div>
+</div>
+<script type="text/javascript">
+  var old_account_voters_chart = 0
+  var voteAccounts = []
+  var total_votes = 0
+	function draw_account_voters_chart(flg) {
+		if(voteAccounts){
+			var data = google.visualization.arrayToDataTable(voteAccounts);
+			if(flg==0){
+				var element = document.getElementById('chart-account-voters');
+				var options = {pieHole: 0.0,
+          sliceVisibilityThreshold: 0,
+					annotations:options_googlechart.annotations,
+					fontSize:10,
+					legend: {position: 'right',alignment:'center',
+						textStyle:{"color":options_googlechart.slices[0].color,"fontSize":12},
+						pagingTextStyle: {color: '#616161'},
+						scrollArrows:{activeColor: options_googlechart.slices[0].color,inactiveColor:'#e0e0e0'}
+					},
+					slices: options_googlechart.slices,
+					backgroundColor:'transparent',
+					chartArea:{left:10,right:3,top:12,bottom:12,width:'100%',height:'100%'}
+				};
+				var chart = new google.visualization.PieChart(element);
+				var view = new google.visualization.DataView(data);
+				view.setColumns([0, 1]);
+				chart.draw(view, options);
+			}
+			else{
+				var table_html = '<div class="table-responsive h-100"><table class="table table-fixed table-sm table-borderless h-100"><thead><tr class="text-secondary">';
+				table_html += '<th scope="col" class="col-7 text-left">'+data.getColumnLabel(0)+'</th>';
+				table_html += '<th scope="col" class="col-3 text-right">'+data.getColumnLabel(1)+'</th>';
+				table_html += '<th scope="col" class="col-2 text-right">'+data.getColumnLabel(2)+'</th>';
+				table_html += '</tr></thead><tbody>';
+				//<tr>
+				var len = data.getNumberOfRows();
+				for (var i = len-1; i >=0; i--) {
+					table_html += '<tr class="text-success">';
+          var addr = data.getValue(i, 3)
+          var name = data.getValue(i, 4)
+					addr = formatAddress([addr,name],true,false,true,false,true)
+					table_html += '<td class="col-7">'+addr+'</td>'
+					table_html += '<td class="col-3 text-right">'+data.getFormattedValue(i, 1)+'</td>';
+					table_html += '<td class="col-2 text-right">'+data.getValue(i, 2)+'</td>';
+					table_html += '</tr>';
+				}
+				table_html += '</tbody></table></div>';
+				//
+				$('#chart-account-voters').empty();
+				$('#chart-account-voters').html(table_html);
+				addressOP();
+			}
+		}
+		old_account_voters_chart = flg;
+	}
+  //
+	$.ajax({
+		url: thecelohost+'/api/?method=voters&address='+address,type: 'GET',cache: false,dataType:'text',
+		success:function(data,result){
+      if(data.length>0){
+  			let voters = JSON.parse(data)
+        //
+        total_votes = 0
+        Object.keys(voters).forEach((key, i) => {
+            total_votes += voters[key].weight
+        })
+        //
+        voteAccounts = [];
+        voteAccounts.push(['Name/Address',"Weight","Percent","Address","Name"]);
+        Object.keys(voters).forEach((key, i) => {
+          if(voters[key].weight>0){
+            let weight = parseFloat((voters[key].weight/1e+18).toFixed(2))
+            let percent = (weight*100/(total_votes/1e+18)).toFixed(2)+'%'
+            let name = voters[key].name.length>0?voters[key].name:key;
+            voteAccounts.push([name,weight,percent,key,voters[key].name]);
+          }
+        });
+        voteAccounts = voteAccounts.sort(function(x,y){ return y[1]-x[1];});
+        google.charts.setOnLoadCallback(function(){draw_account_voters_chart(old_account_voters_chart);});
+      }
+      else{
+				$('#chart-account-voters').html('<p class="text-success m-3 text-center">Nothing</p>');
+      }
+      //
+      $('#total_votes').html(thousands((total_votes/1e+18).toFixed(2)));
+      $('#account_votes_panel').removeClass('d-none')
+    }
+  })
+</script>

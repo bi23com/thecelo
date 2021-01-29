@@ -1,0 +1,79 @@
+<div id="page_panel">
+	<div class="float-right">
+		<form class="form-inline" role="form">
+			<div class="form-group mb-4 mr-4 input-group-sm">
+				<input type="text" id="address" class="form-control text-secondary" size="50" placeholder="Address">
+			</div>
+			<button type="button" class="btn btn-success mb-4 btn-sm" id="btn_go"> GO </button>
+		</form>
+	</div>
+	<div class="card shadow-sm mb-4 table-responsive">
+		<table class="table table-condensed text-success mb-0 p-0" data-toggle="table">
+			<thead class="card-header">
+				<tr class="text-secondary">
+				<td>Txn Hash</td>
+				<td>Block</td>
+				<td>Age</td>
+				<td>Type</td>
+				<td>From</td>
+				<td>To</td>
+				<td>Value</td>
+				</tr>
+			</thead>
+			<tbody id="tx_logs" style="width: 100%; height: 100%;">
+				<tr><td colspan="7" class="text-center"><p class="text-success m-3">loading...</p></td></tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="w-100 mb-4 text-secondary"><ul class="pagination pagination-sm justify-content-end" id="pager"></div>
+</div>
+<script type="text/javascript">
+	//
+	get_logs(0);
+	//
+	function get_logs(page,address=""){
+		$('#tx_logs').html('<tr><td colspan="7" class="text-center"><p class="text-success m-3">loading...</p></td></tr>');
+		$('#pager').html('');
+		$.ajax({
+				url: thecelohost+'/api/?method=tx_logs&page='+page+'&address='+address,
+				type: 'GET',
+				cache: false,
+				dataType:'text',
+				success:function(data,result){
+					let obj = JSON.parse(data);
+					let items = obj.items;
+					let total = obj.totalCount;
+					let html = '';
+					items.forEach((item, i) => {
+						//
+						html += '<tr><td>'+formatAddress(item[3],true,false)+'</td>';
+						html += '<td>0x'+item[1].toString(16)+'</td>';
+						html += '<td>'+timeSpan(item[2]*1000,'','')+'</td>';
+						html += '<td>'+item[0]+'</td>';
+						html += '<td>'+formatAddress(item[4],true,false,true)+'</td>';
+						html += '<td>'+formatAddress(item[5],true,false,true)+'</td>';
+						html += '<td>'+item[6]+'</td><tr>'
+						//
+					});
+					//
+					$('#tx_logs').html(html);
+					addressOP();
+					$('#timespan').html('');
+					//
+					let pagerHtml = '';
+					if(page > 0){
+						pagerHtml += '<li class="page-item"><a class="page-link" style="cursor:pointer;" onclick=get_logs('+(page-1)+',"'+address+'")>Prev</a></li>';
+					}
+					page = page + 1;
+					pagerHtml += '<li class="page-item"><a class="page-link">'+page+'</a></li>';
+					if((page * 30) < total){
+						pagerHtml += '<li class="page-item"><a class="page-link" style="cursor:pointer;" onclick=get_logs('+page+',"'+address+'")>Next</a></li>';
+					}
+					$('#pager').html(pagerHtml);
+				}
+			});
+		};
+		$("#btn_go").click(function(){
+			get_logs(0,$('#address').val());
+		});
+</script>

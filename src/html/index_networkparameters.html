@@ -1,5 +1,5 @@
 <div class="card mb-3">
-		<div class="card-header text-center">
+		<div class="card-header text-center text-secondary">
 				<strong set-lan="html:Network Parameters"></strong>
 		</div>
 		<div class="card-body">
@@ -10,7 +10,7 @@
 	//
 	$(function(){
 			$.ajax({
-					url: thecelohost+'/api/v0.1.js?method=network_parameters',
+					url: thecelohost+'/api/?method=network_parameters',
 					type:'get',
 					dataType:'script',
 					success:function(data){

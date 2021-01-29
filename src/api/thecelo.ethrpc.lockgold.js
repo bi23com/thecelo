@@ -1,8 +1,6 @@
 const thecelo = require("./thecelo.utils.js");
 const redis = require("./thecelo.redis.js");
 const theceloconst = require("./thecelo.const.js");
-
-var lockgold_goldlocked_topic ='0x0f0f2fc5b4c987a49e1663ce2c2d65de12f3b701ff02b4d09461421e63e609e7';
 //
 var fromBlock = 'earliest';
 //
@@ -66,3 +64,77 @@ function election_vote(){
   redis.redis_client.set(theceloconst.voteds_key,JSON.stringify(voteds));
   redis.redis_client.set(theceloconst.voters_key,JSON.stringify(voters));
 }
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+const Web3 = require('web3')
+const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:8545'))
+var validatorsproxy_address = '0xaEb865bCa93DdC8F47b8e29F40C5399cE34d0C58';
+if('rc1' != thecelo.celo_network){
+  validatorsproxy_address = '0xcb3A2f0520edBb4Fc37Ecb646d06877E339bBC9D';
+}
+var lockedGold_proxy_address = '0x6cC083Aed9e3ebe302A6336dBC7c921C9f03349E';
+if('rc1' != thecelo.celo_network){
+  lockedGold_proxy_address = '0xF07406D8040fBD831e9983CA9cC278fBfFeB56bF';
+}
+//
+function signerToAccount(address){
+  var data = web3.eth.abi.encodeFunctionCall({
+      name: 'signerToAccount',
+      type: 'function',
+      inputs: [{type: 'address',name: 'account'}]
+  },[address]);
+  var result = thecelo.eth_rpc('eth_call','[{"to": "0x7d21685C17607338b313a7174bAb6620baD0aaB7", "data":"'+data+'"}, "latest"]');
+  var datatype = 'address';
+  result = web3.eth.abi.decodeParameter(datatype, result);
+  return result;
+}
+//
+function getAccountLockedGoldRequirement(address){
+  var data = web3.eth.abi.encodeFunctionCall({
+      name: 'getAccountLockedGoldRequirement',
+      type: 'function',
+      inputs: [{type: 'address',name: 'account'}]
+  },[address]);
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+validatorsproxy_address+'", "data":"'+data+'"}, "latest"]');
+  var datatype = 'uint256';
+  result = web3.eth.abi.decodeParameter(datatype, result);
+  return result;
+}
+//
+function getAccountTotalLockedGold(address){
+  var data = web3.eth.abi.encodeFunctionCall({
+      name: 'getAccountTotalLockedGold',
+      type: 'function',
+      inputs: [{type: 'address',name: 'account'}]
+  },[address]);
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+lockedGold_proxy_address+'", "data":"'+data+'"}, "latest"]');
+  var datatype = 'uint256';
+  result = web3.eth.abi.decodeParameter(datatype, result);
+  return result;
+}
+//
+function getAccountNonvotingLockedGold(address){
+  var data = web3.eth.abi.encodeFunctionCall({
+      name: 'getAccountNonvotingLockedGold',
+      type: 'function',
+      inputs: [{type: 'address',name: 'account'}]
+  },[address]);
+  var result = thecelo.eth_rpc('eth_call','[{"to": "'+lockedGold_proxy_address+'", "data":"'+data+'"}, "latest"]');
+  var datatype = 'uint256';
+  result = web3.eth.abi.decodeParameter(datatype, result);
+  return result;
+}
+//
+let transfer_method = web3.eth.abi.encodeEventSignature('Transfer(address,address,uint256)');
+console.log('transfer_method:'+transfer_method);
+  let address='0x07fa1874ad4655AD0C763a7876503509be11e29E';
+  let account = signerToAccount(address);
+  console.log(account);
+  let requirement = getAccountLockedGoldRequirement(address);
+  requirement = (requirement/1e+18).toFixed(2);
+  let totalLocked = getAccountTotalLockedGold(address);
+  totalLocked = (totalLocked/1e+18).toFixed(2);
+  let nonvotingLocked = getAccountNonvotingLockedGold(address);
+  nonvotingLocked = (nonvotingLocked/1e+18).toFixed(2);
+  console.log(JSON.stringify({requirement,totalLocked,nonvotingLocked}));

@@ -10,6 +10,13 @@ const celocli = require("./thecelo.celocli.js");
 // pm2 start thecelo.timer.js --name timer-update_locked_votes_supply_history -- update_locked_votes_supply_history --watch
 // pm2 start thecelo.timer.js --name timer-batch_get_metadataURL -- batch_get_metadataURL --watch
 // pm2 start thecelo.timer.js --name timer-getReserveInfo -- getReserveInfo --watch
+// pm2 start thecelo.timer.js --name timer-getAttestationLogs -- getAttestationLogs --watch
+// pm2 start v0.1.js  --watch
+// pm2 start get_all_addresses.js  --watch
+// pm2 start thecelo.ethrpc.exchange.js  --watch
+// pm2 start thecelo.ethrpc.governance.js --watch
+// pm2 start thecelo.ethrpc.validatorsproxy.js --watch
+// pm2 start thecelo.subscribe.js --watch
 if(process.argv.length<3){
   console.log('argvs lenth must be 3');
 }
@@ -18,15 +25,18 @@ else {
   if(type=='updateaccounts'){
     setInterval(function(){ethrpc.getAddresses(0x1000);},5*60*1000);
   }
-  else if(type=='election_vote'){
-    const ethrpc_election = require("./thecelo.ethrpc.election.js");
-    //
-    ethrpc_election.election_vote();
-    setInterval(function(){ethrpc_election.election_vote();},2*60*1000);
-    //
-    ethrpc_election.latest_epoch_election_votes();
-    setInterval(function(){ethrpc_election.latest_epoch_election_votes();},2*60*1000);
+  else if(type=='updateAllBalance'){
+    ethrpc.updateAllBalance();
   }
+  // else if(type=='election_vote'){
+  //   const ethrpc_election = require("./thecelo.ethrpc.election.js");
+  //   //
+  //   ethrpc_election.election_vote();
+  //   setInterval(function(){ethrpc_election.election_vote();},2*60*1000);
+  //   //
+  //   ethrpc_election.latest_epoch_election_votes();
+  //   setInterval(function(){ethrpc_election.latest_epoch_election_votes();},2*60*1000);
+  // }
   else if(type=='update_all_group_info'){
     //
     celocli.update_groups_balance();
@@ -61,4 +71,9 @@ else {
     ethrpc_reserve.getReserveInfo();
     setInterval(function(){ethrpc_reserve.getReserveInfo();},5*60*1000);
   }
+  // else if(type=='getAttestationLogs'){
+  //   const attestations = require("./thecelo.attestations.js");
+  //   attestations.getAttestationLogs();
+  //   setInterval(function(){attestations.getAttestationLogs();},5*60*1000);
+  // }
 }

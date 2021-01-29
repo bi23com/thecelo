@@ -16,21 +16,21 @@ var eth_dataset = {'cGLD_totalSupply':0,'cGLD_addresses':0,'cGLD_transfers':0,
                    'cUSD_totalSupply':0,'cUSD_addresses':0,'cUSD_transfers':0};
 var addressesList = {};
 //
-var accounts_height = 0x0;
+var blockHeight = 0x0;
 //
 function getAddresses(count,earliest = false){
   redis.redis_client.get(theceloconst.accounts_key, function(err, data) {
     if(!err && data){
       var obj = JSON.parse(data);
       if(!earliest)
-        accounts_height =  obj.blockHeight;
+        blockHeight =  obj.blockHeight;
       addressesList = obj.addresses;
       eth_dataset['cGLD_transfers'] = obj.cGLD_transfers;
       eth_dataset['cUSD_transfers'] = obj.cUSD_transfers;
     }
     //
-    thecelo.log_out('accounts_height:'+accounts_height);
-    var fromHeight = accounts_height;
+    thecelo.log_out('blockHeight:'+blockHeight);
+    var fromHeight = blockHeight;
     //
     var arr_addresses = {};
     delete addressesList['0xf823e8a4ba6adddb02e97b5b8886d18e41b2723e'];
@@ -64,15 +64,12 @@ function getAddresses(count,earliest = false){
     arr_addresses['0xf505be37703fcd9a1c7f8e8f5921699963cb1450'.toLowerCase()] = 0;
     addressesList['0xf505be37703fcd9a1c7f8e8f5921699963cb1450'.toLowerCase()] = [0,0,0];
     */
-    var updateAllBalance = false;
     //
     let lastestBlockNumber = thecelo.eth_rpc('eth_blockNumber','[]','');
     //
-    for(;accounts_height <= (fromHeight+count) && accounts_height <= lastestBlockNumber; accounts_height++){
+    for(;blockHeight <= (fromHeight+count) && blockHeight <= lastestBlockNumber; blockHeight++){
       //
-      if((parseInt(accounts_height) % 17280) == 5) updateAllBalance = true;
-      //
-      var block = thecelo.eth_rpc('eth_getBlockByNumber','["0x'+accounts_height.toString(16)+'",true]');
+      var block = thecelo.eth_rpc('eth_getBlockByNumber','["0x'+blockHeight.toString(16)+'",true]');
       //thecelo.log_out('block:'+block);
       if(block){
         var txs = block['transactions'];
@@ -99,19 +96,8 @@ function getAddresses(count,earliest = false){
     /////////////////////////////////////////////////////////
     //https://baklava-blockscout.celo-testnet.org/tokens/0x44f434e83a3179fcede28941b3a81953fb575217/token_transfers
     //
-    //updateAllBalance = true;
-    if(updateAllBalance){
-      thecelo.log_out('updateAllBalance begin....');
-      Object.keys(addressesList).forEach(function(address){
-
-        updateBalance(address);
-      });
-      thecelo.log_out('updateAllBalance end....');
-    }
-    //
     Object.keys(arr_addresses).forEach(function(address){
-      console.log(address);
-      updateBalance(address);
+      updateBalance(address,addressesList[address]);
       //
       redis.redis_client.publish("tx",address,function(err,result){
         thecelo.log_out('publish result:'+result);
@@ -130,12 +116,12 @@ function getAddresses(count,earliest = false){
     //
     eth_dataset['cGLD_addresses'] = counts['cgld'];
     //var result = thecelo.eth_rpc('eth_getLogs','[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.cgld_address+'","topics":["'+transfer_topic+'"]}]');
-    var result = thecelo.eth_rpc('eth_getLogs','[{"fromBlock": "0x'+fromHeight.toString(16)+'","toBlock":"0x'+accounts_height.toString(16)+'","address":"'+cgld_address+'","topics":["'+transfer_topic+'"]}]');
+    var result = thecelo.eth_rpc('eth_getLogs','[{"fromBlock": "0x'+fromHeight.toString(16)+'","toBlock":"0x'+blockHeight.toString(16)+'","address":"'+cgld_address+'","topics":["'+transfer_topic+'"]}]');
     eth_dataset['cGLD_transfers'] += result.length;
     //https://baklava-blockscout.celo-testnet.org/tokens/0x4b84c2ef94a274dbf83e2f1ec1608456c9b62d96/token_transfers
     eth_dataset['cUSD_addresses'] = counts['cusd'];
     //var result = thecelo.eth_rpc('eth_getLogs','[{"fromBlock": "earliest","toBlock":"latest","address":"'+theceloconst.cusd_address+'","topics":["'+transfer_topic+'"]}]');
-    var result = thecelo.eth_rpc('eth_getLogs','[{"fromBlock": "0x'+fromHeight.toString(16)+'","toBlock":"0x'+accounts_height.toString(16)+'","address":"'+cusd_address+'","topics":["'+transfer_topic+'"]}]');
+    var result = thecelo.eth_rpc('eth_getLogs','[{"fromBlock": "0x'+fromHeight.toString(16)+'","toBlock":"0x'+blockHeight.toString(16)+'","address":"'+cusd_address+'","topics":["'+transfer_topic+'"]}]');
     eth_dataset['cUSD_transfers'] += result.length;
     ////////////////////////////////////////////////
     //totalSupply
@@ -159,31 +145,51 @@ function getAddresses(count,earliest = false){
     ////////////////////////////////////////////////
     ////////////////////////////////////////////////
     //
-    var jsonString = '{"blockHeight":'+accounts_height+',"cGLD_transfers":'+eth_dataset['cGLD_transfers']+',"cUSD_transfers":'+eth_dataset['cUSD_transfers']+',"addresses":'+JSON.stringify(addressesList)+'}';
-    //thecelo.log_out(jsonString);
-    redis.redis_client.set(theceloconst.accounts_key,jsonString);
+    let cGLD_transfers = eth_dataset['cGLD_transfers'];
+    let cUSD_transfers = eth_dataset['cUSD_transfers'];
+    let addresses = addressesList;
+    redis.redis_client.set(theceloconst.accounts_key,JSON.stringify({blockHeight,cGLD_transfers,cUSD_transfers,addresses}));
   });
 }
 //
-function updateBalance(address){
+function updateBalance(address,obj){
   //
   var cgld = ethweb3.getAccountInfo(cgld_address,'balanceOf',address,'uint256');
   if(parseInt(cgld)>1e+50){
     cgld = 0;
   }
   var cusd = ethweb3.getAccountInfo(cusd_address,'balanceOf',address,'uint256');
-  addressesList[address][1] = cgld/(1e+18);
-  addressesList[address][2] = cusd/(1e+18);
+  obj[1] = cgld/(1e+18);
+  obj[2] = cusd/(1e+18);
   //name,lockedGold,nonVotingLockedGold,pendingWithdrawals,metadataURL
   var account = ethweb3.getAccount(address);
-  addressesList[address][3] = account.name;
-  addressesList[address][4] = account.lockedGold/(1e+18);
-  addressesList[address][5] = account.nonVotingLockedGold/(1e+18);
-  addressesList[address][6] = account.pendingWithdrawals/(1e+18);
-  addressesList[address][7] = account.metadataURL;
+  obj[3] = account.name;
+  obj[4] = account.lockedGold/(1e+18);
+  obj[5] = account.nonVotingLockedGold/(1e+18);
+  obj[6] = account.pendingWithdrawals/(1e+18);
+  obj[7] = account.metadataURL;
   //
+  console.log(address,JSON.stringify(obj));
   //if(addressesList['0xf823e8a4ba6adddb02e97b5b8886d18e41b2723e'])
   //delete addressesList['0xf823e8a4ba6adddb02e97b5b8886d18e41b2723e'];
+}
+//
+function updateAllBalance(){
+  redis.redis_client.get(theceloconst.accounts_key, function(err, data) {
+    if(!err && data){
+      thecelo.log_out('updateAllBalance begin....');
+      var obj = JSON.parse(data);
+      let addresses = obj.addresses;
+      Object.keys(addresses).forEach(function(address){
+        updateBalance(address,addresses[address]);
+      });
+      let blockHeight = obj.blockHeight;
+      let cGLD_transfers = obj.cGLD_transfers;
+      let cUSD_transfers = obj.cUSD_transfers;
+      redis.redis_client.set(theceloconst.accounts_key,JSON.stringify({blockHeight,cGLD_transfers,cUSD_transfers,addresses}));
+      thecelo.log_out('updateAllBalance end....');
+    }
+  })
 }
 //
 function getBalanceOf(address){
@@ -200,5 +206,6 @@ module.exports = {
        addressesList,
        getAddresses,
        getBalanceOf,
-       eth_dataset
+       eth_dataset,
+       updateAllBalance
      }

@@ -5,7 +5,7 @@
 					<div class="row">
 						<div class="col-3 text-center pt-4" >
 							<div id="logo" class="mb-3"><i class="iconfont icondefault-header text-success" style="font-size:80px;"></i></div>
-							<div class="btn btn-success btn-sm" style="padding:0px 4px 0px 4px;font-size:10px;" id="rank" set-lan="html:Rank"></div>
+							<div class="btn btn-success btn-sm" style="padding:0px 4px 0px 4px;font-size:10px;" id="rank"></div>
 						</div>
 						<div class="col-9 pt-4 mb-3">
 							<h4 clas="text-success" id='group_name' style="word-break:break-word;">&nbsp;</h4>
@@ -79,7 +79,7 @@
 									</div>
 								</li>
 							</ul>
-							<div id="chart-group-voters" style="height:140px"></div>
+							<div id="chart-group-voters" style="height:140px"><p class="text-success m-3 text-center">Loading...</p></div>
 						</div>
 						<div class="card shadow-sm mt-3 p-3">
 							<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">
@@ -94,15 +94,15 @@
 									</label>
 								</div>
 							</li>
-							<div id="area-group-voters" style="height:140px"></div>
+							<div id="area-group-voters" style="height:140px"><p class="text-success m-3 text-center">loading...</p></div>
 						</div>
 
 						<div class="card shadow-sm mt-3 p-3">
 							<ul class="list-group">
 								<li class="list-group-item p-1 border-0 d-flex justify-content-between align-items-center">
-									<span><strong set-lan="html:Votes Epoch Rewards APR"></strong>: <strong class="text-success" id="apr"></strong>
+									<span><strong set-lan="html:Votes Epoch Rewards ARY"></strong>: <strong class="text-success" id="apy"></strong>
 										<i class="iconfont iconcircle_help" style="cursor: pointer;"
-										 data-toggle="tooltip" data-placement="right" data-type="success" title="* APR = ((1+EpochRewards/ActivatedVotes)^365-1)×100"></i>
+										 data-toggle="tooltip" data-placement="right" data-type="success" title="* APY = ((1+EpochRewards/ActivatedVotes)^365-1)×100"></i>
 									</span>
 									<div class="btn-group btn-group-toggle bg-light btn-group-sm" data-toggle="buttons" style="height:24px;width:60px;">
 										<label class="btn btn-sm btn-outline-success active pt-0" onclick="javascript:group_rewards_chart(0);return false;">
@@ -114,11 +114,44 @@
 									</div>
 								</li>
 							</ul>
-							<div id="group-rewards-chart" style="height:140px"></div>
+							<div id="group-rewards-chart" style="height:140px"><p class="text-success m-3 text-center">loading...</p></div>
 						</div>
 				</div>
 	</div>
 	<div id="group_members"></div>
+
+	<ul class="nav nav-tabs mt-4" id="myTab" role="tablist">
+		<li class="nav-item">
+			<a class="nav-link active" id="Validator-tab" data-toggle="tab" href="#Validator" role="tab" aria-controls="Validator" aria-selected="true">
+				<strong class="text-secondary">Validator</strong></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" id="Proposals-tab" data-toggle="tab" href="#Proposals" role="tab" aria-controls="Proposals" aria-selected="false">
+				<strong class="text-secondary">Proposals</strong></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" id="Transfer-tab" data-toggle="tab" href="#Transfer" role="tab" aria-controls="Transfer" aria-selected="false">
+				<strong class="text-secondary">Transfer</strong></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" id="Exchange-tab" data-toggle="tab" href="#Exchange" role="tab" aria-controls="Exchange" aria-selected="false">
+				<strong class="text-secondary">Exchange</strong></a>
+		</li>
+	</ul>
+	<div class="tab-content rounded-bottom border border-top-0 mb-4 shadow-sm" id="myTabContent">
+		<div class="tab-pane fade show active" id="Validator" role="tabpanel" aria-labelledby="Validator-tab">
+			<div id="include_validator_logs"></div>
+		</div>
+		<div class="tab-pane fade" id="Transfer" role="tabpanel" aria-labelledby="Transfer-tab">
+			<div id="include_transfer_logs"></div>
+		</div>
+		<div class="tab-pane fade" id="Proposals" role="tabpanel" aria-labelledby="Proposals-tab">
+			<div id="include_governance_logs"></div>
+		</div>
+		<div class="tab-pane fade" id="Exchange" role="tabpanel" aria-labelledby="Exchange-tab">
+			<div id="include_exchange_logs"></div>
+		</div>
+	</div>
 <script type="text/javascript">
 	var votes=0;
 	var epoch_payments = {};
@@ -164,7 +197,7 @@
 			var data = google.visualization.arrayToDataTable(item_vote);
 			if(flg==0){
 				var element = document.getElementById('chart-group-voters');
-				var options = {pieHole: 0.2,
+				var options = {pieHole: 0.0,
 					width: '100%',
 					annotations:options_googlechart.annotations,
 					fontSize:10,
@@ -190,7 +223,7 @@
 				chart.draw(view, options);
 			}
 			else{
-				var table_html = '<div class="table-responsive"><table class="table table-fixed table-sm table-borderless"><thead><tr class="text-secondary">';
+				var table_html = '<div class="table-responsive h-100"><table class="table table-fixed table-sm table-borderless h-100"><thead><tr class="text-secondary">';
 				table_html += '<th scope="col" class="col-7 text-left">'+data.getColumnLabel(0)+'</th>';
 				table_html += '<th scope="col" class="col-3 text-right">'+data.getColumnLabel(1)+'</th>';
 				table_html += '<th scope="col" class="col-2 text-right">'+data.getColumnLabel(2)+'</th>';
@@ -199,7 +232,7 @@
 				var len = data.getNumberOfRows();
 				for (var i = len-1; i >=0; i--) {
 					table_html += '<tr class="text-success">';
-					var addr = formatAddress(data.getValue(i, 0),true,false,true);
+					var addr = formatAddress(data.getValue(i, 0),true,false,true,false,true);
 					table_html += '<td class="col-7">'+addr+'</td>';
 					table_html += '<td class="col-3 text-right">'+data.getFormattedValue(i, 1)+'</td>';
 					table_html += '<td class="col-2 text-right">'+data.getValue(i, 2)+'</td>';
@@ -240,7 +273,7 @@
 				chart.draw(view, options);
 			}
 			else{
-				var table_html = '<div class="table-responsive"><table class="table table-fixed table-sm table-borderless"><thead><tr class="text-secondary">';
+				var table_html = '<div class="table-responsive h-100"><table class="table table-fixed table-sm table-borderless h-100"><thead><tr class="text-secondary">';
 				table_html += '<th scope="col" class="col-2 text-left">'+area_votes_dataTable.getColumnLabel(0)+'</th>';
 				table_html += '<th scope="col" class="col-5 text-right">'+area_votes_dataTable.getColumnLabel(1)+'</th>';
 				table_html += '<th scope="col" class="col-5 text-right">'+area_votes_dataTable.getColumnLabel(2)+'</th>';
@@ -275,7 +308,7 @@
 					tooltip: {isHtml: true},
 					annotations:options_googlechart.annotations,
 	        hAxis: {showTextEvery:rewards_dataTable.getNumberOfRows()-1,textStyle : {color: '#6c757d',fontSize : 10}},
-					vAxis:{minValue: 0,maxValue: 7,title:'APR(%)',titleTextStyle: {color: '#6c757d',fontSize:10},textStyle : {color: '#6c757d',fontSize : 10},
+					vAxis:{minValue: 0,maxValue: 7,title:'APY(%)',titleTextStyle: {color: '#6c757d',fontSize:10},textStyle : {color: '#6c757d',fontSize : 10},
 						baselineColor:'transparent',gridlines:{color:'transparent'}},
 					legend: 'none',
 					pointSize: 0,
@@ -289,7 +322,7 @@
 				chart.draw(view, options);
 			}
 			else{
-				var table_html = '<div class="table-responsive"><table class="table table-fixed table-sm table-borderless"><thead><tr class="text-secondary">';
+				var table_html = '<div class="table-responsive h-100"><table class="table table-fixed table-sm table-borderless h-100"><thead><tr class="text-secondary">';
 				table_html += '<th scope="col" class="col-2 text-left">'+rewards_dataTable.getColumnLabel(0)+'</th>';
 				table_html += '<th scope="col" class="col-5 text-right">'+rewards_dataTable.getColumnLabel(1)+'</th>';
 				table_html += '<th scope="col" class="col-5 text-right">'+rewards_dataTable.getColumnLabel(2)+'</th>';
@@ -336,13 +369,13 @@
 							textStyle:{"color":"#6ccd86","fontSize":12}},
 						series: options_googlechart.slices,
 						backgroundColor:'transparent',
-						chartArea:{left:20,right:20,top:10,bottom:50,height:'150px'}
+						chartArea:{left:20,right:20,top:10,bottom:50,height:'100%'}
 					};
 					var chart = new google.visualization.ColumnChart(document.getElementById('chart-validator-payment-'+validator));
 					chart.draw(datatable, options);
 				}
 				else{
-					var table_html = '<div class="table-responsive"><table class="table table-fixed table-sm table-borderless"><thead><tr class="text-secondary">';
+					var table_html = '<div class="table-responsive h-100"><table class="table table-fixed table-sm table-borderless h-100"><thead><tr class="text-secondary">';
 					table_html += '<th scope="col" class="col-2 text-left">'+datatable.getColumnLabel(0)+'</th>';
 					table_html += '<th scope="col" class="col-5 text-right">'+datatable.getColumnLabel(1)+'</th>';
 					table_html += '<th scope="col" class="col-5 text-right">'+datatable.getColumnLabel(2)+'</th>';
@@ -379,7 +412,7 @@
 	//
 	function load_voteds(address){
 		$(function(){
-			var url = thecelohost+'/api/v0.1.js?method=voteds&address='+address;
+			var url = thecelohost+'/api/?method=voteds&address='+address;
 			$.ajax({
 					url:url,
 					type: 'GET',cache: false,dataType:'text',
@@ -408,14 +441,14 @@
 							weights += weight;
 							blocks[vote[2]] = weights;
 							//
-							total_activated_votes += parseInt(vote[3])+parseInt(vote[4]);
+							total_activated_votes += weight;//parseInt(vote[3]) + parseInt(vote[4]);
 							epoch_activated_votes[Math.ceil(vote[2]/17280)] = total_activated_votes;
 						}
 						//
-						Object.keys(voters).forEach((key, i) => {
-							if(voters[key]>0){
-								var percent = (voters[key]*100/(total_activated_votes/1e+18)).toFixed(2)+'%';
-								item_vote.push([key,voters[key],percent]);
+						Object.keys(voters).forEach((address, i) => {
+							if(voters[address]>0){
+								var percent = (voters[address]*100/total_activated_votes).toFixed(2)+'%';
+								item_vote.push([address,voters[address],percent]);
 							}
 						});
 						item_vote = item_vote.sort(function(x,y){ return y[1]-x[1];});
@@ -476,7 +509,7 @@
 	function load_info(address){
 		//
 		$.ajax({
-			url:thecelohost+'/api/v0.1.js?method=metadata&address='+address,
+			url:thecelohost+'/api/?method=metadata&address='+address,
 			type: 'GET',cache: false,
 			dataType:'text',
 			success:function(data){
@@ -521,7 +554,7 @@
 		})
 		//
 		$.ajax({
-			url:thecelohost+'/api/v0.1.js?method=get_group_epoch_votes&address='+address,
+			url:thecelohost+'/api/?method=get_group_epoch_votes&address='+address,
 			type: 'GET',cache: false,
 			dataType:'text',
 			success:function(data){
@@ -554,17 +587,17 @@
 				vote_html+='</div>';
 				$('#vote_status').html(vote_html);
 				//////////////////////////////
-				var url = thecelohost+'/api/v0.1.js?method=epochRewardsDistributedToVoters&address='+address;
+				var url = thecelohost+'/api/?method=epochRewardsDistributedToVoters&address='+address;
 				$.ajax({url:url,type: 'GET',dataType:'text',cache: false,
 						success:function(data){
 							rewards_dataTable = new google.visualization.DataTable();
 							rewards_dataTable.addColumn('string', get_lan('Epoch'));
-							rewards_dataTable.addColumn('number', get_lan('APR'));
+							rewards_dataTable.addColumn('number', get_lan('APY'));
 							rewards_dataTable.addColumn('number', get_lan('Rewards'));
 							rewards_dataTable.addColumn({type: 'string', role: 'tooltip', p: {html:true}});
 							//
 							var obj = JSON.parse(data);
-							var apr = 0;
+							var apy = 0;
 							var activated_votes = 0;
 							var epoch = 1;
 							for(;epoch<obj.epoch;epoch++){
@@ -573,21 +606,21 @@
 									rewards = obj.result[epoch]/1e+18;
 								var activated_votes = group_epoch_votes[epoch].activeVotesForGroup/1e+18;
 								if(activated_votes>0){
-									//apr = (rewards*365*100)/activated_votes;
-									apr = (Math.pow(1+rewards/activated_votes,365)-1)*100;
+									//apy = (rewards*365*100)/activated_votes;
+									apy = (Math.pow(1+rewards/activated_votes,365)-1)*100;
 								}
-								apr = Number(apr.toFixed(3));
+								apy = Number(apy.toFixed(3));
 								//
 								if(epoch>=27){
 									var tip = '<ul class="list-group p-1 text-secondary"><strong>'+get_lan('Epoch')+': '+epoch+'th</strong>';
-									tip += '<li class='+list_li_class+'>'+get_lan('APR')+': <span class="text-success">'+apr+'%</span></li>';
+									tip += '<li class='+list_li_class+'>'+get_lan('APY')+': <span class="text-success">'+apy+'%</span></li>';
 									tip += '<li class='+list_li_class+'>'+get_lan('ActivatedVotes')+':&nbsp;&nbsp;<span class="text-success">'+activated_votes.toFixed(2)+'</span></li>';
 									tip += '<li class='+list_li_class+'><span>'+get_lan('Rewards')+':&nbsp;&nbsp;</span> <span class="text-success">'+rewards.toFixed(2)+'&nbsp;CELO</span></li></ul>';
-									rewards_dataTable.addRow([rankStr(epoch)+' '+get_lan('Epoch'),apr,rewards,tip]);
+									rewards_dataTable.addRow([rankStr(epoch)+' '+get_lan('Epoch'),apy,rewards,tip]);
 								}
 							}
 							//
-							$('#apr').html(apr+'%');
+							$('#apy').html(apy+'%');
 							//
 							google.charts.setOnLoadCallback(function(){group_rewards_chart(old_group_rewards_chart);});
 						}
@@ -597,7 +630,7 @@
 		});
 		//
 		$(function(){
-			var url = thecelohost+'/api/v0.1.js?method=user&address='+address;
+			var url = thecelohost+'/api/?method=user&address='+address;
 			$.ajax({url:url,type: 'GET',cache: false,dataType:'text',
 					success:function(data){
 						var links_html='';
@@ -654,17 +687,16 @@
 		};
 	//
 	function load_more(address){
-    var url = thecelohost+'/api/v0.1.js?method=group&address='+address;
+    var url = thecelohost+'/api/?method=group&address='+address;
     $.ajax({url:url,type: 'GET',dataType:'text',cache: false,traditional: true,success:function(data){
         var obj = JSON.parse(data);
 				var rank = obj.rank;
 				var group = obj.group;
 				votes = formatAmount(group[2]);
 				$('#total_votes').html(votes);
-
 				$('#rank').html('Rank: <strong>'+rank+'</strong>');
 				$('#group_name').html(group[1]+'&nbsp;');
-				$('#group_address').html(formatAddress(group[0],true,true,true));
+				$('#group_address').html(formatAddress(group[0],true,true,true,false,true));
 				 $('#Commission').html((group[7]*100).toFixed(2)+'%');
 				 if(parseInt(group[9])==0){
 					 $('#nextCommission').html('-');
@@ -701,7 +733,7 @@
            }
 
            members_html += '<div class="col-md-4 pl-3"><i class="text-success iconfont '+fas+'"></i> <strong>'+member[0]+'</strong>';
-					 members_html += '<span class="text-success float-right">'+formatAddress(member[1],true,false,true)+'</span>';
+					 members_html += '<span class="text-success float-right">'+formatAddress(member[1],true,false,true,false,true)+'</span>';
            members_html += '<ul class="list-group pl-3 pt-3">';
            members_html += '<li '+li_class+'>'+get_lan('Attestations fulfilled/requested')+'<span class="text-success">'+member[14]+'/'+member[15]+'</span></li>';
            members_html += '<li '+li_class+'>'+get_lan('Score')+'<span class="text-success">'+((member[2]*100).toFixed(2))+'%</span></li>';
@@ -711,7 +743,7 @@
            members_html += '<li '+li_class+'>'+get_lan('Locked CELO')+'<span class="text-success">'+formatAmount(member[7])+'</span></li>';
            members_html += '<li '+li_class+'>'+get_lan('Available cUSD')+'<span class="text-success">'+formatAmount(member[8])+'</span></li>';
            members_html += '<li '+li_class+'>'+get_lan('Pending CELO')+'<span class="text-success">'+formatAmount(member[9])+'</span></li>';
-					 var total = Number.parseFloat(member[3])+Number.parseFloat(member[6])+Number.parseFloat(member[7]);
+					 var total = Number.parseFloat(member[6])+Number.parseFloat(member[7]);
 					 members_html += '<li '+li_class+'>'+get_lan('Total CELO')+'<span class="text-success">'+formatAmount(total)+'</span></li>';
 
            members_html += '<li '+li_class+'>'+get_lan('Elected');
@@ -737,7 +769,7 @@
 					 members_html += '</div></li>';
 					 members_html += '</div>';
 					 //
-					 members_html += '<div id="chart-validator-payment-'+member[1]+'" style="height:200px;"></div>';
+					 members_html += '<div id="chart-validator-payment-'+member[1]+'" style="height:220px;"><p class="text-success m-3 text-center">loading...</p></div>';
 					 members_html += '</div>';
 					 //
            members_html += '</div></div>';
@@ -748,7 +780,7 @@
 				 //
 				 members.forEach(function(member) {
 					var validator = member[1];
-	 	      var url = thecelohost+'/api/v0.1.js?method=validatorEpochPaymentDistributed&group='+address+'&validator='+validator;
+	 	      var url = thecelohost+'/api/?method=validatorEpochPaymentDistributed&group=&validator='+validator;
 	 	      $.ajax({url:url,type: 'GET',dataType:'text',cache: false,traditional: true,success:function(data){
 	 						var obj = JSON.parse(data);
 							var dataTable = [];
@@ -777,6 +809,25 @@
 		if(!address||address.trim().length==0)
 			alert('Address is empty!');
 		else{
+			//
+			var randnum = Math.round(Math.random()*10000);
+			$("#include_validator_logs").load("/include_validator_logs.html?"+randnum);
+			$('.nav-tabs a').on('shown.bs.tab', function(event){
+				var tab = $(event.target).text().trim();         // active tab
+				var pretab = $(event.relatedTarget).text();  // previous tab
+				if(tab=='Transfer')
+					$("#include_transfer_logs").load("/include_transfer_logs.html?"+randnum);
+				else if(tab=='Proposals')
+					$("#include_governance_logs").load("/include_governance_logs.html?"+randnum);
+				else if(tab=='Validator')
+					$("#include_validator_logs").load("/include_validator_logs.html?"+randnum);
+				else if(tab=='Exchange')
+					$("#include_exchange_logs").load("/include_exchange_logs.html?"+randnum);
+			});
+			//$("#include_transfer_logs").load("/include_transfer_logs.html?"+Math.round(Math.random()*10000));
+			//$("#include_governance_logs").load("/include_governance_logs.html?"+Math.round(Math.random()*10000));
+			//$("#include_validator_logs").load("/include_validator_logs.html?"+Math.round(Math.random()*10000));
+			//
 			load_more(address);
 			load_info(address);
 			load_voteds(address);
@@ -796,7 +847,7 @@
 				goto_load();
 			}
 			else if(address&&address.length>0){
-				var url = thecelohost+'/api/v0.1.js?method=find_address&name='+encodeURI(address);
+				var url = thecelohost+'/api/?method=find_address&name='+encodeURI(address);
 				console.info("url:"+url);
 		    $.ajax({url:url,type: 'GET',dataType:'text',cache: false,traditional: true,success:function(data){
 					console.info("data:"+data);
@@ -808,5 +859,4 @@
 			}
 		}
 	}
-
 </script>

@@ -1,0 +1,104 @@
+  <div class="row p-3 justify-content-center">
+    <div class="p-0 mr-3 text-secondary"><strong>Epoch Balance</strong></div>
+    <div class="btn-group btn-group-toggle bg-light btn-group-sm" data-toggle="buttons" style="height:24px;width:60px;">
+      <button class="btn btn-sm btn-outline-success pt-0 active" onclick="javascript:drawEpochBalanceChart(0);return false;">
+        <input type="radio" data-toggle="button" checked hidden><i class="iconfont icontrending-up" style="font-size:16px;"></i>
+      </button>
+      <button class="btn btn-sm btn-outline-success pt-0" onclick="javascript:drawEpochBalanceChart(1);return false;">
+        <input type="radio" data-toggle="button" hidden><i class='iconfont iconmore_line p-0' style="font-size:12px;"></i>
+      </button>
+    </div>
+  </div>
+  <div id="chart_epoch_balance" style="width: 100%; height: 180px;"></div>
+<script type="text/javascript">
+  //
+	var epochBalanceTable ;
+	var old_epochBalanceTable_flg = 0;
+	function drawEpochBalanceChart(flg) {
+		if(epochBalanceTable){
+			if(flg==0){
+				var options = {lineWidth:3,tooltip: {isHtml: true},
+					series: {0: { color: options_googlechart.slices[1].color },1: { color: options_googlechart.slices[0].color }},
+					hAxis: {showTextEvery:epochBalanceTable.getNumberOfRows()-1,textStyle : {color: '#6c757d',fontSize : 10}},
+					vAxis:{
+						title:'CELO',
+						titleTextStyle: {color: 'transparent',fontSize:8},
+						baselineColor:'transparent',
+						gridlines:{color:'transparent'},
+            textStyle : {color: '#6c757d',fontSize : 10},
+						//viewWindow: {min:0}
+						viewWindowMode:'maximized'
+					},
+					curveType: 'function',
+					legend: {position: 'bottom',alignment:'center',textStyle:{"color":"#6ccd86","fontSize":12}},
+					chartArea:{left:60,top:10,bottom:60,right:20,width:"100%",height:"100%"}
+				};
+				var chart = new google.visualization.LineChart(document.getElementById('chart_epoch_balance'));
+				chart.draw(epochBalanceTable, options);
+			}
+			else{
+				var table_html = '<div class="table-responsive h-100"><table class="table table-fixed table-sm table-borderless h-100"><thead><tr class="text-secondary">';
+				table_html += '<th scope="col" class="col-2 text-left">'+epochBalanceTable.getColumnLabel(0)+'</th>';
+				table_html += '<th scope="col" class="col-5 text-right">'+epochBalanceTable.getColumnLabel(1)+'</th>';
+				table_html += '<th scope="col" class="col-5 text-right">'+epochBalanceTable.getColumnLabel(3)+'</th>';
+      	table_html += '</tr></thead><tbody>';
+				//<tr>
+				var len = epochBalanceTable.getNumberOfRows();
+				for (var i = len-1; i >=0; i--) {
+					table_html += '<tr class="text-success">';
+	      	table_html += '<td class="col-2">'+epochBalanceTable.getFormattedValue(i, 0)+'</td>';
+	      	table_html += '<td class="col-5 text-right">'+epochBalanceTable.getFormattedValue(i, 1)+'</td>';
+	      	table_html += '<td class="col-5 text-right">'+epochBalanceTable.getFormattedValue(i, 3)+'</td>';
+	      	table_html += '</tr>';
+				}
+      	table_html += '</tbody></table></div>';
+				//
+				$('#chart_epoch_balance').empty();
+				$('#chart_epoch_balance').html(table_html);
+			}
+		}
+		old_epochBalanceTable_flg = flg;
+	}
+  //
+	function getEpochBalance(){
+    $('#chart_epoch_balance').html('<p class="text-success text-center mt-4">Loading</p>');
+		$.ajax({
+				url: thecelohost+'/api/?method=account_epoch_balance&address='+address,type: 'GET',cache: false,dataType:'text',
+				success:function(data,result){
+          let history = []
+					let balances = JSON.parse(data)
+					Object.keys(balances).forEach((epoch, i) => {
+					  let balance = balances[epoch]
+            let totalLockedGold = balance[0]
+            let nonvotingLockedGold = balance[1]
+            let pendingWithdrawals = balance[2]
+            let totalCelo = balance[0] + balance[1] + balance[2] + balance[3]
+            let celo = balance[3]
+            let cusd = balance[4]
+            let epoch_date = getEpochDate(epoch)
+            //
+            let tip = '<ul class="list-group p-1 text-secondary">'
+              tip += '<li class='+list_li_class+'><strong>'+rankStr(epoch)+' Epoch</strong><strong>'+epoch_date.substr(5,11)+'</strong></li>'
+            tip += '<li class='+list_li_class+'>Total CELO <span class="text-success">'+thousands(totalCelo.toFixed(2))+'</span></li>'
+            tip += '<li class='+list_li_class+'>Total Locked CELO <span class="text-success">'+thousands(totalLockedGold.toFixed(2))+'</span></li>'
+            tip += '<li class='+list_li_class+'>NonVoting Locked CELO <span class="text-success">'+thousands(nonvotingLockedGold.toFixed(2))+'</span></li>'
+            tip += '<li class='+list_li_class+'>Pending Withdrawals CELO <span class="text-success">'+thousands(pendingWithdrawals.toFixed(2))+'</span></li>'
+            tip += '<li class='+list_li_class+'>Available CELO <span class="text-success">'+thousands(celo.toFixed(2))+'</span></li>'
+            tip += '<li class='+list_li_class+'>Available cUSD <span class="text-success">'+thousands(cusd.toFixed(2))+'</span></li></ul>'
+            //
+            history.push([rankStr(epoch),totalCelo,tip,cusd,tip])
+  				})
+          //
+          epochBalanceTable = new google.visualization.DataTable()
+          epochBalanceTable.addColumn('string', 'Epoch')
+          epochBalanceTable.addColumn('number', 'CELO')
+          epochBalanceTable.addColumn({type: 'string', role: 'tooltip', p: {html:true}})
+          epochBalanceTable.addColumn('number', 'cUSD')
+          epochBalanceTable.addColumn({type: 'string', role: 'tooltip', p: {html:true}})
+          epochBalanceTable.addRows(history)
+          google.charts.setOnLoadCallback(function(){drawEpochBalanceChart(old_epochBalanceTable_flg);})
+  			}
+  		})
+  }
+  getEpochBalance();
+</script>

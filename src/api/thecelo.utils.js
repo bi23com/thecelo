@@ -1,21 +1,28 @@
 let
+  os = require('os');
+  hostName = os.hostname();
+  console.log('hostName:'+hostName);
+  //
   util = require('util');
   execSync = require('child_process').execSync;
   //
-  var celo_network = 'rc1';//baklava
-  var os = require('os');
-  var hostName = os.hostname();
-  console.log('hostName:'+hostName);
+  celo_network = 'rc1';//baklava
+  ws_host ='http://192.168.28.109:8546';//Mainnet
+  http_host = 'http://127.0.0.1:8545';
   if('blockchain-server3'==hostName){
     celo_network = 'baklava';
+    ws_host ='http://192.168.88.182:8546';//baklava
   }
   //
-function containsKey(object, key) {
-  return Object.keys(object).find(k => k.toLowerCase() === key.toLowerCase());
-}
-function containsValue(object, value) {
-  return object.find(k => k.toLowerCase() === value.toLowerCase());
-}
+  function findKey(obj, value) {
+    return Object.keys(obj).find(k => obj[k].toLowerCase() === value.toLowerCase())
+  }
+  function containsKey(object, key) {
+    return Object.keys(object).find(k => k.toLowerCase() === key.toLowerCase());
+  }
+  function containsValue(object, value) {
+    return object.find(k => k.toLowerCase() === value.toLowerCase());
+  }
 //
 let get_http_data = function (req,url){
   return new Promise(function(resolve, reject){
@@ -194,9 +201,21 @@ function getDateFromDay(dayDate , day){
   date.setTime(dayDate.getTime() + day * 24 * 60 * 60 * 1000);
   return date;
 }
+function thousands(num){
+  var str = num.toString();
+  var reg = str.indexOf(".") > -1 ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g;
+  return str.replace(reg,"$1,");
+}
+
+function isValidEmail(email){
+  const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return regex.test(email.toLowerCase())
+}
+
 module.exports = {
-      celo_network,containsKey,containsValue,
-      add_keybase,execCmd,eth_rpc,log_out,formatDate,getBool,formatHHMM,formatDuraton,formatYMDhms,
-      saveImage,get_http_data,
-      getWeekInYear
-     }
+  findKey,
+  celo_network,containsKey,containsValue,ws_host,http_host,
+  add_keybase,execCmd,eth_rpc,log_out,formatDate,getBool,formatHHMM,formatDuraton,formatYMDhms,
+  saveImage,get_http_data,
+  getWeekInYear,thousands,isValidEmail
+}

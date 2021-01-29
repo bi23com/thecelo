@@ -165,11 +165,17 @@
 			});
 		//
 		var cumulative_votes = 0;
+		let split_line = '';
 		keys.forEach(function(address){
 			//address 0:name 1:votes,2:Capacity, 3:ElectedCount 4:MemberCount 5:eligible 6:commission,7:logo
 	  		var group = groups[address];
 	      num ++;
 	      //
+				if(group[3]==0&&split_line.length==0){
+					split_line = '<tr><td colspan="8" class="card-header border-bottom-0 text-center text-secondary">Groups without members are below!</td></tr>';
+					groups_html += split_line;
+				}
+				//
 	      var html = '<tr id="groups-line-'+address+'" domain="'+group[9]+'" keybase="'+group[10]+'"';
 				html += group[3]==0?'':' class="text-success" ';
 				html += ' style="cursor: pointer;'+(group[3]==0?' color:grey;"':'')+'">';
@@ -251,7 +257,7 @@
 	var groups;
 	$(function(){
 			$.ajax({
-					url: thecelohost+'/api/v0.1.js?method=groups',
+					url: thecelohost+'/api/?method=groups',
 					type: 'GET',dataType:'text',cache: false,
 					success:function(data){
 						var obj = JSON.parse(data);
@@ -296,7 +302,7 @@
 						$('#body_content').show();
 						$('#footer_about').show();
 						//////////////////////////////////////////////////////////
-						var url = thecelohost+'/api/v0.1.js?method=latest_epoch_election_votes';
+						var url = thecelohost+'/api/?method=latest_epoch_election_votes';
 						$.ajax({url:url,type: 'GET',dataType:'text',cache: false,
 								success:function(data){
 									let obj = JSON.parse(data);

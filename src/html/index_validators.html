@@ -141,7 +141,7 @@
 				if(flg=='uptime')if(pre_value != validator[5]){status_num ++;pre_value = validator[5]}
 				*/
 				//
-	      var html = '<tr style="cursor: pointer;" class="text-success" id="status-line-'+address+'" group="'+validator[11]+'">';
+	      var html = '<tr style="cursor: pointer;" class="text-success" id="status-line-'+address+'" account="'+address+'">';
 	      //
 	      var i_class = 'iconfont iconicon_rank_star';
 	      if(validatorfavs.indexOf(address)>-1){
@@ -168,10 +168,10 @@
 				}
 				html += '>'
 				if(validator[0].trim().length==0)
-	      	html += formatAddress(address,true,false,true);
+	      	html += formatAddress(address,true,false,true,false,true);
 				else{
 					html += '<span>' + validator[0] + '</span>';
-					html += formatAddress(address,true,false,true,true);
+					html += formatAddress(address,true,false,true,true,false,true);
 				}
 				html += '</td>';
 	      //leader_html += '<td><div class="d-none d-md-inline-block">' + validator[1] + '</div></td>';
@@ -212,7 +212,7 @@
 	var validators;
 	$(function(){
 		$.ajax({
-				url: thecelohost+'/api/v0.1.js?method=validators',
+				url: thecelohost+'/api/?method=validators',
 				type: 'GET',
 				dataType:'text',
 				success:function(data){

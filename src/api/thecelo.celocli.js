@@ -4,7 +4,9 @@ const theceloconst = require("./thecelo.const.js");
 const fs = require('fs');
 const req = require('request');
 const weblogopath = '/thecelocom/logos/';
-var attestations = require("./thecelo.attestations.js");
+const attestations = require("./thecelo.attestations.js");
+const ethweb3 = require("./thecelo.ethweb3.js");
+const ethrpc = require("./thecelo.ethrpc.js");
 //
 function getSubscribeData() {
     //
@@ -54,7 +56,7 @@ function get_validators_score(){
   let lines = rep.toString().trim().split('\n');
   lines.forEach( function  (line) {
     if(line.indexOf('0x')==0){
-      let values = line.trim().split(/\s+/);//blank or blans
+      let values = line.trim().split(/\s+/);//blank or blanks
       let address = values[0];
       let score = values[values.length-4];
       let afiliation = values[values.length-5];
@@ -89,31 +91,26 @@ function update_groups_balance(){
     if(line.indexOf('0x')==0){
       let values = line.trim().split(/\s+/);//blank or blans
       let address = values[0];
-      groups_balance[address] = [];
+      var balance = account_balance(address);
+      console.log({address,balance});
+      groups_balance[address] = balance;
     }
   });
-  //
-  Object.keys(groups_balance).forEach((address, i) => {
-    var balance = account_balance(address);
-    groups_balance[address] = balance;
-  });
-  console.log(JSON.stringify(groups_balance));
+  //console.log(JSON.stringify(groups_balance));
   redis.redis_client.set('groups_balance',JSON.stringify(groups_balance));
   thecelo.log_out('update_groups_balance end...');
 }
 //
 function account_balance (address) {
-    var balances = {'usd':0,'gold':0,'lockedGold':0,'pending':0};
-    var cmd = 'celocli account:balance '+address;
-    var rep = thecelo.execCmd(cmd);
-    //console.log(rep.toString());
-    var lines = rep.toString().trim().split('\n');
-    //
-    balances['gold'] = parseFloat(lines[1].trim().replace('gold: ',''));
-    balances['lockedGold'] = parseFloat(lines[2].trim().replace('lockedGold: ',''));
-    balances['usd'] = parseFloat(lines[3].trim().replace('usd: ',''));
-    balances['pending'] = parseFloat(lines[4].trim().replace('pending: ',''));
-    return balances;
+    var result = ethweb3.getAccount(address);
+    let lockedGold = result.lockedGold;
+    let pending = result.pendingWithdrawals;
+    let nonVotingLockedGold = result.nonVotingLockedGold;
+
+    var balances = ethrpc.getBalanceOf(address);
+    let gold = balances.cgld;
+    let usd = balances.cusd;
+    return {lockedGold,pending,nonVotingLockedGold,gold,usd};
 }
 //celocli validatorgroup:list
 async function celocli_validatorgroup_list(groups) {
@@ -215,8 +212,6 @@ function celocli_election_current (groups,election_current) {
   }
 //celocli validator:status
 async function update_validator_status_all(){
-  //
-  attestations.getAttestationLogs();
   //address,name,votes,members
   let validators_score = get_validators_score();
   //
@@ -234,10 +229,15 @@ async function update_validator_status_all(){
   var validators = {};
   try {
     //
+    let attestationInfos = await redis.get_redis_data('attestation_infos');
+    attestationInfos = JSON.parse(attestationInfos);
+    //
     var cmd = 'celocli validator:status --all';
     var rep = thecelo.execCmd(cmd,3,10,false);//cmd,loop = 3,seconds = 10,print=true
+    console.log(rep.toString());
     var lines = rep.toString().trim().split('\n');
-    lines.forEach( function  (line) {
+    for(let i=0;i<lines.length;i++){
+      line = lines[i];
       if(line.indexOf('0x')==0){
         //address
         var b = 0;
@@ -260,8 +260,8 @@ async function update_validator_status_all(){
         ////////////////////////////////////////
         //
         var frontrunner = (values[2] == 'true');
-        var proposed = values[3];
-        var signatures = values[4];
+        var proposed = 0;//values[3];
+        var signatures = values[3];
         if(signatures==null)
           signatures = '0%';
         var score = 0;
@@ -275,14 +275,19 @@ async function update_validator_status_all(){
           metadata_url = accounts[key][7];
         }
         //Attestations fulfilled/requested
-        let attestation = attestations.getAttestationInfo(address);
+        let attestation =[0,0];
+        let key_address = thecelo.containsKey(attestationInfos,address);
+        if(key_address){
+          attestation = attestationInfos[key_address];
+        }
+        //console.log(JSON.stringify(attestation));
         let affiliation = '';
         if(validators_score[address]){
           affiliation = validators_score[address][0];
         }
         validators[address] = [name,signer,elected,frontrunner,proposed,signatures,parseFloat(score),logo,metadata_url,attestation[0],attestation[1],affiliation];
       }
-    });
+    };
   }
   catch(err) {
       if (err) throw err;
@@ -295,8 +300,6 @@ async function update_validator_status_all(){
 //
 async function update_all_group_info(){
   //
-  attestations.getAttestationLogs();
-  //
   var data = await redis.get_redis_data(theceloconst.groups_key);
   var obj = JSON.parse(data);
   Object.keys(obj.groups).forEach((address,i) => {
@@ -308,13 +311,10 @@ async function update_all_group_info(){
 //
 async function celocli_group_info(groups,group_address){
   //
-  thecelo.log_out('celocli_group_info begin....');
+  thecelo.log_out('celocli_group_info '+group_address+' begin....');
   //
   var validators_balance = await redis.get_redis_data('validators_balance');
   var validators_balance = JSON.parse(validators_balance);
-  //
-  var groups_balance = await redis.get_redis_data('groups_balance');
-  var groups_balance = JSON.parse(groups_balance);
   //
   var data = await redis.get_redis_data(theceloconst.validators_key);
     if(data){
@@ -332,53 +332,80 @@ async function celocli_group_info(groups,group_address){
         //votes
         group.push(groups[key][1]);
         //
+        var groups_balance = await redis.get_redis_data('groups_balance');
+        groups_balance = JSON.parse(groups_balance);
         var balance = groups_balance[group_address];
         group.push(balance['gold']);
         group.push(balance['lockedGold']);
         group.push(balance['usd']);
         group.push(balance['pending']);
-        //members
-        var members = new Array();
+        //groupmembers
+        var groupmembers = new Array();
         cmd = 'celocli validatorgroup:show '+group_address;
         var rep1 = thecelo.execCmd(cmd);
         var lines1 = rep1.toString().trim().split('\n');
-        //commission
-        var commission = lines1[5].replace('commission: ','');
+        //
+        let commission = 0;
+        let nextCommission = 0;
+        let nextCommissionBlock = 0;
+        let slashingMultiplier = 0;
+        let lastSlashed = 0;
+        let membersUpdated = 0;
+        let members = '';
+        lines1.forEach( function  (line) {
+          if(line.indexOf('commission: ')>=0){
+            commission = line.replace('commission: ','');
+          }
+          else if(line.indexOf('nextCommission: ')>=0){
+            nextCommission = line.replace('nextCommission: ','');
+          }
+          else if(line.indexOf('nextCommissionBlock: ')>=0){
+            nextCommissionBlock = line.replace('nextCommissionBlock: ','');
+          }
+          else if(line.indexOf('slashingMultiplier: ')>=0){
+            slashingMultiplier = line.replace('slashingMultiplier: ','');
+          }
+          else if(line.indexOf('lastSlashed: ')>=0){
+            lastSlashed = line.replace('lastSlashed: ','');
+          }
+          else if(line.indexOf('membersUpdated: ')>=0){
+            membersUpdated = line.replace('membersUpdated: ','');
+          }
+          else if(line.indexOf('members: ')>=0){
+            members = line.replace('members: ','');
+          }
+        });
         group.push(commission);
-        //nextCommission
-        var nextCommission = lines1[6].replace('nextCommission: ','');
         group.push(nextCommission);
-        //nextCommissionBlock
-        var nextCommissionBlock = lines1[7].replace('nextCommissionBlock: ','');
         group.push(nextCommissionBlock);
-        //slashingMultiplier
-        var slashingMultiplier = lines1[10].replace('slashingMultiplier: ','');
         group.push(slashingMultiplier);
-        //lastSlashed
-        var lastSlashed = lines1[11].replace('lastSlashed: ','');
         group.push(lastSlashed);
-        // membersUpdated
-        var membersUpdated = lines1[8].replace('membersUpdated: ','');
         group.push(membersUpdated);
         //
-        var addresses = lines1[4].replace('members: ','').split(',');
+        let attestationInfos = await redis.get_redis_data('attestation_infos');
+        attestationInfos = JSON.parse(attestationInfos);
+        //
+        let addresses = members.split(',');
         addresses.forEach( function  (address) {
           if(address.indexOf('0x')>=0){
+            let pending = 0;
+            let active = 0;
+            /*
             cmd = 'celocli election:show '+address+' --voter';
             var rep2 = thecelo.execCmd(cmd);
             var lines2 = rep2.toString().trim().split('\n');
             //pending
-            var pending = 0;
+
             if(lines2.length>6){
                 var pendings = lines2[6].trim().split(' ');
                 pending = pendings[1];
             }
             //active
-            var active = 0;
             if(lines2.length>7){
                 var actives = lines2[7].trim().split(' ');
                 active = actives[1];
             }
+            */
             ////address name signer Elected Frontrunner Proposed Signatures score logo
 
             var name = validators[address][0];
@@ -409,15 +436,19 @@ async function celocli_group_info(groups,group_address){
             member.push(proposed);
             member.push(signatures);
             //Attestations fulfilled/requested
-            let attestation = attestations.getAttestationInfo(address);
+            let attestation =[0,0];
+            let key_address = thecelo.containsKey(attestationInfos,address);
+            if(key_address){
+              attestation = attestationInfos[key_address];
+            }
             member.push(attestation[0]);
             member.push(attestation[1]);
             //
-            members.push(member);
+            groupmembers.push(member);
           }
         });
         //
-        group.push(members);
+        group.push(groupmembers);
         //
         var timestamp = new Date().getTime();
         redis.redis_client.set('group_'+group_address,JSON.stringify({timestamp,group}));
@@ -426,7 +457,7 @@ async function celocli_group_info(groups,group_address){
         if (err) throw err;
       }
     }
-    thecelo.log_out('celocli_group_info end....');
+    thecelo.log_out('celocli_group_info '+group_address+' end....');
 }
 //
 function update_networkparameters(){
@@ -442,6 +473,9 @@ function update_networkparameters(){
   var html = '';
   var depath=0,old_depath=0;
   lines.forEach( function  (line) {
+    if(line.indexOf('Warning')>=0){
+      return true
+    }
     //
     if(line.indexOf('      ')==0){
       depath = 3;
@@ -483,7 +517,9 @@ function update_networkparameters(){
       value = date.toJSON().substr(0, 19);
     }
     //
-    var keyvalue = '<span class="text-secondary" set-lan="html:'+key+'">' + key+ ':</span><span class="text-success" > '+value+'</span>';
+    key = key.replace( /([A-Z])/g, ' $1')
+    //
+    var keyvalue = '<span class="text-secondary" set-lan="html:'+key+': ">' + key+ ': </span><span class="text-success" > '+value+'</span>';
     //
     if(depath == 0){
       if(old_depath != 0)
@@ -571,5 +607,6 @@ module.exports = {
        transfer_dollars,
        getSubscribeData,
        update_groups_balance,
-       update_validators_balance
+       update_validators_balance,
+       account_balance
      }

@@ -27,7 +27,7 @@
 	var items_vote;
 	$(function(){
 			$.ajax({
-					url: thecelohost+'/api/v0.1.js?method=proposalList',
+					url: thecelohost+'/api/?method=proposalList',
 					type:'get',cache: false,
 					dataType:'text',
 					success:function(data){

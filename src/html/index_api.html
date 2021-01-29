@@ -30,6 +30,9 @@
 			<a class="list-group-item list-group-item-action" data-toggle="list" href="#account" role="tab"> Accounts
 				<span class="float-right"></span>
 			</a>
+			<a class="list-group-item list-group-item-action" data-toggle="list" href="#exchange" role="tab"> Exchange
+				<span class="float-right"></span>
+			</a>
 			<a class="list-group-item list-group-item-action" data-toggle="list" href="#governance" role="tab"> Governance
 				<span class="float-right"></span>
 			</a>
@@ -263,16 +266,24 @@
 			</div>
 		</div>
 		<!-- account -->
-		<div class="card tab-pane text-secondary" id="account" role="tabpanel">
+		<div class="card tab-pane text-primary" id="account" role="tabpanel">
 			<div class='card-body'>
-			<h6>Accounts</h6>
+			<h6 class='text-secondary'>Accounts</h6>
 			<hr/>
 			<p class="mt-3"><strong>Request</strong></p>
 			<div class='card p-3 bg-light'>
-				<p>Mainnet : <span class="text-primary">https://thecelo.com/api/v0.1?method=accounts</span></p>
-				<p>Testnet Baklava : <span class="text-primary">http://baklava.thecelo.com/api/v0.1?method=accounts</span></p>
+				<p><span class="text-secondary">Mainnet</span> : https://thecelo.com/api/v0.1?method=accounts&page=[page]&count=[count]&sort_flg=[sort_flg]</p>
+				<p><span class="text-secondary">Testnet Baklava</span> : http://baklava.thecelo.com/api/v0.1?method=accounts&page=[page]&count=[count]&sort_flg=[flg]</p>
 			</div>
-			<p class="mt-3"><strong>Response</strong></p>
+			<p class="mt-3"><strong class="text-secondary">Request</strong></p>
+			<div class="card p-3 bg-light">
+			<ul>
+				<li class="p-1">page<span class="text-secondary">: page number, starting from 0</span></li>
+				<li class="p-1">count<span class="text-secondary">: the number of items displayed per page</span></li>
+				<li class="p-1">sort_flg<span class="text-secondary">: sort flag (0: celo, 1: cusd, 2: txs)</span></li>
+			</ul>
+			</div>
+			<p class="mt-3"><strong class="text-secondary">Response</strong></p>
 			<div class="card p-3 bg-light">
 			<ul>
 				<li class="p-1">CELO_totalSupply</li>
@@ -301,6 +312,111 @@
 				</li>
 			</ul>
 			</div>
+			</div>
+		</div>
+		<!-- exchange -->
+		<div class="card tab-pane text-secondary" id="exchange" role="tabpanel">
+			<div class='card-body'>
+				<h6>Exchange</h6>
+				<hr/>
+				<p class="mt-3"><strong>Request</strong></p>
+				<div class='card p-3 bg-light'>
+					<p>Summary : <span class="text-primary">https://thecelo.com/api/?method=ex_summary</span></p>
+				</div>
+				<p class="mt-3"><strong>Response</strong></p>
+				<div class="card p-3 bg-light">
+					<ul>
+						<li class="p-1">code</li>
+						<li class="p-1">msg</li>
+						<li class="p-1">data:{0...n}
+							<ul>
+								<li class="p-1">trading_pairs</li>
+								<li class="p-1">last_price</li>
+								<li class="p-1">last_price</li>
+								<li class="p-1">lowest_ask</li>
+								<li class="p-1">highest_bid</li>
+								<li class="p-1">base_volume</li>
+								<li class="p-1">quote_volume</li>
+								<li class="p-1">price_change_percent_24h</li>
+								<li class="p-1">highest_price_24h</li>
+								<li class="p-1">lowest_price_24h</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<!--
+				<hr/>
+				<p class="mt-3"><strong>Request</strong></p>
+				<div class='card p-3 bg-light'>
+					<p>Asset : <span class="text-primary">https://thecelo.com/api/?method=ex_asset</span></p>
+				</div>
+				<p class="mt-3"><strong>Response</strong></p>
+				<div class="card p-3 bg-light">
+					<ul>
+						<li class="p-1">code</li>
+						<li class="p-1">msg</li>
+						<li class="p-1">data:{0...n}
+							<ul>
+								<li class="p-1">name</li>
+								<li class="p-1">unified_cryptoasset_id</li>
+								<li class="p-1">can_withdraw</li>
+								<li class="p-1">can_deposit</li>
+								<li class="p-1">min_withdraw</li>
+								<li class="p-1">max_withdraw</li>
+								<li class="p-1">maker_fee</li>
+								<li class="p-1">taker_fee</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				-->
+				<!--
+				<hr/>
+				<p class="mt-3"><strong>Request</strong></p>
+				<div class='card p-3 bg-light'>
+					<p>Ticker : <span class="text-primary">https://thecelo.com/api/?method=ex_ticker</span></p>
+				</div>
+				<p class="mt-3"><strong>Response</strong></p>
+				<div class="card p-3 bg-light">
+					<ul>
+						<li class="p-1">code</li>
+						<li class="p-1">msg</li>
+						<li class="p-1">data:{0...n}
+							<ul>
+								<li class="p-1">base_id</li>
+								<li class="p-1">quote_id</li>
+								<li class="p-1">last_price</li>
+								<li class="p-1">base_volume</li>
+								<li class="p-1">quote_volume</li>
+								<li class="p-1">isFrozen</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				-->
+				<hr/>
+				<p class="mt-3"><strong>Request</strong></p>
+				<div class='card p-3 bg-light'>
+					<p>Trades : <span class="text-primary">https://thecelo.com/api/?method=ex_celocusd</span></p>
+				</div>
+				<p class="mt-3"><strong>Response</strong></p>
+				<div class="card p-3 bg-light">
+					<ul>
+						<li class="p-1">code</li>
+						<li class="p-1">msg</li>
+						<li class="p-1">data:{0...n}
+							<ul>
+								<li class="p-1">trade_id</li>
+								<li class="p-1">timestamp</li>
+								<li class="p-1">price</li>
+								<li class="p-1">quote_volume</li>
+								<li class="p-1">base_volume</li>
+								<li class="p-1">type</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<!-- -->
 			</div>
 		</div>
 		<!-- governance -->
