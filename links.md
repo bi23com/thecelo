@@ -11,9 +11,15 @@ thecelo has a new optimization, which simplifies the link to the group web page,
 
 > https://thecelo.com/group/0x07fa1874ad4655AD0C763a7876503509be11e29E
 
+> `https://thecelo.com/account/< address:0x000...>`
+
+> https://thecelo.com/account/0x997490F08B9b99dB00657e2B1BbEc180Cf804A27
+
 Also add some simplified page links:
 > https://thecelo.com/groups
 
 > https://thecelo.com/governance
 
 > https://thecelo.com/validators
+
+> https://thecelo.com/accounts
