@@ -1,4 +1,20 @@
-thecelo has a new optimization, which simplifies the link to the group web page, and can now access the group page via domain and keybase name, such as:
+New optimization of thecelo.com
+
+
+1, add some simplified page links:
+> https://thecelo.com/groups
+
+> https://thecelo.com/governance
+
+> https://thecelo.com/validators
+
+> https://thecelo.com/accounts
+
+> https://thecelo.com/exchange
+
+> https://thecelo.com/networkparameters
+> 
+2, simplifies the link to the group page, now you can access the group page via domain or keybase name,For example:
 > `https://thecelo.com/group/<domain>`<br/>
 > https://thecelo.com/group/bi23
 
@@ -11,15 +27,3 @@ thecelo has a new optimization, which simplifies the link to the group web page,
 > `https://thecelo.com/account/<address:0x000...>`<br/>
 > https://thecelo.com/account/0x997490F08B9b99dB00657e2B1BbEc180Cf804A27
 
-Also add some simplified page links:
-> https://thecelo.com/groups
-
-> https://thecelo.com/governance
-
-> https://thecelo.com/validators
-
-> https://thecelo.com/accounts
-
-> https://thecelo.com/exchange
-
-> https://thecelo.com/networkparameters
