@@ -1,7 +1,7 @@
 New optimization of thecelo.com! 
 
 
-1, We added some simplified page links:
+1, Some simplified page links:
 > https://thecelo.com/groups
 
 > https://thecelo.com/governance
@@ -14,7 +14,7 @@ New optimization of thecelo.com!
 
 > https://thecelo.com/networkparameters
 > 
-2,We simplifies the link to the group page, now you can access the group page via domain or keybase name,For example:
+2,Simplifies the link to the group page, now you can access the group page via domain or keybase name or address,for example:
 > `https://thecelo.com/group/<domain>`<br/>
 > https://thecelo.com/group/bi23
 
