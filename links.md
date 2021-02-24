@@ -23,3 +23,7 @@ Also add some simplified page links:
 > https://thecelo.com/validators
 
 > https://thecelo.com/accounts
+
+> https://thecelo.com/exchange
+
+> https://thecelo.com/networkparameters
