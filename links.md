@@ -1,7 +1,11 @@
-New optimization of thecelo.com! 
+Thecelo Q&A
 
+1, how can I add my validator's logo on thecelo.com?
+step 1: create your keybase account,  upload your logo and complete your profile.
+step 2: copy your group/validator address 
+step 3: provide your keybase link and group/validator address to support@bi23.com
 
-1, Some simplified page links:
+2, Simplified page links:
 > https://thecelo.com/groups
 
 > https://thecelo.com/governance
@@ -14,7 +18,7 @@ New optimization of thecelo.com!
 
 > https://thecelo.com/networkparameters
 > 
-2,Simplifies the link to the group page, now you can access the group page via domain or keybase name or address,for example:
+3,You can access the group page via domain or keybase name or address,for example:
 > `https://thecelo.com/group/<domain>`<br/>
 > https://thecelo.com/group/bi23
 
@@ -26,4 +30,6 @@ New optimization of thecelo.com!
 
 > `https://thecelo.com/account/<address:0x000...>`<br/>
 > https://thecelo.com/account/0x997490F08B9b99dB00657e2B1BbEc180Cf804A27
+> 
+
 
