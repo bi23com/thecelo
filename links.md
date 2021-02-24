@@ -1,10 +1,8 @@
 thecelo has a new optimization, which simplifies the link to the group web page, and can now access the group page via domain and keybase name, such as:
 > `https://thecelo.com/group/<domain>`
-
 > https://thecelo.com/group/bi23
 
 > `https://thecelo.com/group/<keybase name>`
-
 > https://thecelo.com/group/sunxmldapp
 
 > `https://thecelo.com/group/<address:0x000...>`
