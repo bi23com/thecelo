@@ -1,0 +1,29 @@
+"routing": {
+  "rules": [
+    {
+      "type": "field",
+      "outboundTag": "Direct",
+      "ip": [
+        "223.5.5.5/32",
+        "geoip:cn",
+        "geoip:private"
+      ]
+    },
+    {
+      "type": "field",
+      "outboundTag": "Proxy",
+      "ip": [
+        "1.1.1.1/32",
+        "1.0.0.1/32",
+        "8.8.8.8/32",
+        "8.8.4.4/32",
+        "app.nirvana.finance",
+        "geoip:twitter",
+        "geoip:google",
+        "geoip:us",
+        "geoip:ca",
+        "geoip:telegram"
+      ]
+    }
+  ]
+}
